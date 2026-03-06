@@ -3,10 +3,11 @@ import 'package:flutter_saverquest_mvp/core/analytics/analytics_events.dart';
 import 'package:flutter_saverquest_mvp/core/analytics/analytics_service.dart';
 import 'package:flutter_saverquest_mvp/core/consent/consent_controller.dart';
 import 'package:flutter_saverquest_mvp/core/consent/consent_platform.dart';
+import 'package:flutter_saverquest_mvp/core/logging/app_logger.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class _FakeAnalyticsService extends AnalyticsService {
-  _FakeAnalyticsService() : super();
+  _FakeAnalyticsService() : super(logger: _SilentLogger());
 
   final List<Map<String, Object?>> events = [];
 
@@ -14,6 +15,38 @@ class _FakeAnalyticsService extends AnalyticsService {
   Future<void> logEvent(String name, {Map<String, Object>? parameters}) async {
     events.add({'name': name, 'parameters': parameters});
   }
+}
+
+class _SilentLogger implements AppLogger {
+  @override
+  void debug(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void error(
+    String message, {
+    String scope = 'app',
+    Object? error,
+    StackTrace? stackTrace,
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void info(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void warning(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
 }
 
 class _FakeConsentPlatform implements ConsentPlatform {

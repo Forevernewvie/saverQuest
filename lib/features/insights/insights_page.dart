@@ -15,14 +15,18 @@ class InsightsPage extends StatefulWidget {
 }
 
 class _InsightsPageState extends State<InsightsPage> {
+  /// Logs the initial insights screen impression for analytics.
   @override
   void initState() {
     super.initState();
     widget.dependencies.analyticsService.logScreen('insights');
   }
 
+  /// Builds the insights screen from repository-provided summary content.
   @override
   Widget build(BuildContext context) {
+    final insightsContent = widget.dependencies.contentRepository
+        .getInsightsContent();
     final l10n = context.l10n;
 
     return ScreenShell(
@@ -41,12 +45,16 @@ class _InsightsPageState extends State<InsightsPage> {
         AppFeatureCard(
           icon: Icons.thumb_up_alt_outlined,
           title: l10n.insightsSegmentATitle,
-          body: l10n.insightsSegmentABody,
+          body: l10n.insightsSegmentABodyFor(
+            insightsContent.positiveCategories,
+          ),
         ),
         AppFeatureCard(
           icon: Icons.lightbulb_outline,
           title: l10n.insightsSegmentBTitle,
-          body: l10n.insightsSegmentBBody,
+          body: l10n.insightsSegmentBBodyFor(
+            insightsContent.nextFocusCategories,
+          ),
         ),
         AppFeatureCard(
           icon: Icons.check_circle_outline,

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../ads/ad_result.dart';
+import '../content/app_content_repository.dart';
 
 class AppLocalizations {
   AppLocalizations(this.locale);
@@ -43,23 +44,13 @@ class AppLocalizations {
     'A single change to a repeated expense can move you closer to your goal. Jump into the calculator or report to see it right away.',
   );
   String get homeStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
-  String get homeStatSavingsValue => _t('63,200원', 'KRW 63,200');
   String get homeStatStreakLabel => _t('연속 기록', 'Current streak');
-  String get homeStatStreakValue => _t('7일', '7 days');
   String get homeTodaySectionTitle => _t(
     '오늘 이렇게 시작해보세요',
     'Start here today',
   );
   String get homeMissionTitle => _t('오늘의 추천', 'Today\'s suggestion');
-  String get homeMissionBody => _t(
-    '커피 한 잔만 줄여도 오늘 4,500원을 아낄 수 있어요.',
-    'Skip one coffee today and save KRW 4,500.',
-  );
   String get homeProgressTitle => _t('이번 주 흐름', 'This week\'s progress');
-  String get homeProgressBody => _t(
-    '목표의 68%를 채웠고, 7일째 꾸준히 이어가고 있어요.',
-    'You have reached 68% of your goal and kept a 7-day streak.',
-  );
   String get homePrimaryAction => _t(
     '절약 금액 계산하기',
     'Estimate your savings',
@@ -97,17 +88,9 @@ class AppLocalizations {
     '이번 주에 잘한 점',
     'What went well this week',
   );
-  String get insightsSegmentABody => _t(
-    '커피와 외식 지출이 줄어들면서 절약 흐름이 안정적으로 이어지고 있어요.',
-    'Your savings rhythm is improving as coffee and dining expenses stay lower.',
-  );
   String get insightsSegmentBTitle => _t(
     '다음으로 시도해볼 점',
     'What to try next',
-  );
-  String get insightsSegmentBBody => _t(
-    '정기구독과 간식 지출을 함께 점검하면 다음 주 절약 폭을 더 키울 수 있어요.',
-    'Review subscriptions and snack spending next to increase savings further.',
   );
   String get insightsResultTitle => _t('한줄 정리', 'Quick takeaway');
   String get insightsResultBody => _t(
@@ -216,9 +199,11 @@ class AppLocalizations {
     required int monthlySavings,
     required String latestStatus,
   }) {
+    final monthlyLabel = formatCurrency(monthlySavings);
+    final yearlyLabel = formatCurrency(monthlySavings * 12);
     return _t(
-      '한 달에 약 $monthlySavings원을 아낄 수 있어요.\n1년으로 보면 약 ${monthlySavings * 12}원입니다.',
-      'You could save about KRW $monthlySavings each month.\nThat is about KRW ${monthlySavings * 12} over a year.',
+      '한 달에 약 $monthlyLabel을 아낄 수 있어요.\n1년으로 보면 약 $yearlyLabel입니다.',
+      'You could save about $monthlyLabel each month.\nThat is about $yearlyLabel over a year.',
     );
   }
 
@@ -247,7 +232,6 @@ class AppLocalizations {
   );
   String get reportStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
   String get reportStatTopCategoryLabel => _t('가장 크게 줄인 항목', 'Top reduced category');
-  String get reportStatTopCategoryValue => _t('외식', 'Dining');
   String get reportStatDetailLabel => _t('상세 보기 상태', 'Detailed view');
   String get reportDetailReadyValue => _t('열림', 'Open');
   String get reportDetailLockedValue => _t('요약만 보기', 'Summary only');
@@ -262,10 +246,6 @@ class AppLocalizations {
         'The detailed report is unavailable right now. Please try again shortly.',
       );
   String get reportFreeSummaryTitle => _t('이번 주 요약', 'This week at a glance');
-  String get reportFreeSummaryBody => _t(
-    '총 절약 63,200원 · 상위 절약 카테고리: 외식, 커피, 구독',
-    'Total savings KRW 63,200 · top categories: dining, coffee, subscriptions',
-  );
   String get reportUnlockedTitle => _t('상세 분석', 'Detailed insights');
   String get reportLockedTitle => _t('더 자세히 보기', 'See more detail');
   String get reportUnlockedBody => _t(
@@ -276,17 +256,9 @@ class AppLocalizations {
     '카테고리 흐름',
     'Category trend',
   );
-  String get reportUnlockedTrendBody => _t(
-    '외식과 커피 지출이 함께 줄면서 이번 주 절약 흐름이 가장 안정적으로 유지됐어요.',
-    'Dining and coffee spending dropped together, creating the most stable savings trend this week.',
-  );
   String get reportUnlockedFocusTitle => _t(
     '다음 주 집중 포인트',
     'Next-week focus',
-  );
-  String get reportUnlockedFocusBody => _t(
-    '구독과 간식 항목만 한 번 더 점검하면 절약 폭을 더 넓힐 수 있어요.',
-    'A quick review of subscriptions and snack spending could widen your savings next week.',
   );
   String get reportLockedBody => _t(
     '광고를 보고 더 자세한 절약 분석을 확인할 수 있어요.',
@@ -391,6 +363,112 @@ class AppLocalizations {
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';
 
+  /// Formats a currency value for the active locale.
+  String formatCurrency(int amount) {
+    final formatted = _formatNumber(amount);
+    return _isKorean ? '$formatted원' : 'KRW $formatted';
+  }
+
+  /// Formats a streak duration for the active locale.
+  String formatDays(int days) => _isKorean ? '$days일' : '$days days';
+
+  /// Returns the localized label for a supported spending category.
+  String spendingCategoryLabel(SpendingCategory category) {
+    return switch (category) {
+      SpendingCategory.coffee => _t('커피', 'Coffee'),
+      SpendingCategory.dining => _t('외식', 'Dining'),
+      SpendingCategory.subscriptions => _t('구독', 'Subscriptions'),
+      SpendingCategory.snacks => _t('간식', 'Snacks'),
+    };
+  }
+
+  /// Joins localized category labels for summaries and guidance messages.
+  String spendingCategoryList(Iterable<SpendingCategory> categories) {
+    return categories.map(spendingCategoryLabel).join(', ');
+  }
+
+  /// Returns the home hero savings value from the supplied amount.
+  String homeStatSavingsValue(int amount) => formatCurrency(amount);
+
+  /// Returns the home hero streak value from the supplied day count.
+  String homeStatStreakValue(int days) => formatDays(days);
+
+  /// Builds the home mission body from a category and savings amount.
+  String homeMissionBodyForCategory({
+    required SpendingCategory category,
+    required int savingsAmount,
+  }) {
+    final categoryLabel = spendingCategoryLabel(category);
+    final amountLabel = formatCurrency(savingsAmount);
+    return _t(
+      '$categoryLabel 한 번만 줄여도 오늘 $amountLabel을 아낄 수 있어요.',
+      'Cut one $categoryLabel purchase today and save $amountLabel.',
+    );
+  }
+
+  /// Builds the weekly progress body from progress and streak metrics.
+  String homeProgressBodyForProgress({
+    required int goalProgressPercent,
+    required int streakDays,
+  }) {
+    final streakLabel = formatDays(streakDays);
+    return _t(
+      '목표의 $goalProgressPercent%를 채웠고, $streakLabel째 꾸준히 이어가고 있어요.',
+      'You have reached $goalProgressPercent% of your goal and kept a $streakLabel streak.',
+    );
+  }
+
+  /// Returns the localized top-category value for the report hero.
+  String reportTopCategoryValue(SpendingCategory category) =>
+      spendingCategoryLabel(category);
+
+  /// Builds the report summary body from amount and category data.
+  String reportFreeSummaryBodyFor({
+    required int totalSavings,
+    required List<SpendingCategory> topCategories,
+  }) {
+    return _t(
+      '총 절약 ${formatCurrency(totalSavings)} · 상위 절약 카테고리: ${spendingCategoryList(topCategories)}',
+      'Total savings ${formatCurrency(totalSavings)} · top categories: ${spendingCategoryList(topCategories)}',
+    );
+  }
+
+  /// Builds the report trend body from the best-performing categories.
+  String reportUnlockedTrendBodyFor(List<SpendingCategory> trendCategories) {
+    final categoryLabel = spendingCategoryList(trendCategories);
+    return _t(
+      '$categoryLabel 지출이 함께 줄면서 이번 주 절약 흐름이 가장 안정적으로 유지됐어요.',
+      '$categoryLabel spending dropped together, creating the most stable savings trend this week.',
+    );
+  }
+
+  /// Builds the report focus body from the next target categories.
+  String reportUnlockedFocusBodyFor(List<SpendingCategory> focusCategories) {
+    final categoryLabel = spendingCategoryList(focusCategories);
+    return _t(
+      '$categoryLabel 항목만 한 번 더 점검하면 절약 폭을 더 넓힐 수 있어요.',
+      'A quick review of $categoryLabel can widen your savings next week.',
+    );
+  }
+
+  /// Builds the positive insights body from recently improved categories.
+  String insightsSegmentABodyFor(List<SpendingCategory> positiveCategories) {
+    final categoryLabel = spendingCategoryList(positiveCategories);
+    return _t(
+      '$categoryLabel 지출이 줄어들면서 절약 흐름이 안정적으로 이어지고 있어요.',
+      'Your savings rhythm is improving as $categoryLabel spending stays lower.',
+    );
+  }
+
+  /// Builds the next-step insights body from upcoming target categories.
+  String insightsSegmentBBodyFor(List<SpendingCategory> nextFocusCategories) {
+    final categoryLabel = spendingCategoryList(nextFocusCategories);
+    return _t(
+      '$categoryLabel 지출을 함께 점검하면 다음 주 절약 폭을 더 키울 수 있어요.',
+      'Review $categoryLabel next to increase savings further.',
+    );
+  }
+
   String adStatusLabel(AdShowStatus? status) {
     switch (status) {
       case AdShowStatus.shown:
@@ -414,6 +492,20 @@ class AppLocalizations {
 
   String _t(String korean, String english) {
     return _isKorean ? korean : english;
+  }
+
+  /// Formats an integer with grouping separators without extra dependencies.
+  String _formatNumber(int value) {
+    final digits = value.abs().toString();
+    final buffer = StringBuffer();
+    for (var index = 0; index < digits.length; index += 1) {
+      final reversedIndex = digits.length - index;
+      buffer.write(digits[index]);
+      if (reversedIndex > 1 && reversedIndex % 3 == 1) {
+        buffer.write(',');
+      }
+    }
+    return value < 0 ? '-$buffer' : buffer.toString();
   }
 }
 

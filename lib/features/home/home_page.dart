@@ -21,17 +21,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /// Logs the initial home screen impression for analytics.
   @override
   void initState() {
     super.initState();
     widget.dependencies.analyticsService.logScreen('home');
   }
 
+  /// Builds the personalized home dashboard using repository-provided content.
   @override
   Widget build(BuildContext context) {
     final consentState = widget.dependencies.consentController.state;
+    final homeContent = widget.dependencies.contentRepository.getHomeContent();
     final l10n = context.l10n;
 
+    /// Opens the calculator and records the primary CTA source.
     void openCalculator() async {
       await widget.dependencies.analyticsService.logEvent(
         AnalyticsEvents.missionCompleted,
@@ -65,11 +69,11 @@ class _HomePageState extends State<HomePage> {
           pills: [
             AppMetricPill(
               label: l10n.homeStatSavingsLabel,
-              value: l10n.homeStatSavingsValue,
+              value: l10n.homeStatSavingsValue(homeContent.weeklySavingsAmount),
             ),
             AppMetricPill(
               label: l10n.homeStatStreakLabel,
-              value: l10n.homeStatStreakValue,
+              value: l10n.homeStatStreakValue(homeContent.streakDays),
             ),
           ],
         ),
@@ -78,12 +82,18 @@ class _HomePageState extends State<HomePage> {
         AppFeatureCard(
           icon: Icons.local_cafe_outlined,
           title: l10n.homeMissionTitle,
-          body: l10n.homeMissionBody,
+          body: l10n.homeMissionBodyForCategory(
+            category: homeContent.missionCategory,
+            savingsAmount: homeContent.missionSavingsAmount,
+          ),
         ),
         AppFeatureCard(
           icon: Icons.show_chart_outlined,
           title: l10n.homeProgressTitle,
-          body: l10n.homeProgressBody,
+          body: l10n.homeProgressBodyForProgress(
+            goalProgressPercent: homeContent.goalProgressPercent,
+            streakDays: homeContent.streakDays,
+          ),
         ),
         const SizedBox(height: AppSpacing.l),
         AppSectionHeader(title: l10n.homeQuickActionsTitle),
