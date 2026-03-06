@@ -24,15 +24,11 @@ class ToolPage extends StatefulWidget {
 }
 
 class _ToolPageState extends State<ToolPage> {
-  final TextEditingController _beforeController = TextEditingController(
-    text: '12000',
-  );
-  final TextEditingController _afterController = TextEditingController(
-    text: '8500',
-  );
-  final TextEditingController _countController = TextEditingController(
-    text: '14',
-  );
+  static const int _monthsInYear = 12;
+
+  late final TextEditingController _beforeController;
+  late final TextEditingController _afterController;
+  late final TextEditingController _countController;
 
   int _calcTapCount = 0;
   int _monthlySavings = 0;
@@ -41,12 +37,24 @@ class _ToolPageState extends State<ToolPage> {
   AdShowStatus? _lastAdStatus;
   final SavingsCalculator _calculator = const SavingsCalculator();
 
+  /// Seeds the calculator with repository-backed default values and logs view.
   @override
   void initState() {
     super.initState();
+    final defaults = widget.dependencies.contentRepository.getToolInputDefaults();
+    _beforeController = TextEditingController(
+      text: defaults.beforePrice.toString(),
+    );
+    _afterController = TextEditingController(
+      text: defaults.afterPrice.toString(),
+    );
+    _countController = TextEditingController(
+      text: defaults.monthlyCount.toString(),
+    );
     widget.dependencies.analyticsService.logScreen('tool');
   }
 
+  /// Disposes text controllers to avoid retaining obsolete widget state.
   @override
   void dispose() {
     _beforeController.dispose();
@@ -55,6 +63,7 @@ class _ToolPageState extends State<ToolPage> {
     super.dispose();
   }
 
+  /// Validates input, calculates savings, and conditionally shows ads.
   Future<void> _runCalculation() async {
     final l10n = context.l10n;
     final before = int.tryParse(_beforeController.text);
@@ -131,10 +140,11 @@ class _ToolPageState extends State<ToolPage> {
     }
   }
 
+  /// Builds the calculator screen using repository-backed defaults.
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final yearlySavings = _monthlySavings * 12;
+    final yearlySavings = _monthlySavings * _monthsInYear;
 
     return ScreenShell(
       title: l10n.toolTitle,
@@ -236,6 +246,7 @@ class _SavingsResultCard extends StatelessWidget {
   final int yearlySavings;
   final String body;
 
+  /// Builds the calculation result card from prepared presentation values.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -255,11 +266,11 @@ class _SavingsResultCard extends StatelessWidget {
               children: [
                 AppMetricPill(
                   label: monthlyLabel,
-                  value: '$monthlySavings원',
+                  value: context.l10n.formatCurrency(monthlySavings),
                 ),
                 AppMetricPill(
                   label: yearlyLabel,
-                  value: '$yearlySavings원',
+                  value: context.l10n.formatCurrency(yearlySavings),
                 ),
               ],
             ),

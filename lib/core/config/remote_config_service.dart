@@ -1,11 +1,16 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
-class RemoteConfigService {
-  RemoteConfigService({FirebaseRemoteConfig? remoteConfig})
-    : _remoteConfig = remoteConfig;
+import '../logging/app_logger.dart';
 
+class RemoteConfigService {
+  /// Creates a remote-config service with injectable logging and backend access.
+  RemoteConfigService({
+    required AppLogger logger,
+    FirebaseRemoteConfig? remoteConfig,
+  }) : _logger = logger,
+       _remoteConfig = remoteConfig;
+
+  final AppLogger _logger;
   final FirebaseRemoteConfig? _remoteConfig;
 
   static const int _defaultInterstitialInterval = 3;
@@ -20,9 +25,13 @@ class RemoteConfigService {
   int get interstitialCooldownSec => _interstitialCooldownSec;
   int get rewardedDailyCap => _rewardedDailyCap;
 
+  /// Loads runtime ad guardrails while preserving safe defaults on failure.
   Future<void> initialize() async {
     if (_remoteConfig == null) {
-      developer.log('[remote-config] unavailable. using defaults.');
+      _logger.info(
+        'Remote config unavailable. Using defaults.',
+        scope: 'remote-config',
+      );
       return;
     }
 
@@ -41,11 +50,26 @@ class RemoteConfigService {
       );
       _rewardedDailyCap = _remoteConfig.getInt('rewarded_daily_cap');
 
-      developer.log(
-        '[remote-config] loaded: interstitialInterval=$_interstitialInterval, cooldown=$_interstitialCooldownSec, rewardedDailyCap=$_rewardedDailyCap',
+      _logger.info(
+        'Remote config values loaded.',
+        scope: 'remote-config',
+        metadata: {
+          'interstitialInterval': _interstitialInterval,
+          'interstitialCooldownSec': _interstitialCooldownSec,
+          'rewardedDailyCap': _rewardedDailyCap,
+        },
       );
-    } catch (error) {
-      developer.log('[remote-config] failed. using defaults. $error');
+    } catch (error, stackTrace) {
+      _logger.warning(
+        'Remote config failed. Falling back to defaults.',
+        scope: 'remote-config',
+      );
+      _logger.error(
+        'Remote config exception captured.',
+        scope: 'remote-config',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 }

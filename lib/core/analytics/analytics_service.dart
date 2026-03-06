@@ -1,15 +1,25 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 
-class AnalyticsService {
-  AnalyticsService({FirebaseAnalytics? firebaseAnalytics})
-    : _firebaseAnalytics = firebaseAnalytics;
+import '../logging/app_logger.dart';
 
+class AnalyticsService {
+  /// Creates an analytics service with optional Firebase backing.
+  AnalyticsService({
+    required AppLogger logger,
+    FirebaseAnalytics? firebaseAnalytics,
+  }) : _logger = logger,
+       _firebaseAnalytics = firebaseAnalytics;
+
+  final AppLogger _logger;
   final FirebaseAnalytics? _firebaseAnalytics;
 
+  /// Stores the active environment so telemetry can be segmented safely.
   Future<void> setEnvironment(String environmentName) async {
-    developer.log('[analytics] env=$environmentName');
+    _logger.info(
+      'Analytics environment updated.',
+      scope: 'analytics',
+      metadata: {'environment': environmentName},
+    );
     if (_firebaseAnalytics == null) {
       return;
     }
@@ -20,8 +30,13 @@ class AnalyticsService {
     );
   }
 
+  /// Records a screen view with a consistent logging trail.
   Future<void> logScreen(String screenName) async {
-    developer.log('[analytics] screen_view: $screenName');
+    _logger.debug(
+      'Screen view tracked.',
+      scope: 'analytics',
+      metadata: {'screen': screenName},
+    );
     if (_firebaseAnalytics == null) {
       return;
     }
@@ -29,8 +44,13 @@ class AnalyticsService {
     await _firebaseAnalytics.logScreenView(screenName: screenName);
   }
 
+  /// Records a named analytics event with optional structured parameters.
   Future<void> logEvent(String name, {Map<String, Object>? parameters}) async {
-    developer.log('[analytics] event: $name | $parameters');
+    _logger.debug(
+      'Analytics event tracked.',
+      scope: 'analytics',
+      metadata: {'event': name, 'parameters': parameters ?? const {}},
+    );
     if (_firebaseAnalytics == null) {
       return;
     }

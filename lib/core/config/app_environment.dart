@@ -15,8 +15,8 @@ extension AppEnvironmentX on AppEnvironment {
   bool get isProd => this == AppEnvironment.prod;
 }
 
-AppEnvironment appEnvironmentFromDefine() {
-  const env = String.fromEnvironment('APP_ENV', defaultValue: 'dev');
+/// Resolves an application environment from a raw string value.
+AppEnvironment appEnvironmentFromRaw(String env) {
   switch (env) {
     case 'prod':
       return AppEnvironment.prod;
@@ -25,4 +25,10 @@ AppEnvironment appEnvironmentFromDefine() {
     default:
       return AppEnvironment.dev;
   }
+}
+
+/// Resolves the application environment from compile-time variables.
+AppEnvironment appEnvironmentFromDefine() {
+  const env = String.fromEnvironment('APP_ENV', defaultValue: 'dev');
+  return appEnvironmentFromRaw(env);
 }
