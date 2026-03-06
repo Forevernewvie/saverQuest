@@ -27,12 +27,14 @@ class _ReportPageState extends State<ReportPage> {
   bool _loading = false;
   AdShowStatus? _lastRewardStatus;
 
+  /// Logs the initial report screen impression for analytics.
   @override
   void initState() {
     super.initState();
     widget.dependencies.analyticsService.logScreen('report');
   }
 
+  /// Attempts to unlock the detailed report through a rewarded ad flow.
   Future<void> _unlockWithRewarded() async {
     final l10n = context.l10n;
     setState(() => _loading = true);
@@ -88,9 +90,11 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
+  /// Builds the report screen with repository-backed summary content.
   @override
   Widget build(BuildContext context) {
     final consentState = widget.dependencies.consentController.state;
+    final reportContent = widget.dependencies.contentRepository.getReportContent();
     final l10n = context.l10n;
     final hasRewarded = AdMobIds.hasReportRewarded;
     final detailStatus = _unlocked
@@ -110,11 +114,13 @@ class _ReportPageState extends State<ReportPage> {
           pills: [
             AppMetricPill(
               label: l10n.reportStatSavingsLabel,
-              value: '63,200원',
+              value: l10n.formatCurrency(reportContent.weeklySavingsAmount),
             ),
             AppMetricPill(
               label: l10n.reportStatTopCategoryLabel,
-              value: l10n.reportStatTopCategoryValue,
+              value: l10n.reportTopCategoryValue(
+                reportContent.topReducedCategory,
+              ),
             ),
             AppMetricPill(
               label: l10n.reportStatDetailLabel,
@@ -126,18 +132,25 @@ class _ReportPageState extends State<ReportPage> {
         AppFeatureCard(
           icon: Icons.savings_outlined,
           title: l10n.reportFreeSummaryTitle,
-          body: l10n.reportFreeSummaryBody,
+          body: l10n.reportFreeSummaryBodyFor(
+            totalSavings: reportContent.weeklySavingsAmount,
+            topCategories: reportContent.summaryCategories,
+          ),
         ),
         if (_unlocked) ...[
           AppFeatureCard(
             icon: Icons.auto_graph_outlined,
             title: l10n.reportUnlockedTrendTitle,
-            body: l10n.reportUnlockedTrendBody,
+            body: l10n.reportUnlockedTrendBodyFor(
+              reportContent.trendCategories,
+            ),
           ),
           AppFeatureCard(
             icon: Icons.track_changes_outlined,
             title: l10n.reportUnlockedFocusTitle,
-            body: l10n.reportUnlockedFocusBody,
+            body: l10n.reportUnlockedFocusBodyFor(
+              reportContent.focusCategories,
+            ),
           ),
         ] else if (hasRewarded) ...[
           AppFeatureCard(

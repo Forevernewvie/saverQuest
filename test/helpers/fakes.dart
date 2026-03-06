@@ -6,10 +6,12 @@ import 'package:flutter_saverquest_mvp/core/ads/ad_service.dart';
 import 'package:flutter_saverquest_mvp/core/analytics/analytics_service.dart';
 import 'package:flutter_saverquest_mvp/core/config/app_environment.dart';
 import 'package:flutter_saverquest_mvp/core/config/remote_config_service.dart';
+import 'package:flutter_saverquest_mvp/core/content/app_content_repository.dart';
 import 'package:flutter_saverquest_mvp/core/consent/att_transparency_service.dart';
 import 'package:flutter_saverquest_mvp/core/consent/consent_controller.dart';
 import 'package:flutter_saverquest_mvp/core/crash/crash_reporter.dart';
 import 'package:flutter_saverquest_mvp/core/localization/app_locale_controller.dart';
+import 'package:flutter_saverquest_mvp/core/logging/app_logger.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class FakeAdService implements AdService {
@@ -92,8 +94,41 @@ class FakeLocaleStorage implements LocaleStorage {
   }
 }
 
+class FakeLogger implements AppLogger {
+  @override
+  void debug(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void error(
+    String message, {
+    String scope = 'app',
+    Object? error,
+    StackTrace? stackTrace,
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void info(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
+
+  @override
+  void warning(
+    String message, {
+    String scope = 'app',
+    Map<String, Object?> metadata = const {},
+  }) {}
+}
+
 AppDependencies buildFakeDependencies() {
-  final analytics = AnalyticsService();
+  final logger = FakeLogger();
+  final analytics = AnalyticsService(logger: logger);
   final localeController = AppLocaleController(storage: FakeLocaleStorage());
   return AppDependencies(
     environment: AppEnvironment.dev,
@@ -104,12 +139,14 @@ AppDependencies buildFakeDependencies() {
     ),
     adService: FakeAdService(),
     analyticsService: analytics,
-    remoteConfigService: RemoteConfigService(),
+    remoteConfigService: RemoteConfigService(logger: logger),
     consentController: FakeConsentController(analyticsService: analytics),
     attTransparencyService: FakeAttTransparencyService(
       analyticsService: analytics,
     ),
     localeController: localeController,
-    crashReporter: CrashReporter(),
+    crashReporter: CrashReporter(logger: logger),
+    contentRepository: const StaticAppContentRepository(),
+    logger: logger,
   );
 }

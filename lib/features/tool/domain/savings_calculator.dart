@@ -24,6 +24,7 @@ enum SavingsValidationError {
 class SavingsCalculator {
   const SavingsCalculator();
 
+  /// Validates user input before running the savings calculation.
   SavingsValidationError? validate(SavingsCalculationInput input) {
     if (input.beforePrice <= input.afterPrice) {
       return SavingsValidationError.beforePriceMustBeGreater;
@@ -34,6 +35,7 @@ class SavingsCalculator {
     return null;
   }
 
+  /// Calculates monthly savings from the validated input values.
   SavingsCalculationResult calculate(SavingsCalculationInput input) {
     return SavingsCalculationResult(
       monthlySavings:
