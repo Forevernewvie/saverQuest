@@ -6,10 +6,11 @@ import '../../core/ads/ad_placement.dart';
 import '../../core/ads/ad_result.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 import 'domain/savings_calculator.dart';
-import '../../widgets/common/app_panel.dart';
+import '../../widgets/common/app_blocks.dart';
 import '../../widgets/common/async_feedback.dart';
 import '../../widgets/screen_shell.dart';
 
@@ -35,6 +36,7 @@ class _ToolPageState extends State<ToolPage> {
 
   int _calcTapCount = 0;
   int _monthlySavings = 0;
+  bool _hasCalculated = false;
   String? _validationError;
   AdShowStatus? _lastAdStatus;
   final SavingsCalculator _calculator = const SavingsCalculator();
@@ -90,6 +92,7 @@ class _ToolPageState extends State<ToolPage> {
       _validationError = null;
       _calcTapCount += 1;
       _monthlySavings = savings;
+      _hasCalculated = true;
     });
 
     await widget.dependencies.analyticsService.logEvent(
@@ -131,36 +134,57 @@ class _ToolPageState extends State<ToolPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final yearlySavings = _monthlySavings * 12;
 
     return ScreenShell(
       title: l10n.toolTitle,
       children: [
-        AppPanel(
-          title: l10n.toolInterstitialRulesTitle,
-          body: l10n.toolInterstitialRulesBody(
-            widget.dependencies.remoteConfigService.interstitialInterval,
+        AppHeroCard(
+          eyebrow: l10n.navTool,
+          title: l10n.toolHeroTitle,
+          body: l10n.toolHeroBody,
+          trailing: const AppHeroIcon(icon: Icons.calculate_outlined),
+        ),
+        AppSectionHeader(
+          title: l10n.toolInputSectionTitle,
+          subtitle: l10n.toolInputSectionBody,
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: AppSpacing.m),
+          padding: const EdgeInsets.all(AppSpacing.m),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              TextField(
+                controller: _beforeController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: l10n.toolCurrentPriceLabel,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.s),
+              TextField(
+                controller: _afterController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: l10n.toolAlternativePriceLabel,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.s),
+              TextField(
+                controller: _countController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: l10n.toolMonthlyCountLabel,
+                ),
+              ),
+            ],
           ),
         ),
-        TextField(
-          controller: _beforeController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: l10n.toolCurrentPriceLabel),
-        ),
-        const SizedBox(height: AppSpacing.s),
-        TextField(
-          controller: _afterController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: l10n.toolAlternativePriceLabel,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s),
-        TextField(
-          controller: _countController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: l10n.toolMonthlyCountLabel),
-        ),
-        const SizedBox(height: AppSpacing.m),
         FilledButton(
           onPressed: _runCalculation,
           child: Text(l10n.toolCalculate),
@@ -169,21 +193,86 @@ class _ToolPageState extends State<ToolPage> {
           onPressed: () => Navigator.pushNamed(context, AppRoutes.report),
           child: Text(l10n.toolGoToReport),
         ),
-        const SizedBox(height: AppSpacing.m),
+        const SizedBox(height: AppSpacing.l),
+        AppSectionHeader(title: l10n.toolSimulationResultTitle),
         if (_validationError != null)
           AsyncFeedback.error(
             label: _validationError!,
             onRetry: () => setState(() => _validationError = null),
           )
         else
-          AppPanel(
-            title: l10n.toolSimulationResultTitle,
-            body: l10n.toolSimulationResultBody(
-              monthlySavings: _monthlySavings,
-              latestStatus: l10n.adStatusLabel(_lastAdStatus),
-            ),
+          _SavingsResultCard(
+            hasCalculated: _hasCalculated,
+            monthlyLabel: l10n.toolMonthlyResultLabel,
+            yearlyLabel: l10n.toolYearlyResultLabel,
+            monthlySavings: _monthlySavings,
+            yearlySavings: yearlySavings,
+            body: _hasCalculated
+                ? l10n.toolSimulationResultBody(
+                    monthlySavings: _monthlySavings,
+                    latestStatus: l10n.adStatusLabel(_lastAdStatus),
+                  )
+                : l10n.toolEmptyResultBody,
           ),
       ],
+    );
+  }
+}
+
+class _SavingsResultCard extends StatelessWidget {
+  const _SavingsResultCard({
+    required this.hasCalculated,
+    required this.monthlyLabel,
+    required this.yearlyLabel,
+    required this.monthlySavings,
+    required this.yearlySavings,
+    required this.body,
+  });
+
+  final bool hasCalculated;
+  final String monthlyLabel;
+  final String yearlyLabel;
+  final int monthlySavings;
+  final int yearlySavings;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hasCalculated)
+            Wrap(
+              spacing: AppSpacing.s,
+              runSpacing: AppSpacing.s,
+              children: [
+                AppMetricPill(
+                  label: monthlyLabel,
+                  value: '$monthlySavings원',
+                ),
+                AppMetricPill(
+                  label: yearlyLabel,
+                  value: '$yearlySavings원',
+                ),
+              ],
+            ),
+          if (hasCalculated) const SizedBox(height: AppSpacing.m),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

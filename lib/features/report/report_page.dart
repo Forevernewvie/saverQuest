@@ -6,10 +6,11 @@ import '../../core/ads/ad_placement.dart';
 import '../../core/ads/ad_result.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../widgets/ad_banner_slot.dart';
-import '../../widgets/common/app_panel.dart';
+import '../../widgets/common/app_blocks.dart';
 import '../../widgets/screen_shell.dart';
 
 class ReportPage extends StatefulWidget {
@@ -91,29 +92,93 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     final consentState = widget.dependencies.consentController.state;
     final l10n = context.l10n;
+    final hasRewarded = AdMobIds.hasReportRewarded;
+    final detailStatus = _unlocked
+        ? l10n.reportDetailReadyValue
+        : hasRewarded
+        ? l10n.reportDetailLockedValue
+        : l10n.reportDetailComingSoonValue;
 
     return ScreenShell(
       title: l10n.reportTitle,
       children: [
-        AppPanel(
+        AppHeroCard(
+          eyebrow: l10n.appTitle,
+          title: l10n.reportHeroTitle,
+          body: l10n.reportHeroBody,
+          trailing: const AppHeroIcon(icon: Icons.insights_outlined),
+          pills: [
+            AppMetricPill(
+              label: l10n.reportStatSavingsLabel,
+              value: '63,200원',
+            ),
+            AppMetricPill(
+              label: l10n.reportStatTopCategoryLabel,
+              value: l10n.reportStatTopCategoryValue,
+            ),
+            AppMetricPill(
+              label: l10n.reportStatDetailLabel,
+              value: detailStatus,
+            ),
+          ],
+        ),
+        AppSectionHeader(title: l10n.reportFreeSummaryTitle),
+        AppFeatureCard(
+          icon: Icons.savings_outlined,
           title: l10n.reportFreeSummaryTitle,
           body: l10n.reportFreeSummaryBody,
         ),
-        AppPanel(
-          title: _unlocked ? l10n.reportUnlockedTitle : l10n.reportLockedTitle,
-          body: _unlocked ? l10n.reportUnlockedBody : l10n.reportLockedBody,
+        if (_unlocked) ...[
+          AppFeatureCard(
+            icon: Icons.auto_graph_outlined,
+            title: l10n.reportUnlockedTrendTitle,
+            body: l10n.reportUnlockedTrendBody,
+          ),
+          AppFeatureCard(
+            icon: Icons.track_changes_outlined,
+            title: l10n.reportUnlockedFocusTitle,
+            body: l10n.reportUnlockedFocusBody,
+          ),
+        ] else if (hasRewarded) ...[
+          AppFeatureCard(
+            icon: Icons.lock_open_outlined,
+            title: l10n.reportLockedTitle,
+            body: l10n.reportLockedBody,
+          ),
+          FilledButton(
+            onPressed: _loading ? null : _unlockWithRewarded,
+            child: Text(_loading ? l10n.reportLoadingAd : l10n.reportWatchAd),
+          ),
+        ] else ...[
+          AppFeatureCard(
+            icon: Icons.schedule_outlined,
+            title: l10n.reportPreviewTitle,
+            body: l10n.reportPreviewBody,
+          ),
+          OutlinedButton(
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.insights),
+            child: Text(l10n.reportPreviewAction),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.l),
+        AppSectionHeader(
+          title: hasRewarded ? l10n.reportFlowTitle : l10n.reportNextSectionTitle,
         ),
-        FilledButton(
-          onPressed: _loading ? null : _unlockWithRewarded,
-          child: Text(_loading ? l10n.reportLoadingAd : l10n.reportWatchAd),
+        AppFeatureCard(
+          icon: hasRewarded ? Icons.play_circle_outline : Icons.lightbulb_outline,
+          title: hasRewarded ? l10n.reportFlowTitle : l10n.reportNextSectionTitle,
+          body: hasRewarded
+              ? l10n.reportFlowBody(l10n.adStatusLabel(_lastRewardStatus))
+              : l10n.reportNextSectionBody,
         ),
-        OutlinedButton(onPressed: () {}, child: Text(l10n.reportKeepSummary)),
-        const SizedBox(height: AppSpacing.s),
-        AppPanel(
-          title: l10n.reportFlowTitle,
-          body: l10n.reportFlowBody(l10n.adStatusLabel(_lastRewardStatus)),
-        ),
-        const SizedBox(height: AppSpacing.s),
+        if (!_unlocked && hasRewarded)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.m),
+            child: Text(
+              l10n.reportKeepSummary,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
         AdBannerSlot(
           adService: widget.dependencies.adService,
           adUnitId: AdMobIds.reportBanner,
