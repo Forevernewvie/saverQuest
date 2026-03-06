@@ -1,0 +1,54 @@
+name: Feature request
+description: Propose a feature with user value and rollout scope.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or business problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the solution in practical terms.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Small
+        - Medium
+        - Large
+    validations:
+      required: true
+  - type: dropdown
+    id: monetization
+    attributes:
+      label: Revenue impact
+      options:
+        - Direct
+        - Indirect
+        - None
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Dependencies, risks, design notes, or rollout considerations.
