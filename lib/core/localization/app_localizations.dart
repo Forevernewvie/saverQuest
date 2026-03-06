@@ -27,59 +27,129 @@ class AppLocalizations {
 
   String get retry => _t('다시 시도', 'Try again');
   String get noData => _t('데이터가 없습니다.', 'No data available.');
-  String get adBannerPlaceholder => _t('배너 광고 자리', 'Ad banner slot');
+  String get adBannerPlaceholder =>
+      _t('파트너 영역 로딩 중', 'Partner area loading');
   String get adDisabledRequiresConsent =>
       _t('광고 비활성 (동의 필요)', 'Ads disabled (consent required)');
   String get adBannerSemanticLabel => _t('광고 배너', 'Ad banner');
 
-  String get homeTitle => _t('오늘의 절약 홈', 'Today\'s Savings Home');
-  String get homeMissionTitle => _t('오늘의 미션', 'Today\'s Mission');
-  String get homeMissionBody => _t(
-    '커피 소비 1회 줄이기 · 예상 절약 4,500원',
-    'Skip one coffee purchase · save KRW 4,500',
+  String get homeTitle => _t('오늘의 절약', 'Today\'s Savings');
+  String get homeHeroTitle => _t(
+    '오늘 아낄 수 있는 금액을 바로 확인해보세요',
+    'See how much you could save today',
   );
-  String get homeProgressTitle => _t('주간 진행률', 'Weekly Progress');
-  String get homeProgressBody =>
-      _t('68% (목표 80%) · 연속 7일 달성 중', '68% (goal 80%) · 7-day streak');
-  String get homePrimaryAction => _t('지출 10초 기록', 'Log expense in 10 seconds');
+  String get homeHeroBody => _t(
+    '반복 지출 하나만 바꿔도 목표에 더 가까워질 수 있어요. 계산기와 리포트에서 바로 확인해보세요.',
+    'A single change to a repeated expense can move you closer to your goal. Jump into the calculator or report to see it right away.',
+  );
+  String get homeStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
+  String get homeStatSavingsValue => _t('63,200원', 'KRW 63,200');
+  String get homeStatStreakLabel => _t('연속 기록', 'Current streak');
+  String get homeStatStreakValue => _t('7일', '7 days');
+  String get homeTodaySectionTitle => _t(
+    '오늘 이렇게 시작해보세요',
+    'Start here today',
+  );
+  String get homeMissionTitle => _t('오늘의 추천', 'Today\'s suggestion');
+  String get homeMissionBody => _t(
+    '커피 한 잔만 줄여도 오늘 4,500원을 아낄 수 있어요.',
+    'Skip one coffee today and save KRW 4,500.',
+  );
+  String get homeProgressTitle => _t('이번 주 흐름', 'This week\'s progress');
+  String get homeProgressBody => _t(
+    '목표의 68%를 채웠고, 7일째 꾸준히 이어가고 있어요.',
+    'You have reached 68% of your goal and kept a 7-day streak.',
+  );
+  String get homePrimaryAction => _t(
+    '절약 금액 계산하기',
+    'Estimate your savings',
+  );
   String get homePrimaryActionSemantic =>
-      _t('지출 10초 기록 버튼', 'Log expense quickly button');
-  String get homeSecondaryAction => _t('이번주 기록 보기', 'View this week\'s report');
-  String get navTool => _t('도구', 'Tools');
+      _t('절약 금액 계산하기 버튼', 'Estimate your savings button');
+  String get homeSecondaryAction => _t('주간 리포트 보기', 'View weekly report');
+  String get homeQuickActionsTitle => _t(
+    '지금 할 수 있는 것',
+    'What you can do now',
+  );
+  String get homeQuickCalcBody => _t(
+    '자주 쓰는 항목을 바꿨을 때 얼마나 아낄 수 있는지 계산해보세요.',
+    'Estimate how much you can save by changing one repeated expense.',
+  );
+  String get homeQuickReportBody => _t(
+    '이번 주 절약 흐름과 카테고리별 변화를 확인해보세요.',
+    'Review this week’s savings trend and category changes.',
+  );
+  String get homeQuickInsightsBody => _t(
+    '소비 습관에서 다음 절약 힌트를 찾아보세요.',
+    'Find your next savings hint from spending patterns.',
+  );
+  String get navTool => _t('계산기', 'Calculator');
   String get navReport => _t('리포트', 'Report');
   String get navInsights => _t('인사이트', 'Insights');
 
-  String get insightsTitle => _t('인사이트 실험실', 'Insights Lab');
-  String get insightsNoAdTitle => _t('광고 없는 분석 구간', 'No-Ad Analytics Zone');
+  String get insightsTitle => _t('소비 인사이트', 'Spending Insights');
+  String get insightsNoAdTitle => _t('집중해서 보기', 'Focus view');
   String get insightsNoAdBody => _t(
-    '실험 분석 집중 구간이라 광고를 노출하지 않습니다.',
-    'Ads are hidden here to keep analysis focused.',
+    '이번 주 소비 흐름을 광고 없이 편하게 살펴볼 수 있어요.',
+    'Review this week’s spending patterns without distraction.',
   );
-  String get insightsSegmentATitle => _t('세그먼트 A (신규)', 'Segment A (New)');
-  String get insightsSegmentABody =>
-      _t('배너 중심 + 리워드 약한 CTA', 'Banner-first + soft rewarded CTA');
-  String get insightsSegmentBTitle =>
-      _t('세그먼트 B (복귀)', 'Segment B (Returning)');
+  String get insightsSegmentATitle => _t(
+    '이번 주에 잘한 점',
+    'What went well this week',
+  );
+  String get insightsSegmentABody => _t(
+    '커피와 외식 지출이 줄어들면서 절약 흐름이 안정적으로 이어지고 있어요.',
+    'Your savings rhythm is improving as coffee and dining expenses stay lower.',
+  );
+  String get insightsSegmentBTitle => _t(
+    '다음으로 시도해볼 점',
+    'What to try next',
+  );
   String get insightsSegmentBBody => _t(
-    '미션 중심 + 결과 전환 Interstitial',
-    'Mission-led + result-transition interstitial',
+    '정기구독과 간식 지출을 함께 점검하면 다음 주 절약 폭을 더 키울 수 있어요.',
+    'Review subscriptions and snack spending next to increase savings further.',
   );
-  String get insightsResultTitle => _t('실험 결과', 'Experiment Result');
+  String get insightsResultTitle => _t('한줄 정리', 'Quick takeaway');
   String get insightsResultBody => _t(
-    'B 그룹 리텐션 +11%, 다음 액션: B 전략 확대 적용',
-    'Group B retention is +11%; next action: scale strategy B.',
+    '지금 흐름이면 작은 반복 지출만 더 줄여도 목표에 더 빨리 도달할 수 있어요.',
+    'At this pace, trimming a few repeated small expenses can get you to your goal faster.',
   );
 
-  String get onboardingTitle => _t('시작 전 동의 설정', 'Consent Setup');
-  String get onboardingNoAdTitle => _t('광고 금지 구간', 'No-Ad Zone');
+  String get onboardingTitle => _t(
+    'SaverQuest 시작하기',
+    'Start SaverQuest',
+  );
+  String get onboardingIntroTitle => _t(
+    '시작 전에 필요한 설정만 확인할게요',
+    'We will check just a few essentials first',
+  );
+  String get onboardingIntroBody => _t(
+    '필요한 개인정보 및 광고 설정이 있으면 안내 화면이 먼저 나타납니다. 설정은 언제든 앱 안에서 다시 바꿀 수 있어요.',
+    'If privacy or ad choices are required, you will see a prompt first. You can change them anytime inside the app.',
+  );
+  String get onboardingTrustSectionTitle => _t(
+    '먼저 알아두세요',
+    'What to expect',
+  );
+  String get onboardingSettingsHint => _t(
+    '세부 설정은 앱 안의 설정에서 언제든 변경할 수 있어요.',
+    'You can change these settings anytime in Settings.',
+  );
+  String get onboardingNoAdTitle => _t(
+    '집중 구간에서는 광고를 쉬어요',
+    'Ads stay off during focus moments',
+  );
   String get onboardingNoAdBody => _t(
     '온보딩/민감정보 입력 구간에는 광고를 노출하지 않습니다.',
     'Ads are hidden during onboarding and sensitive flows.',
   );
-  String get onboardingConsentTitle => _t('광고 동의 (UMP)', 'Ad Consent (UMP)');
+  String get onboardingConsentTitle => _t(
+    '필요한 설정만 분명하게 안내해요',
+    'Only required choices are shown clearly',
+  );
   String get onboardingConsentBody => _t(
-    '동의/거부/철회 상태는 즉시 반영됩니다.',
-    'Consent, rejection, and withdrawal are reflected immediately.',
+    '개인정보 또는 광고 관련 선택이 필요할 때만 안내하며, 변경 내용은 바로 반영됩니다.',
+    'We only ask when privacy or ad choices are needed, and updates apply right away.',
   );
   String get onboardingCurrentStatusTitle => _t('현재 상태', 'Current Status');
   String onboardingCurrentStatusBody({
@@ -90,22 +160,41 @@ class AppLocalizations {
     return 'initialized=$initialized, canRequestAds=$canRequestAds, nonPersonalized=$nonPersonalized';
   }
 
-  String errorMessage(String message) => _t('오류: $message', 'Error: $message');
-  String get onboardingAgreeSemantic =>
-      _t('동의하고 시작 버튼', 'Agree and start button');
+  String errorMessage(String message) => _t(
+    '개인정보 설정을 불러오는 중 문제가 있었습니다. 앱은 계속 사용할 수 있고, 설정에서 다시 변경할 수 있습니다.',
+    'There was a problem loading privacy settings. You can still continue and update them later in Settings.',
+  );
+  String get onboardingAgreeSemantic => _t('계속하기 버튼', 'Continue button');
   String get onboardingAgreeProcessing =>
-      _t('동의 처리 중...', 'Processing consent...');
-  String get onboardingAgreeStart => _t('동의하고 시작', 'Agree and start');
+      _t('준비 중...', 'Getting things ready...');
+  String get onboardingAgreeStart => _t('계속하기', 'Continue');
   String get onboardingLaterSemantic =>
-      _t('동의 설정 상세는 나중에 버튼', 'Maybe later button');
-  String get onboardingLater => _t('동의 설정 상세는 나중에', 'Maybe later');
+      _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
+  String get onboardingLater =>
+      _t('나중에 설정에서 변경', 'Change later in Settings');
 
-  String get toolTitle => _t('절약 계산기 (심화)', 'Savings Calculator');
+  String get toolTitle => _t('절약 계산기', 'Savings Calculator');
+  String get toolHeroTitle => _t(
+    '반복 지출 하나만 바꿔도 얼마나 아낄 수 있을까요?',
+    'How much could you save by changing one repeated expense?',
+  );
+  String get toolHeroBody => _t(
+    '기존 금액, 대체 금액, 한 달 횟수를 입력하면 예상 절약 금액을 바로 확인할 수 있어요.',
+    'Enter the current amount, alternative amount, and monthly frequency to estimate your savings right away.',
+  );
+  String get toolInputSectionTitle => _t(
+    '계산할 항목 입력',
+    'Enter your numbers',
+  );
+  String get toolInputSectionBody => _t(
+    '자주 쓰는 지출 항목을 기준으로 입력해보세요.',
+    'Use one of your repeated spending habits as the example.',
+  );
   String get toolInterstitialRulesTitle =>
-      _t('전면 광고 노출 규칙', 'Interstitial Rules');
+      _t('계산 안내', 'Calculation guide');
   String toolInterstitialRulesBody(int interval) => _t(
-    '결과 버튼 탭 기준 $interval회당 1회 · 연속 노출 금지',
-    'Show once every $interval result taps · no back-to-back exposure',
+    '자주 쓰는 지출 항목을 바꿨을 때 한 달에 얼마나 아낄 수 있는지 바로 확인할 수 있어요.',
+    'See how much you could save each month by changing one repeated expense.',
   );
   String get toolCurrentPriceLabel => _t('기존 금액(원)', 'Current price (KRW)');
   String get toolAlternativePriceLabel =>
@@ -113,14 +202,23 @@ class AppLocalizations {
   String get toolMonthlyCountLabel => _t('월 횟수', 'Monthly count');
   String get toolCalculate => _t('절약 금액 계산', 'Calculate savings');
   String get toolGoToReport => _t('리포트로 이동', 'Go to report');
-  String get toolSimulationResultTitle => _t('시뮬레이션 결과', 'Simulation Result');
+  String get toolSimulationResultTitle => _t(
+    '계산 결과',
+    'Calculation result',
+  );
+  String get toolMonthlyResultLabel => _t('한 달 기준', 'Per month');
+  String get toolYearlyResultLabel => _t('1년 기준', 'Per year');
+  String get toolEmptyResultBody => _t(
+    '금액을 입력하고 계산하면 예상 절약 금액이 여기에 표시됩니다.',
+    'Your estimated savings will appear here once you enter your numbers.',
+  );
   String toolSimulationResultBody({
     required int monthlySavings,
     required String latestStatus,
   }) {
     return _t(
-      '예상 월 절약액: $monthlySavings원\n최근 광고 상태: $latestStatus',
-      'Estimated monthly savings: KRW $monthlySavings\nLatest ad status: $latestStatus',
+      '한 달에 약 $monthlySavings원을 아낄 수 있어요.\n1년으로 보면 약 ${monthlySavings * 12}원입니다.',
+      'You could save about KRW $monthlySavings each month.\nThat is about KRW ${monthlySavings * 12} over a year.',
     );
   }
 
@@ -133,65 +231,132 @@ class AppLocalizations {
   String get toolMonthlyCountMustBePositive =>
       _t('월 횟수는 1 이상이어야 합니다.', 'Monthly count must be at least 1.');
   String toolAdSkippedOrFailed(String status) =>
-      _t('광고 스킵/실패 상태: $status', 'Ad skipped or failed: $status');
+      _t(
+        '광고를 불러오지 못했지만 계산 결과는 그대로 확인할 수 있어요.',
+        'The ad could not be loaded, but your result is still available.',
+      );
 
-  String get reportTitle => _t('주간 리포트 상세', 'Weekly Report');
+  String get reportTitle => _t('주간 절약 리포트', 'Weekly Savings Report');
+  String get reportHeroTitle => _t(
+    '이번 주 절약 흐름을 한눈에 확인해보세요',
+    'See your weekly savings trend at a glance',
+  );
+  String get reportHeroBody => _t(
+    '요약부터 자세한 분석까지, 이번 주 소비 패턴을 차분하게 살펴볼 수 있어요.',
+    'From a quick summary to deeper analysis, review this week’s spending pattern in one place.',
+  );
+  String get reportStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
+  String get reportStatTopCategoryLabel => _t('가장 크게 줄인 항목', 'Top reduced category');
+  String get reportStatTopCategoryValue => _t('외식', 'Dining');
+  String get reportStatDetailLabel => _t('상세 보기 상태', 'Detailed view');
+  String get reportDetailReadyValue => _t('열림', 'Open');
+  String get reportDetailLockedValue => _t('요약만 보기', 'Summary only');
+  String get reportDetailComingSoonValue => _t('준비 중', 'Coming soon');
   String get reportRewardUnitMissing => _t(
-    '리워드 광고 단위 ID가 아직 설정되지 않았습니다.',
-    'Rewarded ad unit ID is not configured yet.',
+    '추가 리포트 기능을 준비 중입니다.',
+    'Detailed report access is being prepared.',
   );
   String reportRewardBlocked(String status) =>
-      _t('리워드 미지급/차단 상태: $status', 'Reward not granted or blocked: $status');
-  String get reportFreeSummaryTitle => _t('무료 요약', 'Free Summary');
+      _t(
+        '지금은 추가 리포트를 열 수 없어요. 잠시 후 다시 시도해주세요.',
+        'The detailed report is unavailable right now. Please try again shortly.',
+      );
+  String get reportFreeSummaryTitle => _t('이번 주 요약', 'This week at a glance');
   String get reportFreeSummaryBody => _t(
     '총 절약 63,200원 · 상위 절약 카테고리: 외식, 커피, 구독',
     'Total savings KRW 63,200 · top categories: dining, coffee, subscriptions',
   );
-  String get reportUnlockedTitle =>
-      _t('상세 리포트 (해제됨)', 'Detailed Report (Unlocked)');
-  String get reportLockedTitle => _t('상세 리포트 (잠금)', 'Detailed Report (Locked)');
+  String get reportUnlockedTitle => _t('상세 분석', 'Detailed insights');
+  String get reportLockedTitle => _t('더 자세히 보기', 'See more detail');
   String get reportUnlockedBody => _t(
-    '광고 시청 보상으로 24시간 상세 분석이 열렸습니다.',
-    'A rewarded ad unlocked detailed insights for 24 hours.',
+    '더 자세한 절약 흐름과 카테고리 분석을 확인할 수 있어요.',
+    'You can now view deeper savings trends and category analysis.',
+  );
+  String get reportUnlockedTrendTitle => _t(
+    '카테고리 흐름',
+    'Category trend',
+  );
+  String get reportUnlockedTrendBody => _t(
+    '외식과 커피 지출이 함께 줄면서 이번 주 절약 흐름이 가장 안정적으로 유지됐어요.',
+    'Dining and coffee spending dropped together, creating the most stable savings trend this week.',
+  );
+  String get reportUnlockedFocusTitle => _t(
+    '다음 주 집중 포인트',
+    'Next-week focus',
+  );
+  String get reportUnlockedFocusBody => _t(
+    '구독과 간식 항목만 한 번 더 점검하면 절약 폭을 더 넓힐 수 있어요.',
+    'A quick review of subscriptions and snack spending could widen your savings next week.',
   );
   String get reportLockedBody => _t(
-    '보상형 광고 시청 완료 시 24시간 상세 분석이 열립니다.',
-    'Watch a rewarded ad to unlock detailed insights for 24 hours.',
+    '광고를 보고 더 자세한 절약 분석을 확인할 수 있어요.',
+    'Watch an ad to open a more detailed savings view.',
+  );
+  String get reportPreviewTitle => _t(
+    '상세 리포트 준비 중',
+    'Detailed report is on the way',
+  );
+  String get reportPreviewBody => _t(
+    '지금은 요약과 인사이트 중심으로 확인할 수 있어요. 상세 리포트는 다음 수익화 단계에서 자연스럽게 추가할 예정입니다.',
+    'For now, the experience focuses on the summary and insights. A deeper report will be added in a later monetization step.',
+  );
+  String get reportPreviewAction => _t(
+    '인사이트 먼저 보기',
+    'Open insights instead',
   );
   String get reportLoadingAd => _t('광고 로딩 중...', 'Loading ad...');
-  String get reportWatchAd => _t('광고 보고 상세 열기', 'Watch ad and unlock');
-  String get reportKeepSummary => _t('요약만 유지', 'Keep summary only');
-  String get reportFlowTitle => _t('리워드 흐름', 'Reward Flow');
+  String get reportWatchAd => _t('광고 보고 자세히 보기', 'Watch ad and continue');
+  String get reportKeepSummary => _t('지금은 요약만 보기', 'Keep the summary for now');
+  String get reportFlowTitle => _t('이용 안내', 'How it works');
+  String get reportNextSectionTitle => _t('다음 단계', 'Next step');
+  String get reportNextSectionBody => _t(
+    '계산기에서 자주 쓰는 지출을 먼저 정리하고, 인사이트 화면에서 다음 절약 힌트를 확인해보세요.',
+    'Start with the calculator for one repeated expense, then use Insights to decide your next savings move.',
+  );
   String reportFlowBody(String status) => _t(
-    '1) 광고 보기 선택 2) 시청 완료 3) 보상 지급 4) 상세 열람\n최근 상태: $status',
-    '1) Choose ad 2) Finish watching 3) Grant reward 4) Open details\nLatest status: $status',
+    '광고를 본 뒤 바로 더 자세한 리포트를 확인할 수 있어요. 원하지 않으면 요약만 보고 넘어가도 됩니다.',
+    'After watching the ad, you can open a more detailed report right away. You can also stay with the summary if you prefer.',
   );
 
-  String get settingsTitle => _t('광고 설정/컴플라이언스', 'Ads & Compliance');
-  String get settingsConsentStateTitle => _t('동의 상태', 'Consent State');
+  String get settingsTitle => _t('개인정보 및 앱 설정', 'Privacy & app settings');
+  String get settingsHeroBody => _t(
+    '개인정보 설정, 광고 안내, 언어 선택을 이곳에서 차분하게 관리할 수 있어요.',
+    'Manage privacy choices, ad guidance, and language preferences here.',
+  );
+  String get settingsManageTitle => _t('설정 변경', 'Adjust settings');
+  String get settingsConsentStateTitle => _t(
+    '개인정보 설정',
+    'Privacy settings',
+  );
   String settingsConsentStateBody({
     required bool canRequestAds,
     required bool nonPersonalized,
     required bool privacyOptionsRequired,
   }) {
-    return 'canRequestAds=$canRequestAds, nonPersonalized=$nonPersonalized, privacyOptionsRequired=$privacyOptionsRequired';
-  }
+    if (canRequestAds) {
+      return _t(
+        '현재 개인정보 설정이 적용되어 있습니다. 필요하면 아래에서 언제든 변경할 수 있어요.',
+        'Your current privacy choices are applied. You can update them below anytime.',
+      );
+    }
 
-  String get settingsFrequencyCapTitle => _t('빈도 캡', 'Frequency Cap');
-  String settingsFrequencyCapBody({
-    required int interstitialInterval,
-    required int rewardedDailyCap,
-  }) {
+    if (nonPersonalized || privacyOptionsRequired) {
+      return _t(
+        '현재 맞춤형 광고 없이 앱을 이용 중입니다. 필요하면 아래에서 개인정보 설정을 다시 선택할 수 있어요.',
+        'You are currently using the app without personalized ads. You can review your privacy choices below.',
+      );
+    }
+
     return _t(
-      'Banner 고정 · Interstitial $interstitialInterval행동당 1회 · Rewarded 1일 $rewardedDailyCap회',
-      'Banner fixed · Interstitial once per $interstitialInterval actions · Rewarded $rewardedDailyCap times per day',
+      '개인정보 설정을 다시 확인해야 할 수 있습니다. 아래에서 언제든 변경할 수 있어요.',
+      'You may need to review your privacy settings. You can update them below anytime.',
     );
   }
 
-  String get settingsPolicyRiskTitle => _t('정책 리스크', 'Policy Risks');
-  String get settingsPolicyRiskBody => _t(
-    '오탭 유도 금지, 민감 구간 배너 금지, 동의 철회 즉시 반영',
-    'No accidental taps, no banners in sensitive zones, reflect consent withdrawal immediately',
+  String get settingsAdsInfoTitle => _t('광고 안내', 'About ads');
+  String get settingsAdsInfoBody => _t(
+    '광고는 일부 화면에서만 조심스럽게 표시되며, 계산이나 설정 흐름을 방해하지 않도록 제한됩니다.',
+    'Ads appear carefully on selected screens only and stay limited so they do not interrupt calculation or settings flows.',
   );
   String get settingsSaving => _t('저장 중...', 'Saving...');
   String get settingsSaveGuardrails => _t('가드레일 저장', 'Save guardrails');
@@ -218,6 +383,11 @@ class AppLocalizations {
   String get settingsLanguageTitle => _t('앱 언어', 'App Language');
   String get settingsLanguageSubtitle =>
       _t('한국어와 영어 중 하나를 선택합니다.', 'Choose Korean or English.');
+
+  String get insightsHeroBody => _t(
+    '이번 주 소비 흐름에서 바로 적용할 수 있는 절약 힌트를 정리했어요.',
+    'Here are practical savings hints based on this week’s spending pattern.',
+  );
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';
 

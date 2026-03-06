@@ -107,32 +107,57 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    if (!widget.canRequestAds) {
+      return const SizedBox.shrink();
+    }
 
     if (_bannerAd == null || !_isLoaded) {
-      return Container(
-        height: 52,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceAlt,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Text(
-          widget.canRequestAds
-              ? l10n.adBannerPlaceholder
-              : l10n.adDisabledRequiresConsent,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+      return Semantics(
+        label: context.l10n.adBannerPlaceholder,
+        child: Container(
+          height: 52,
+          margin: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceAlt,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: List.generate(
+              3,
+              (index) => Expanded(
+                child: Container(
+                  height: 10,
+                  margin: EdgeInsets.only(right: index == 2 ? 0 : 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceMuted,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       );
     }
 
     return Semantics(
-      label: l10n.adBannerSemanticLabel,
-      child: SizedBox(
-        height: _bannerAd!.size.height.toDouble(),
-        width: _bannerAd!.size.width.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
+      label: context.l10n.adBannerSemanticLabel,
+      child: Container(
+        margin: const EdgeInsets.only(top: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: SizedBox(
+          height: _bannerAd!.size.height.toDouble(),
+          width: _bannerAd!.size.width.toDouble(),
+          child: AdWidget(ad: _bannerAd!),
+        ),
       ),
     );
   }
