@@ -1,42 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_saverquest_mvp/features/home/home_page.dart';
 import 'package:flutter_saverquest_mvp/core/localization/app_localizations.dart';
+import 'package:flutter_saverquest_mvp/features/report/report_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
 
 void main() {
-  testWidgets('renders mission and CTA', (tester) async {
+  testWidgets('shows preview state when rewarded ad is not configured', (
+    tester,
+  ) async {
     final dependencies = buildFakeDependencies();
 
     await tester.pumpWidget(
       _LocalizedTestApp(
         locale: const Locale('ko'),
-        home: HomePage(dependencies: dependencies),
+        home: ReportPage(dependencies: dependencies),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘의 절약'), findsOneWidget);
-    expect(find.text('오늘의 추천'), findsOneWidget);
-    expect(find.text('절약 금액 계산하기'), findsOneWidget);
-  });
-
-  testWidgets('renders english copy when locale is english', (tester) async {
-    final dependencies = buildFakeDependencies();
-
-    await tester.pumpWidget(
-      _LocalizedTestApp(
-        locale: const Locale('en'),
-        home: HomePage(dependencies: dependencies),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Today\'s Savings'), findsOneWidget);
-    expect(find.text('Today\'s suggestion'), findsOneWidget);
-    expect(find.text('Estimate your savings'), findsOneWidget);
+    expect(find.text('상세 리포트 준비 중'), findsOneWidget);
+    expect(find.text('인사이트 먼저 보기'), findsOneWidget);
+    expect(find.text('광고 보고 자세히 보기'), findsNothing);
   });
 }
 

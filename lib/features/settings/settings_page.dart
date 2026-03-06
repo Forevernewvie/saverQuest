@@ -5,11 +5,12 @@ import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_locale_controller.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../widgets/ad_banner_slot.dart';
-import '../../widgets/common/app_panel.dart';
+import '../../widgets/common/app_blocks.dart';
 import '../../widgets/screen_shell.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -22,34 +23,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _saving = false;
   bool _updatingPrivacyOptions = false;
 
   @override
   void initState() {
     super.initState();
     widget.dependencies.analyticsService.logScreen('settings');
-  }
-
-  Future<void> _saveGuardrails() async {
-    setState(() => _saving = true);
-
-    await widget.dependencies.analyticsService.logEvent(
-      AnalyticsEvents.settingsSaved,
-      parameters: {
-        'frequency_cap':
-            'banner_1_fixed/interstitial_${widget.dependencies.remoteConfigService.interstitialInterval}_actions/rewarded_${widget.dependencies.remoteConfigService.rewardedDailyCap}_day',
-      },
-    );
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() => _saving = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.settingsGuardrailsSaved)),
-    );
   }
 
   Future<void> _openPrivacyOptions() async {
@@ -126,7 +105,14 @@ class _SettingsPageState extends State<SettingsPage> {
     return ScreenShell(
       title: l10n.settingsTitle,
       children: [
-        AppPanel(
+        AppHeroCard(
+          eyebrow: l10n.appTitle,
+          title: l10n.settingsTitle,
+          body: l10n.settingsHeroBody,
+          trailing: const AppHeroIcon(icon: Icons.settings_outlined),
+        ),
+        AppFeatureCard(
+          icon: Icons.verified_user_outlined,
           title: l10n.settingsConsentStateTitle,
           body: l10n.settingsConsentStateBody(
             canRequestAds: consentState.canRequestAds,
@@ -134,29 +120,15 @@ class _SettingsPageState extends State<SettingsPage> {
             privacyOptionsRequired: consentState.privacyOptionsRequired,
           ),
         ),
-        AppPanel(
-          title: l10n.settingsFrequencyCapTitle,
-          body: l10n.settingsFrequencyCapBody(
-            interstitialInterval:
-                widget.dependencies.remoteConfigService.interstitialInterval,
-            rewardedDailyCap:
-                widget.dependencies.remoteConfigService.rewardedDailyCap,
-          ),
+        AppFeatureCard(
+          icon: Icons.ads_click_outlined,
+          title: l10n.settingsAdsInfoTitle,
+          body: l10n.settingsAdsInfoBody,
         ),
-        AppPanel(
-          title: l10n.settingsPolicyRiskTitle,
-          body: l10n.settingsPolicyRiskBody,
-        ),
-        FilledButton(
-          onPressed: _saving ? null : _saveGuardrails,
-          child: Text(
-            _saving ? l10n.settingsSaving : l10n.settingsSaveGuardrails,
-          ),
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.settingsLanguageTitle),
-          subtitle: Text(l10n.settingsLanguageSubtitle),
+        AppSectionHeader(title: l10n.settingsManageTitle),
+        _SettingsControlCard(
+          title: l10n.settingsLanguageTitle,
+          subtitle: l10n.settingsLanguageSubtitle,
           trailing: DropdownButton<String>(
             value: currentLanguageCode,
             underline: const SizedBox.shrink(),
@@ -172,14 +144,11 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
         ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.settingsPrivacyOptionsTitle),
-          subtitle: Text(
-            consentState.privacyOptionsRequired
-                ? l10n.settingsPrivacyOptionsSubtitleRequired
-                : l10n.settingsPrivacyOptionsSubtitleNotRequired,
-          ),
+        _SettingsControlCard(
+          title: l10n.settingsPrivacyOptionsTitle,
+          subtitle: consentState.privacyOptionsRequired
+              ? l10n.settingsPrivacyOptionsSubtitleRequired
+              : l10n.settingsPrivacyOptionsSubtitleNotRequired,
           trailing: _updatingPrivacyOptions
               ? const SizedBox(
                   height: 18,
@@ -187,7 +156,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.chevron_right),
-          onTap: _updatingPrivacyOptions ? null : _openPrivacyOptions,
+          onTap: _updatingPrivacyOptions
+              ? null
+              : () {
+                  _openPrivacyOptions();
+                },
         ),
         const SizedBox(height: AppSpacing.s),
         AdBannerSlot(
@@ -199,6 +172,75 @@ class _SettingsPageState extends State<SettingsPage> {
           nonPersonalizedAds: consentState.serveNonPersonalizedAds,
         ),
       ],
+    );
+  }
+}
+
+class _SettingsControlCard extends StatelessWidget {
+  const _SettingsControlCard({
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+    this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.s),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.m),
+          trailing,
+        ],
+      ),
+    );
+
+    if (onTap == null) {
+      return content;
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: content,
+      ),
     );
   }
 }

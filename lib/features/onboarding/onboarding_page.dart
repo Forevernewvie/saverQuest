@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import '../../app/app_dependencies.dart';
 import '../../app/routes.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
-import '../../widgets/common/app_panel.dart';
+import '../../widgets/common/app_blocks.dart';
 import '../../widgets/screen_shell.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -72,21 +73,36 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return ScreenShell(
       title: l10n.onboardingTitle,
       children: [
-        AppPanel(
+        AppHeroCard(
+          eyebrow: l10n.appTitle,
+          title: l10n.onboardingIntroTitle,
+          body: l10n.onboardingIntroBody,
+          trailing: const AppHeroIcon(icon: Icons.verified_user_outlined),
+          primaryLabel: l10n.onboardingAgreeStart,
+          primarySemanticLabel: l10n.onboardingAgreeSemantic,
+          onPrimary: _loading
+              ? null
+              : () {
+                  _startWithConsent();
+                },
+          secondaryLabel: l10n.onboardingLater,
+          onSecondary: _loading
+              ? null
+              : () => Navigator.pushReplacementNamed(context, AppRoutes.home),
+        ),
+        AppSectionHeader(
+          title: l10n.onboardingTrustSectionTitle,
+          subtitle: l10n.onboardingSettingsHint,
+        ),
+        AppFeatureCard(
+          icon: Icons.visibility_off_outlined,
           title: l10n.onboardingNoAdTitle,
           body: l10n.onboardingNoAdBody,
         ),
-        AppPanel(
+        AppFeatureCard(
+          icon: Icons.tune_outlined,
           title: l10n.onboardingConsentTitle,
           body: l10n.onboardingConsentBody,
-        ),
-        AppPanel(
-          title: l10n.onboardingCurrentStatusTitle,
-          body: l10n.onboardingCurrentStatusBody(
-            initialized: consentState.initialized,
-            canRequestAds: consentState.canRequestAds,
-            nonPersonalized: consentState.serveNonPersonalizedAds,
-          ),
         ),
         if (consentState.errorMessage != null)
           Padding(
@@ -96,28 +112,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
               style: const TextStyle(color: Colors.redAccent),
             ),
           ),
-        Semantics(
-          label: l10n.onboardingAgreeSemantic,
-          button: true,
-          child: FilledButton(
-            onPressed: _loading ? null : _startWithConsent,
+        if (_loading)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.m),
             child: Text(
-              _loading
-                  ? l10n.onboardingAgreeProcessing
-                  : l10n.onboardingAgreeStart,
+              l10n.onboardingAgreeProcessing,
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
           ),
-        ),
-        Semantics(
-          label: l10n.onboardingLaterSemantic,
-          button: true,
-          child: OutlinedButton(
-            onPressed: _loading
-                ? null
-                : () => Navigator.pushReplacementNamed(context, AppRoutes.home),
-            child: Text(l10n.onboardingLater),
-          ),
-        ),
       ],
     );
   }
