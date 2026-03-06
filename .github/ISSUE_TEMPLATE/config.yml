@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SaverQuest repository guide
+    url: https://github.com/Forevernewvie/saverQuest
+    about: Review the repository workflow and existing issues before opening a new item.
