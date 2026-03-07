@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/design/app_ui_tokens.dart';
 
 /// Renders a section title with an optional supporting subtitle.
 class AppSectionHeader extends StatelessWidget {
-  const AppSectionHeader({
-    super.key,
-    required this.title,
-    this.subtitle,
-  });
+  const AppSectionHeader({super.key, required this.title, this.subtitle});
 
   final String title;
   final String? subtitle;
@@ -78,104 +75,126 @@ class AppHeroCard extends StatelessWidget {
   /// Builds the high-emphasis hero surface used at the top of major screens.
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.m),
-      padding: const EdgeInsets.all(AppSpacing.l),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppUiTokens.heroCornerRadius),
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 16,
-            offset: Offset(0, 8),
+    final textContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (eyebrow != null) ...[
+          Text(
+            eyebrow!,
+            style: const TextStyle(
+              color: AppColors.accent,
+              fontWeight: FontWeight.w700,
+            ),
           ),
+          const SizedBox(height: AppSpacing.s),
         ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+        Text(
+          title,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w800,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.s),
+        Text(
+          body,
+          style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
+        ),
+      ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useStackedHeader = AdaptiveLayout.useStackedLayout(
+          context,
+          constraints.maxWidth,
+        );
+        final pillsContent = useStackedHeader
+            ? Column(
+                children: pills
+                    .map(
+                      (pill) => Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.s),
+                        child: SizedBox(width: double.infinity, child: pill),
+                      ),
+                    )
+                    .toList(),
+              )
+            : Wrap(
+                spacing: AppSpacing.s,
+                runSpacing: AppSpacing.s,
+                children: pills,
+              );
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: AppSpacing.m),
+          padding: const EdgeInsets.all(AppSpacing.l),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppUiTokens.heroCornerRadius),
+            color: AppColors.surface,
+            border: Border.all(color: AppColors.border),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 16,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
+              if (useStackedHeader) ...[
+                if (trailing != null) ...[
+                  Align(alignment: Alignment.centerRight, child: trailing!),
+                  const SizedBox(height: AppSpacing.m),
+                ],
+                textContent,
+              ] else
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (eyebrow != null) ...[
-                      Text(
-                        eyebrow!,
-                        style: const TextStyle(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.s),
+                    Expanded(child: textContent),
+                    if (trailing != null) ...[
+                      const SizedBox(width: AppSpacing.m),
+                      trailing!,
                     ],
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.s),
-                    Text(
-                      body,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        height: 1.5,
-                      ),
-                    ),
                   ],
                 ),
-              ),
-              if (trailing != null) ...[
-                const SizedBox(width: AppSpacing.m),
-                trailing!,
+              if (pills.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.l),
+                pillsContent,
+              ],
+              if (primaryLabel != null && onPrimary != null) ...[
+                const SizedBox(height: AppSpacing.l),
+                Semantics(
+                  label: primarySemanticLabel ?? primaryLabel,
+                  button: true,
+                  child: FilledButton(
+                    onPressed: onPrimary,
+                    child: Text(primaryLabel!),
+                  ),
+                ),
+              ],
+              if (secondaryLabel != null && onSecondary != null) ...[
+                const SizedBox(height: AppSpacing.s),
+                OutlinedButton(
+                  onPressed: onSecondary,
+                  child: Text(secondaryLabel!),
+                ),
               ],
             ],
           ),
-          if (pills.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.l),
-            Wrap(
-              spacing: AppSpacing.s,
-              runSpacing: AppSpacing.s,
-              children: pills,
-            ),
-          ],
-          if (primaryLabel != null && onPrimary != null) ...[
-            const SizedBox(height: AppSpacing.l),
-            Semantics(
-              label: primarySemanticLabel ?? primaryLabel,
-              button: true,
-              child: FilledButton(
-                onPressed: onPrimary,
-                child: Text(primaryLabel!),
-              ),
-            ),
-          ],
-          if (secondaryLabel != null && onSecondary != null) ...[
-            const SizedBox(height: AppSpacing.s),
-            OutlinedButton(
-              onPressed: onSecondary,
-              child: Text(secondaryLabel!),
-            ),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
+/// Renders a compact summary pill for metrics shown in hero sections.
 class AppMetricPill extends StatelessWidget {
-  const AppMetricPill({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+  const AppMetricPill({super.key, required this.label, required this.value});
 
   final String label;
   final String value;
@@ -216,11 +235,9 @@ class AppMetricPill extends StatelessWidget {
   }
 }
 
+/// Builds the accent icon chip used inside hero cards.
 class AppHeroIcon extends StatelessWidget {
-  const AppHeroIcon({
-    super.key,
-    required this.icon,
-  });
+  const AppHeroIcon({super.key, required this.icon});
 
   final IconData icon;
 
@@ -234,7 +251,11 @@ class AppHeroIcon extends StatelessWidget {
         fillColor: const Color(0x1AFFFFFF),
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Icon(icon, color: AppColors.accent, size: AppUiTokens.heroIconSize),
+      child: Icon(
+        icon,
+        color: AppColors.accent,
+        size: AppUiTokens.heroIconSize,
+      ),
     );
   }
 }
@@ -267,47 +288,64 @@ class AppFeatureCard extends StatelessWidget {
       decoration: _surfaceDecoration(
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: AppUiTokens.featureIconContainerSize,
-            height: AppUiTokens.featureIconContainerSize,
-            decoration: _surfaceDecoration(
-              fillColor: AppColors.surfaceAlt,
-              borderRadius: AppUiTokens.cardCornerRadius,
-              showBorder: false,
-            ),
-            child: Icon(icon, color: AppColors.accent),
-          ),
-          const SizedBox(width: AppSpacing.m),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useStackedTrailing =
+              trailing != null &&
+              AdaptiveLayout.useStackedLayout(context, constraints.maxWidth);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: AppUiTokens.featureIconContainerSize,
+                    height: AppUiTokens.featureIconContainerSize,
+                    decoration: _surfaceDecoration(
+                      fillColor: AppColors.surfaceAlt,
+                      borderRadius: AppUiTokens.cardCornerRadius,
+                      showBorder: false,
+                    ),
+                    child: Icon(icon, color: AppColors.accent),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  body,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    height: 1.45,
+                  const SizedBox(width: AppSpacing.m),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          body,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  if (trailing != null && !useStackedTrailing) ...[
+                    const SizedBox(width: AppSpacing.m),
+                    trailing!,
+                  ],
+                ],
+              ),
+              if (trailing != null && useStackedTrailing) ...[
+                const SizedBox(height: AppSpacing.s),
+                Align(alignment: Alignment.centerRight, child: trailing!),
               ],
-            ),
-          ),
-          if (trailing != null) ...[
-            const SizedBox(width: AppSpacing.m),
-            trailing!,
-          ],
-        ],
+            ],
+          );
+        },
       ),
     );
 
@@ -334,20 +372,24 @@ class AppQuickActionCard extends StatelessWidget {
     required this.label,
     required this.body,
     required this.onTap,
+    this.expandToWidth = false,
   });
 
   final IconData icon;
   final String label;
   final String body;
   final VoidCallback onTap;
+  final bool expandToWidth;
 
   /// Builds the quick action surface with consistent sizing constraints.
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minWidth: AppUiTokens.quickActionMinWidth,
-        maxWidth: AppUiTokens.quickActionMaxWidth,
+      constraints: BoxConstraints(
+        minWidth: expandToWidth ? 0 : AppUiTokens.quickActionMinWidth,
+        maxWidth: expandToWidth
+            ? double.infinity
+            : AppUiTokens.quickActionMaxWidth,
       ),
       child: Material(
         color: Colors.transparent,

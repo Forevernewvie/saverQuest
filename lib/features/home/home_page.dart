@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../widgets/ad_banner_slot.dart';
@@ -21,6 +22,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /// Returns whether quick actions should collapse into a single column.
+  bool _useSingleColumnQuickActions(BuildContext context) {
+    final availableWidth =
+        MediaQuery.sizeOf(context).width - (AppSpacing.l * 2);
+    return AdaptiveLayout.useStackedLayout(context, availableWidth);
+  }
+
   /// Logs the initial home screen impression for analytics.
   @override
   void initState() {
@@ -34,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     final consentState = widget.dependencies.consentController.state;
     final homeContent = widget.dependencies.contentRepository.getHomeContent();
     final l10n = context.l10n;
+    final useSingleColumnQuickActions = _useSingleColumnQuickActions(context);
 
     /// Opens the calculator and records the primary CTA source.
     void openCalculator() async {
@@ -97,30 +106,60 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: AppSpacing.l),
         AppSectionHeader(title: l10n.homeQuickActionsTitle),
-        Wrap(
-          spacing: AppSpacing.s,
-          runSpacing: AppSpacing.s,
-          children: [
-            AppQuickActionCard(
-              icon: Icons.calculate_outlined,
-              label: l10n.navTool,
-              body: l10n.homeQuickCalcBody,
-              onTap: openCalculator,
-            ),
-            AppQuickActionCard(
-              icon: Icons.receipt_long_outlined,
-              label: l10n.navReport,
-              body: l10n.homeQuickReportBody,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.report),
-            ),
-            AppQuickActionCard(
-              icon: Icons.insights_outlined,
-              label: l10n.navInsights,
-              body: l10n.homeQuickInsightsBody,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.insights),
-            ),
-          ],
-        ),
+        useSingleColumnQuickActions
+            ? Column(
+                children: [
+                  AppQuickActionCard(
+                    icon: Icons.calculate_outlined,
+                    label: l10n.navTool,
+                    body: l10n.homeQuickCalcBody,
+                    onTap: openCalculator,
+                    expandToWidth: true,
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  AppQuickActionCard(
+                    icon: Icons.receipt_long_outlined,
+                    label: l10n.navReport,
+                    body: l10n.homeQuickReportBody,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.report),
+                    expandToWidth: true,
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  AppQuickActionCard(
+                    icon: Icons.insights_outlined,
+                    label: l10n.navInsights,
+                    body: l10n.homeQuickInsightsBody,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.insights),
+                    expandToWidth: true,
+                  ),
+                ],
+              )
+            : Wrap(
+                spacing: AppSpacing.s,
+                runSpacing: AppSpacing.s,
+                children: [
+                  AppQuickActionCard(
+                    icon: Icons.calculate_outlined,
+                    label: l10n.navTool,
+                    body: l10n.homeQuickCalcBody,
+                    onTap: openCalculator,
+                  ),
+                  AppQuickActionCard(
+                    icon: Icons.receipt_long_outlined,
+                    label: l10n.navReport,
+                    body: l10n.homeQuickReportBody,
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.report),
+                  ),
+                  AppQuickActionCard(
+                    icon: Icons.insights_outlined,
+                    label: l10n.navInsights,
+                    body: l10n.homeQuickInsightsBody,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.insights),
+                  ),
+                ],
+              ),
         const SizedBox(height: AppSpacing.m),
         AdBannerSlot(
           adService: widget.dependencies.adService,
