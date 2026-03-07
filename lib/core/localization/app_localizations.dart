@@ -269,8 +269,8 @@ class AppLocalizations {
     'Detailed report is on the way',
   );
   String get reportPreviewBody => _t(
-    '지금은 요약과 인사이트 중심으로 확인할 수 있어요. 상세 리포트는 다음 수익화 단계에서 자연스럽게 추가할 예정입니다.',
-    'For now, the experience focuses on the summary and insights. A deeper report will be added in a later monetization step.',
+    '지금은 요약과 인사이트 중심으로 확인할 수 있어요. 상세 리포트는 다음 업데이트에서 더 자연스럽게 제공될 예정입니다.',
+    'For now, the experience focuses on the summary and insights. A deeper report will arrive in a future update.',
   );
   String get reportPreviewAction => _t(
     '인사이트 먼저 보기',
@@ -335,8 +335,8 @@ class AppLocalizations {
   String get settingsGuardrailsSaved =>
       _t('가드레일 설정을 저장했습니다.', 'Guardrail settings were saved.');
   String get settingsPrivacyOptionsNotRequired => _t(
-    '현재 지역은 추가 개인정보 옵션 설정이 요구되지 않습니다.',
-    'This region does not require additional privacy options.',
+    '현재는 추가로 바꿀 개인정보 옵션이 없습니다.',
+    'There are no additional privacy options to change right now.',
   );
   String settingsPrivacyOptionsFailed(String error) =>
       _t('개인정보 설정 변경 실패: $error', 'Failed to update privacy settings: $error');
@@ -349,8 +349,8 @@ class AppLocalizations {
     'Updates consent withdrawal and re-selection immediately.',
   );
   String get settingsPrivacyOptionsSubtitleNotRequired => _t(
-    '현재 지역은 추가 옵션 제공 의무가 없습니다.',
-    'This region does not require an additional options entry point.',
+    '현재는 이 화면에서 추가로 바꿀 항목이 없습니다.',
+    'There is nothing extra to change from this screen right now.',
   );
   String get settingsLanguageTitle => _t('앱 언어', 'App Language');
   String get settingsLanguageSubtitle =>
