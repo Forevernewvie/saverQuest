@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_locale_controller.dart';
@@ -189,6 +190,11 @@ class _SettingsControlCard extends StatelessWidget {
   final Widget trailing;
   final VoidCallback? onTap;
 
+  /// Returns whether the trailing control should move below the copy block.
+  bool _useStackedTrailing(BuildContext context, double availableWidth) {
+    return AdaptiveLayout.useStackedLayout(context, availableWidth);
+  }
+
   @override
   Widget build(BuildContext context) {
     final content = Container(
@@ -199,34 +205,53 @@ class _SettingsControlCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useStackedTrailing = _useStackedTrailing(
+            context,
+            constraints.maxWidth,
+          );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
+                  if (!useStackedTrailing) ...[
+                    const SizedBox(width: AppSpacing.m),
+                    trailing,
+                  ],
+                ],
+              ),
+              if (useStackedTrailing) ...[
+                const SizedBox(height: AppSpacing.s),
+                Align(alignment: Alignment.centerRight, child: trailing),
               ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.m),
-          trailing,
-        ],
+            ],
+          );
+        },
       ),
     );
 
