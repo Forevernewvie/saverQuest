@@ -11,11 +11,7 @@ class AppUiTokens {
   static const double quickActionMinWidth = 160;
   static const double quickActionMaxWidth = 240;
   static const double maxContentWidth = 560;
-  static const double ambientGlowSize = 220;
-  static const double ambientGlowTopOffset = -80;
-  static const double ambientGlowRightOffset = -40;
   static const double borderPillRadius = 999;
 
   const AppUiTokens._();
 }
-

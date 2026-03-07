@@ -10,7 +10,6 @@ class AppColors {
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Color(0xFF9AB4C5);
   static const Color accent = Color(0xFF22BBD8);
-  static const Color accentSoft = Color(0x3322BBD8);
   static const Color danger = Color(0xFFE85F5F);
   static const Color success = Color(0xFF49C48B);
 }
