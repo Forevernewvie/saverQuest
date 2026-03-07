@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
+import '../../core/design/app_ui_tokens.dart';
 
+/// Renders a section title with an optional supporting subtitle.
 class AppSectionHeader extends StatelessWidget {
   const AppSectionHeader({
     super.key,
@@ -13,6 +15,7 @@ class AppSectionHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
 
+  /// Builds the standard section header typography block.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -45,6 +48,7 @@ class AppSectionHeader extends StatelessWidget {
   }
 }
 
+/// Renders a prominent hero card with CTAs and supporting metrics.
 class AppHeroCard extends StatelessWidget {
   const AppHeroCard({
     super.key,
@@ -71,13 +75,14 @@ class AppHeroCard extends StatelessWidget {
   final String? secondaryLabel;
   final VoidCallback? onSecondary;
 
+  /// Builds the high-emphasis hero surface used at the top of major screens.
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.m),
       padding: const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppUiTokens.heroCornerRadius),
         gradient: const LinearGradient(
           colors: [AppColors.surfaceAlt, AppColors.surface],
           begin: Alignment.topLeft,
@@ -179,6 +184,7 @@ class AppMetricPill extends StatelessWidget {
   final String label;
   final String value;
 
+  /// Builds a compact summary pill for metrics shown in hero sections.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -186,10 +192,9 @@ class AppMetricPill extends StatelessWidget {
         horizontal: AppSpacing.m,
         vertical: AppSpacing.s,
       ),
-      decoration: BoxDecoration(
-        color: const Color(0x1AFFFFFF),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+      decoration: _surfaceDecoration(
+        fillColor: const Color(0x1AFFFFFF),
+        borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,21 +228,22 @@ class AppHeroIcon extends StatelessWidget {
 
   final IconData icon;
 
+  /// Builds the accent icon chip used inside hero cards.
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: const Color(0x1AFFFFFF),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+      width: AppUiTokens.heroIconContainerSize,
+      height: AppUiTokens.heroIconContainerSize,
+      decoration: _surfaceDecoration(
+        fillColor: const Color(0x1AFFFFFF),
+        borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Icon(icon, color: AppColors.accent, size: 28),
+      child: Icon(icon, color: AppColors.accent, size: AppUiTokens.heroIconSize),
     );
   }
 }
 
+/// Renders a reusable feature card surface with optional interaction.
 class AppFeatureCard extends StatelessWidget {
   const AppFeatureCard({
     super.key,
@@ -256,25 +262,25 @@ class AppFeatureCard extends StatelessWidget {
   final Widget? trailing;
   final EdgeInsetsGeometry margin;
 
+  /// Builds the standard feature card used across dashboards and settings.
   @override
   Widget build(BuildContext context) {
     final content = Container(
       margin: margin,
       padding: const EdgeInsets.all(AppSpacing.m),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+      decoration: _surfaceDecoration(
+        borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceAlt,
-              borderRadius: BorderRadius.circular(12),
+            width: AppUiTokens.featureIconContainerSize,
+            height: AppUiTokens.featureIconContainerSize,
+            decoration: _surfaceDecoration(
+              fillColor: AppColors.surfaceAlt,
+              borderRadius: AppUiTokens.cardCornerRadius,
+              showBorder: false,
             ),
             child: Icon(icon, color: AppColors.accent),
           ),
@@ -317,13 +323,14 @@ class AppFeatureCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
         child: content,
       ),
     );
   }
 }
 
+/// Renders a compact action card for frequently used navigation targets.
 class AppQuickActionCard extends StatelessWidget {
   const AppQuickActionCard({
     super.key,
@@ -338,21 +345,23 @@ class AppQuickActionCard extends StatelessWidget {
   final String body;
   final VoidCallback onTap;
 
+  /// Builds the quick action surface with consistent sizing constraints.
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 160, maxWidth: 240),
+      constraints: const BoxConstraints(
+        minWidth: AppUiTokens.quickActionMinWidth,
+        maxWidth: AppUiTokens.quickActionMaxWidth,
+      ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
           child: Ink(
             padding: const EdgeInsets.all(AppSpacing.m),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
+            decoration: _surfaceDecoration(
+              borderRadius: AppUiTokens.surfaceCornerRadius,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,4 +390,17 @@ class AppQuickActionCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Builds the shared border-and-fill decoration used by reusable surfaces.
+BoxDecoration _surfaceDecoration({
+  Color fillColor = AppColors.surface,
+  required double borderRadius,
+  bool showBorder = true,
+}) {
+  return BoxDecoration(
+    color: fillColor,
+    borderRadius: BorderRadius.circular(borderRadius),
+    border: showBorder ? Border.all(color: AppColors.border) : null,
+  );
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../core/design/app_colors.dart';
 import '../core/design/app_spacing.dart';
+import '../core/design/app_ui_tokens.dart';
 
+/// Provides the shared page scaffold, ambient background, and width constraints.
 class ScreenShell extends StatelessWidget {
   const ScreenShell({
     super.key,
@@ -15,6 +17,7 @@ class ScreenShell extends StatelessWidget {
   final List<Widget> children;
   final List<Widget>? actions;
 
+  /// Builds the standard page shell used by feature screens.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,12 +33,12 @@ class ScreenShell extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -80,
-              right: -40,
+              top: AppUiTokens.ambientGlowTopOffset,
+              right: AppUiTokens.ambientGlowRightOffset,
               child: IgnorePointer(
                 child: Container(
-                  width: 220,
-                  height: 220,
+                  width: AppUiTokens.ambientGlowSize,
+                  height: AppUiTokens.ambientGlowSize,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -48,7 +51,9 @@ class ScreenShell extends StatelessWidget {
             SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 560),
+                  constraints: const BoxConstraints(
+                    maxWidth: AppUiTokens.maxContentWidth,
+                  ),
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(
                       AppSpacing.l,
