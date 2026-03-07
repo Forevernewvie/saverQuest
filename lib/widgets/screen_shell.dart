@@ -30,43 +30,23 @@ class ScreenShell extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: AppUiTokens.ambientGlowTopOffset,
-              right: AppUiTokens.ambientGlowRightOffset,
-              child: IgnorePointer(
-                child: Container(
-                  width: AppUiTokens.ambientGlowSize,
-                  height: AppUiTokens.ambientGlowSize,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [AppColors.accentSoft, Colors.transparent],
-                    ),
-                  ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppUiTokens.maxContentWidth,
+              ),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.l,
+                  AppSpacing.m,
+                  AppSpacing.l,
+                  AppSpacing.xl,
                 ),
+                children: children,
               ),
             ),
-            SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: AppUiTokens.maxContentWidth,
-                  ),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.l,
-                      AppSpacing.m,
-                      AppSpacing.l,
-                      AppSpacing.xl,
-                    ),
-                    children: children,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

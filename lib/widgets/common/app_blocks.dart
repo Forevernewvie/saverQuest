@@ -83,17 +83,13 @@ class AppHeroCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppUiTokens.heroCornerRadius),
-        gradient: const LinearGradient(
-          colors: [AppColors.surfaceAlt, AppColors.surface],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.surface,
         border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x22000000),
-            blurRadius: 24,
-            offset: Offset(0, 12),
+            color: Color(0x14000000),
+            blurRadius: 16,
+            offset: Offset(0, 8),
           ),
         ],
       ),
