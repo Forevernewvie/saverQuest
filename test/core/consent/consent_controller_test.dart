@@ -101,6 +101,7 @@ void main() {
 
     final controller = ConsentController(
       analyticsService: analytics,
+      logger: _SilentLogger(),
       consentPlatform: platform,
     );
 
@@ -122,6 +123,7 @@ void main() {
 
     final controller = ConsentController(
       analyticsService: analytics,
+      logger: _SilentLogger(),
       consentPlatform: platform,
     );
 
@@ -142,6 +144,7 @@ void main() {
 
       final controller = ConsentController(
         analyticsService: analytics,
+        logger: _SilentLogger(),
         consentPlatform: platform,
       );
 
