@@ -56,6 +56,7 @@ class AppBootstrapper {
 
     final consentController = ConsentController(
       analyticsService: analyticsService,
+      logger: logger,
     );
     final attTransparencyService = AttTransparencyService(
       analyticsService: analyticsService,
@@ -69,6 +70,7 @@ class AppBootstrapper {
 
     final adService = GoogleMobileAdService(
       analyticsService: analyticsService,
+      logger: logger,
       guardrails: adGuardrails,
       testDeviceIds: runtimeOptions.adTestDeviceIds,
     );

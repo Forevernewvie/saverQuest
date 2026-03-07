@@ -31,17 +31,29 @@ class AdBannerSlot extends StatefulWidget {
 }
 
 class _AdBannerSlotState extends State<AdBannerSlot> {
+  static const int _maxRetryCount = 2;
+  static const int _retryDelayMultiplierSec = 2;
+  static const double _placeholderHeight = 52;
+  static const double _placeholderTopMargin = 4;
+  static const double _placeholderHorizontalPadding = 16;
+  static const double _placeholderSegmentHeight = 10;
+  static const double _placeholderSegmentSpacing = 8;
+  static const double _bannerVerticalPadding = 8;
+  static const double _bannerCornerRadius = 18;
+
   BannerAd? _bannerAd;
   bool _isLoaded = false;
   int _retryCount = 0;
   Timer? _retryTimer;
 
+  /// Starts the initial banner load when the widget enters the tree.
   @override
   void initState() {
     super.initState();
     _loadBanner();
   }
 
+  /// Reloads the banner when consent availability changes.
   @override
   void didUpdateWidget(covariant AdBannerSlot oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -52,6 +64,7 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
     }
   }
 
+  /// Requests a banner ad from the injected ad service.
   void _loadBanner() {
     final ad = widget.adService.buildBannerAd(
       adUnitId: widget.adUnitId,
@@ -82,22 +95,25 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
     _bannerAd = ad..load();
   }
 
+  /// Schedules a bounded retry to avoid infinite banner load churn.
   void _scheduleRetry() {
-    if (!mounted || _retryCount >= 2) {
+    if (!mounted || _retryCount >= _maxRetryCount) {
       return;
     }
 
     _retryCount += 1;
-    final delay = Duration(seconds: _retryCount * 2);
+    final delay = Duration(seconds: _retryCount * _retryDelayMultiplierSec);
     _retryTimer?.cancel();
     _retryTimer = Timer(delay, _loadBanner);
   }
 
+  /// Disposes any previously allocated banner instance.
   void _disposeBanner() {
     _bannerAd?.dispose();
     _bannerAd = null;
   }
 
+  /// Cancels pending retries and disposes the banner on widget teardown.
   @override
   void dispose() {
     _retryTimer?.cancel();
@@ -105,6 +121,7 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
     super.dispose();
   }
 
+  /// Builds either a placeholder, nothing, or the live banner widget.
   @override
   Widget build(BuildContext context) {
     if (!widget.canRequestAds) {
@@ -115,12 +132,14 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
       return Semantics(
         label: context.l10n.adBannerPlaceholder,
         child: Container(
-          height: 52,
-          margin: const EdgeInsets.only(top: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: _placeholderHeight,
+          margin: const EdgeInsets.only(top: _placeholderTopMargin),
+          padding: const EdgeInsets.symmetric(
+            horizontal: _placeholderHorizontalPadding,
+          ),
           decoration: BoxDecoration(
             color: AppColors.surfaceAlt,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(_bannerCornerRadius),
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
@@ -128,8 +147,10 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
               3,
               (index) => Expanded(
                 child: Container(
-                  height: 10,
-                  margin: EdgeInsets.only(right: index == 2 ? 0 : 8),
+                  height: _placeholderSegmentHeight,
+                  margin: EdgeInsets.only(
+                    right: index == 2 ? 0 : _placeholderSegmentSpacing,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(999),
@@ -145,12 +166,12 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
     return Semantics(
       label: context.l10n.adBannerSemanticLabel,
       child: Container(
-        margin: const EdgeInsets.only(top: 4),
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.only(top: _placeholderTopMargin),
+        padding: const EdgeInsets.symmetric(vertical: _bannerVerticalPadding),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.surfaceAlt,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(_bannerCornerRadius),
           border: Border.all(color: AppColors.border),
         ),
         child: SizedBox(

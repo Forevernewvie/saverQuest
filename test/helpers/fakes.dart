@@ -61,7 +61,10 @@ class FakeAdService implements AdService {
 }
 
 class FakeConsentController extends ConsentController {
-  FakeConsentController({required super.analyticsService});
+  FakeConsentController({
+    required super.analyticsService,
+    required super.logger,
+  });
 
   @override
   Future<void> refreshConsent() async {}
@@ -140,7 +143,10 @@ AppDependencies buildFakeDependencies() {
     adService: FakeAdService(),
     analyticsService: analytics,
     remoteConfigService: RemoteConfigService(logger: logger),
-    consentController: FakeConsentController(analyticsService: analytics),
+    consentController: FakeConsentController(
+      analyticsService: analytics,
+      logger: logger,
+    ),
     attTransparencyService: FakeAttTransparencyService(
       analyticsService: analytics,
     ),
