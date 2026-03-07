@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 
+/// Renders a compact semantic card with title, body, and optional trailing UI.
 class AppPanel extends StatelessWidget {
   const AppPanel({
     super.key,
@@ -17,6 +18,7 @@ class AppPanel extends StatelessWidget {
   final Widget? trailing;
   final String? semanticLabel;
 
+  /// Builds a reusable informational panel with consistent card spacing.
   @override
   Widget build(BuildContext context) {
     return Semantics(

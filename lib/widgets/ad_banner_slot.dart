@@ -57,8 +57,9 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
   @override
   void didUpdateWidget(covariant AdBannerSlot oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.canRequestAds != widget.canRequestAds) {
+    if (_shouldReloadBanner(oldWidget)) {
       _retryCount = 0;
+      _retryTimer?.cancel();
       _disposeBanner();
       _loadBanner();
     }
@@ -111,6 +112,15 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
   void _disposeBanner() {
     _bannerAd?.dispose();
     _bannerAd = null;
+  }
+
+  /// Determines whether banner inputs changed enough to require a reload.
+  bool _shouldReloadBanner(AdBannerSlot oldWidget) {
+    return oldWidget.canRequestAds != widget.canRequestAds ||
+        oldWidget.adUnitId != widget.adUnitId ||
+        oldWidget.placement != widget.placement ||
+        oldWidget.routeName != widget.routeName ||
+        oldWidget.nonPersonalizedAds != widget.nonPersonalizedAds;
   }
 
   /// Cancels pending retries and disposes the banner on widget teardown.

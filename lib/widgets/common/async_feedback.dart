@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/design/app_colors.dart';
+import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 
+/// Provides standardized loading, error, and empty-state feedback widgets.
 class AsyncFeedback extends StatelessWidget {
   const AsyncFeedback.loading({super.key, this.label})
     : type = AsyncFeedbackType.loading,
@@ -22,6 +24,7 @@ class AsyncFeedback extends StatelessWidget {
   final String? label;
   final VoidCallback? onRetry;
 
+  /// Builds the correct feedback widget for the current async state.
   @override
   Widget build(BuildContext context) {
     switch (type) {
@@ -31,7 +34,7 @@ class AsyncFeedback extends StatelessWidget {
         return Column(
           children: [
             Text(label!, style: const TextStyle(color: AppColors.danger)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s),
             OutlinedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
           ],
         );
@@ -44,4 +47,5 @@ class AsyncFeedback extends StatelessWidget {
   }
 }
 
+/// Enumerates the supported async UI feedback states.
 enum AsyncFeedbackType { loading, error, empty }
