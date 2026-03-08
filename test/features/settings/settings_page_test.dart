@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_saverquest_mvp/app/app_dependencies.dart';
+import 'package:flutter_saverquest_mvp/app/routes.dart';
 import 'package:flutter_saverquest_mvp/core/ads/ad_guardrails.dart';
 import 'package:flutter_saverquest_mvp/core/analytics/analytics_service.dart';
 import 'package:flutter_saverquest_mvp/core/config/app_environment.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_saverquest_mvp/core/consent/consent_state.dart';
 import 'package:flutter_saverquest_mvp/core/content/app_content_repository.dart';
 import 'package:flutter_saverquest_mvp/core/crash/crash_reporter.dart';
 import 'package:flutter_saverquest_mvp/core/localization/app_locale_controller.dart';
+import 'package:flutter_saverquest_mvp/core/localization/app_localizations.dart';
+import 'package:flutter_saverquest_mvp/features/settings/privacy_policy_page.dart';
 import 'package:flutter_saverquest_mvp/features/settings/settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -142,5 +146,47 @@ void main() {
 
     expect(context.consentController.showPrivacyOptionsCalls, 0);
     expect(find.text('현재는 추가로 바꿀 개인정보 옵션이 없습니다.'), findsOneWidget);
+  });
+
+  testWidgets('navigates to the privacy policy page from settings', (
+    tester,
+  ) async {
+    final context = await _buildDependencies(
+      consentState: const ConsentState(
+        initialized: true,
+        canRequestAds: true,
+        serveNonPersonalizedAds: false,
+        privacyOptionsRequired: true,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ko'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        routes: {
+          '/': (_) => SettingsPage(dependencies: context.dependencies),
+          AppRoutes.privacyPolicy: (_) => const PrivacyPolicyPage(),
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('개인정보 처리방침'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('개인정보 처리방침'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('앱에서 어떤 정보를 어떻게 다루는지 안내합니다'), findsOneWidget);
+    expect(find.text('주요 정책 항목'), findsOneWidget);
   });
 }

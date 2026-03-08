@@ -93,6 +93,11 @@ class _SettingsPageState extends State<SettingsPage> {
     await widget.dependencies.localeController.setLocale(Locale(languageCode));
   }
 
+  /// Opens the in-app privacy policy screen from settings.
+  void _openPrivacyPolicy() {
+    Navigator.of(context).pushNamed(AppRoutes.privacyPolicy);
+  }
+
   @override
   Widget build(BuildContext context) {
     final consentState = widget.dependencies.consentController.state;
@@ -162,6 +167,12 @@ class _SettingsPageState extends State<SettingsPage> {
               : () {
                   _openPrivacyOptions();
                 },
+        ),
+        _SettingsControlCard(
+          title: l10n.settingsPrivacyPolicyTitle,
+          subtitle: l10n.settingsPrivacyPolicySubtitle,
+          trailing: const Icon(Icons.chevron_right),
+          onTap: _openPrivacyPolicy,
         ),
         const SizedBox(height: AppSpacing.s),
         AdBannerSlot(
