@@ -7,11 +7,9 @@ import '../logging/app_logger.dart';
 
 class CrashReporter {
   /// Creates a crash reporter with optional Firebase Crashlytics forwarding.
-  CrashReporter({
-    required AppLogger logger,
-    FirebaseCrashlytics? crashlytics,
-  }) : _logger = logger,
-       _crashlytics = crashlytics;
+  CrashReporter({required AppLogger logger, FirebaseCrashlytics? crashlytics})
+    : _logger = logger,
+      _crashlytics = crashlytics;
 
   final AppLogger _logger;
   final FirebaseCrashlytics? _crashlytics;

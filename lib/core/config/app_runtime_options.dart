@@ -48,4 +48,3 @@ class AppRuntimeOptions {
         .toList(growable: false);
   }
 }
-

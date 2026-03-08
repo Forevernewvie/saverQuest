@@ -24,11 +24,7 @@ Future<void> main() async {
 
   runZonedGuarded(
     () {
-      runApp(
-        SaverQuestApp(
-          dependencies: dependencies,
-        ),
-      );
+      runApp(SaverQuestApp(dependencies: dependencies));
     },
     (error, stack) {
       dependencies.crashReporter.recordNonFatal(error, stack);

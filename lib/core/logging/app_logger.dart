@@ -141,4 +141,3 @@ class DeveloperAppLogger implements AppLogger {
     return sanitized;
   }
 }
-

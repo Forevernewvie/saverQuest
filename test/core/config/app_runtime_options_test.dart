@@ -23,4 +23,3 @@ void main() {
     expect(options.adTestDeviceIds, isEmpty);
   });
 }
-

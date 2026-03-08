@@ -41,7 +41,8 @@ class _ToolPageState extends State<ToolPage> {
   @override
   void initState() {
     super.initState();
-    final defaults = widget.dependencies.contentRepository.getToolInputDefaults();
+    final defaults = widget.dependencies.contentRepository
+        .getToolInputDefaults();
     _beforeController = TextEditingController(
       text: defaults.beforePrice.toString(),
     );
@@ -277,10 +278,7 @@ class _SavingsResultCard extends StatelessWidget {
           if (hasCalculated) const SizedBox(height: AppSpacing.m),
           Text(
             body,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
+            style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
           ),
         ],
       ),

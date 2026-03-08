@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_saverquest_mvp/features/home/home_page.dart';
-import 'package:flutter_saverquest_mvp/core/localization/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
+import '../../helpers/widget_test_app.dart';
 
 void main() {
   testWidgets('renders mission and CTA', (tester) async {
     final dependencies = buildFakeDependencies();
 
     await tester.pumpWidget(
-      _LocalizedTestApp(
+      WidgetTestApp(
         locale: const Locale('ko'),
         home: HomePage(dependencies: dependencies),
       ),
@@ -27,7 +26,7 @@ void main() {
     final dependencies = buildFakeDependencies();
 
     await tester.pumpWidget(
-      _LocalizedTestApp(
+      WidgetTestApp(
         locale: const Locale('en'),
         home: HomePage(dependencies: dependencies),
       ),
@@ -38,26 +37,4 @@ void main() {
     expect(find.text('Today\'s suggestion'), findsOneWidget);
     expect(find.text('Estimate your savings'), findsOneWidget);
   });
-}
-
-class _LocalizedTestApp extends StatelessWidget {
-  const _LocalizedTestApp({required this.home, this.locale});
-
-  final Widget home;
-  final Locale? locale;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: home,
-    );
-  }
 }

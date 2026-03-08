@@ -100,18 +100,12 @@ class StaticAppContentRepository implements AppContentRepository {
       SpendingCategory.subscriptions,
     ],
     trendCategories: [SpendingCategory.dining, SpendingCategory.coffee],
-    focusCategories: [
-      SpendingCategory.subscriptions,
-      SpendingCategory.snacks,
-    ],
+    focusCategories: [SpendingCategory.subscriptions, SpendingCategory.snacks],
   );
 
   static const InsightsDashboardContent _insightsContent =
       InsightsDashboardContent(
-        positiveCategories: [
-          SpendingCategory.coffee,
-          SpendingCategory.dining,
-        ],
+        positiveCategories: [SpendingCategory.coffee, SpendingCategory.dining],
         nextFocusCategories: [
           SpendingCategory.subscriptions,
           SpendingCategory.snacks,
@@ -136,4 +130,3 @@ class StaticAppContentRepository implements AppContentRepository {
   @override
   ToolInputDefaults getToolInputDefaults() => _toolDefaults;
 }
-
