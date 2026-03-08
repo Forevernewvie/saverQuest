@@ -188,5 +188,14 @@ void main() {
 
     expect(find.text('앱에서 어떤 정보를 어떻게 다루는지 안내합니다'), findsOneWidget);
     expect(find.text('주요 정책 항목'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.textContaining('https://forevernewvie.github.io/saverQuest/privacy/'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(
+      find.textContaining('https://forevernewvie.github.io/saverQuest/privacy/'),
+      findsOneWidget,
+    );
   });
 }
