@@ -73,7 +73,9 @@ SaverQuest는 서비스 운영 과정에서 합리적인 보안 조치를 적용
 
 ## 11. 공개 URL 운영 메모
 
-스토어 제출용으로는 로그인 없이 접근 가능한 `https` 공개 URL이 필요합니다. 권장 경로 예시는 아래와 같습니다.
+현재 저장소는 GitHub Pages 기준으로 공개 정책 URL을 사용할 수 있도록 구성합니다.
 
-- `https://saverquest.app/privacy`
-- `https://saverquest.app/en/privacy`
+- 기본 공개 URL: `https://forevernewvie.github.io/saverQuest/privacy/`
+- 사이트 루트: `https://forevernewvie.github.io/saverQuest/`
+
+스토어 제출용 URL은 로그인 없이 접근 가능한 `https` 주소여야 하며, GitHub Pages가 활성화되면 위 경로를 그대로 사용할 수 있습니다.

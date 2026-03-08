@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SaverQuest Documents</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #061827;
+        --bg-alt: #0d2234;
+        --surface: rgba(11, 28, 42, 0.92);
+        --border: rgba(54, 94, 122, 0.9);
+        --text: #f4f8fb;
+        --muted: #b5c7d6;
+        --accent: #2dc3e8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, var(--bg), var(--bg-alt));
+        color: var(--text);
+      }
+
+      main {
+        width: min(880px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 48px 0 72px;
+      }
+
+      .hero,
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 28px;
+      }
+
+      .hero {
+        margin-bottom: 20px;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 12px 0 12px;
+        font-size: clamp(32px, 5vw, 44px);
+        line-height: 1.1;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 22px;
+      }
+
+      .link {
+        display: inline-block;
+        margin-top: 16px;
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .link:hover,
+      .link:focus {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">SaverQuest</div>
+        <h1>공개 문서</h1>
+        <p>
+          SaverQuest의 공개 정책 문서입니다. 현재는 개인정보 처리방침을 GitHub Pages
+          기준으로 제공합니다.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>개인정보 처리방침</h2>
+        <p>
+          앱에서 어떤 정보를 처리하는지, 어떤 외부 서비스를 사용하는지, 사용자가
+          어디서 설정을 바꿀 수 있는지 확인할 수 있습니다.
+        </p>
+        <a class="link" href="./privacy/">개인정보 처리방침 보기</a>
+      </section>
+    </main>
+  </body>
+</html>
