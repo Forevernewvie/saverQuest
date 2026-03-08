@@ -74,7 +74,9 @@ class ConsentController extends ChangeNotifier {
   /// Bridges callback-based SDK APIs into a single awaitable flow with logging.
   Future<void> _runSdkFlow({
     required String operation,
-    required void Function(Future<void> Function([String? errorMessage]) complete)
+    required void Function(
+      Future<void> Function([String? errorMessage]) complete,
+    )
     execute,
   }) async {
     final completer = Completer<void>();

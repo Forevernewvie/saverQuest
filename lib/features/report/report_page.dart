@@ -94,7 +94,8 @@ class _ReportPageState extends State<ReportPage> {
   @override
   Widget build(BuildContext context) {
     final consentState = widget.dependencies.consentController.state;
-    final reportContent = widget.dependencies.contentRepository.getReportContent();
+    final reportContent = widget.dependencies.contentRepository
+        .getReportContent();
     final l10n = context.l10n;
     final hasRewarded = AdMobIds.hasReportRewarded;
     final detailStatus = _unlocked
@@ -175,11 +176,17 @@ class _ReportPageState extends State<ReportPage> {
         ],
         const SizedBox(height: AppSpacing.l),
         AppSectionHeader(
-          title: hasRewarded ? l10n.reportFlowTitle : l10n.reportNextSectionTitle,
+          title: hasRewarded
+              ? l10n.reportFlowTitle
+              : l10n.reportNextSectionTitle,
         ),
         AppFeatureCard(
-          icon: hasRewarded ? Icons.play_circle_outline : Icons.lightbulb_outline,
-          title: hasRewarded ? l10n.reportFlowTitle : l10n.reportNextSectionTitle,
+          icon: hasRewarded
+              ? Icons.play_circle_outline
+              : Icons.lightbulb_outline,
+          title: hasRewarded
+              ? l10n.reportFlowTitle
+              : l10n.reportNextSectionTitle,
           body: hasRewarded
               ? l10n.reportFlowBody(l10n.adStatusLabel(_lastRewardStatus))
               : l10n.reportNextSectionBody,

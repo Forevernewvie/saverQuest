@@ -23,7 +23,7 @@ class _TestConsentController extends ConsentController {
     required ConsentState state,
   }) : _state = state;
 
-  ConsentState _state;
+  final ConsentState _state;
   int showPrivacyOptionsCalls = 0;
 
   @override
@@ -49,12 +49,10 @@ class _TestAttTransparencyService extends AttTransparencyService {
 }
 
 /// Builds settings dependencies with customizable consent state for widget tests.
-Future<({
-  AppDependencies dependencies,
-  _TestConsentController consentController,
-})> _buildDependencies({
-  required ConsentState consentState,
-}) async {
+Future<
+  ({AppDependencies dependencies, _TestConsentController consentController})
+>
+_buildDependencies({required ConsentState consentState}) async {
   final logger = FakeLogger();
   final analytics = AnalyticsService(logger: logger);
   final localeController = AppLocaleController(storage: FakeLocaleStorage());
@@ -114,9 +112,7 @@ void main() {
     expect(find.text('개인정보 설정'), findsOneWidget);
     expect(find.text('동의 철회/재설정을 즉시 반영합니다.'), findsOneWidget);
     expect(
-      find.text(
-        '현재 개인정보 설정이 적용되어 있습니다. 필요하면 아래에서 언제든 변경할 수 있어요.',
-      ),
+      find.text('현재 개인정보 설정이 적용되어 있습니다. 필요하면 아래에서 언제든 변경할 수 있어요.'),
       findsOneWidget,
     );
   });

@@ -21,10 +21,7 @@ import 'app_dependencies.dart';
 /// Builds fully initialized application dependencies for the composition root.
 class AppBootstrapper {
   /// Creates a bootstrapper with explicit runtime options and logging.
-  const AppBootstrapper({
-    required this.runtimeOptions,
-    required this.logger,
-  });
+  const AppBootstrapper({required this.runtimeOptions, required this.logger});
 
   final AppRuntimeOptions runtimeOptions;
   final AppLogger logger;

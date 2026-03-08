@@ -24,4 +24,3 @@ void main() {
     expect(defaults.monthlyCount, greaterThan(0));
   });
 }
-

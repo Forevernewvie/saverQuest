@@ -22,7 +22,7 @@ class _TestConsentController extends ConsentController {
     required ConsentState state,
   }) : _state = state;
 
-  ConsentState _state;
+  final ConsentState _state;
   int refreshCalls = 0;
   int gatherCalls = 0;
 
@@ -52,13 +52,14 @@ class _TestAttTransparencyService extends AttTransparencyService {
 }
 
 /// Builds onboarding dependencies with observable consent and ATT doubles.
-Future<({
-  AppDependencies dependencies,
-  _TestConsentController consentController,
-  _TestAttTransparencyService attService,
-})> _buildDependencies({
-  ConsentState? consentState,
-}) async {
+Future<
+  ({
+    AppDependencies dependencies,
+    _TestConsentController consentController,
+    _TestAttTransparencyService attService,
+  })
+>
+_buildDependencies({ConsentState? consentState}) async {
   final logger = FakeLogger();
   final analytics = AnalyticsService(logger: logger);
   final localeController = AppLocaleController(storage: FakeLocaleStorage());
