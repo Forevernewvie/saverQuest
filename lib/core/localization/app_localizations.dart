@@ -314,8 +314,8 @@ class AppLocalizations {
   );
   String get privacyPolicySectionTitle => _t('주요 정책 항목', 'Key policy sections');
   String get privacyPolicySectionSubtitle => _t(
-    '스토어 등록 전에는 문의처와 공개 URL을 실제 운영 정보로 교체해야 합니다.',
-    'Before store submission, replace the contact details and public URL with live operating information.',
+    'GitHub Pages 공개 URL을 기준으로 안내합니다. 배포 전 문의처와 운영 정보는 실제 값으로 다시 확인해야 합니다.',
+    'This policy is presented with the GitHub Pages public URL. Review the contact details and operator information before release.',
   );
   String get privacyPolicyOverviewTitle => _t('개요', 'Overview');
   String get privacyPolicyOverviewBody => _t(
@@ -361,8 +361,8 @@ class AppLocalizations {
   String get privacyPolicyPublicUrlTitle =>
       _t('공개 URL 안내', 'Public URL guidance');
   String get privacyPolicyPublicUrlBody => _t(
-    '스토어 제출에는 로그인 없이 접근 가능한 HTTPS 정책 URL이 필요합니다. 권장 예시는 https://saverquest.app/privacy 입니다.',
-    'Store submission requires a public HTTPS privacy-policy URL that anyone can open. A recommended example is https://saverquest.app/privacy.',
+    '현재 공개 URL은 https://forevernewvie.github.io/saverQuest/privacy/ 입니다. GitHub Pages를 활성화하면 스토어 제출용 HTTPS 정책 링크로 사용할 수 있습니다.',
+    'The current public URL is https://forevernewvie.github.io/saverQuest/privacy/. Once GitHub Pages is enabled, it can be used as the HTTPS privacy-policy link for store submission.',
   );
 
   String get insightsHeroBody => _t(
