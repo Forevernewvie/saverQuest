@@ -7,6 +7,7 @@ import '../features/home/home_page.dart';
 import '../features/insights/insights_page.dart';
 import '../features/onboarding/onboarding_page.dart';
 import '../features/report/report_page.dart';
+import '../features/settings/privacy_policy_page.dart';
 import '../features/settings/settings_page.dart';
 import '../features/tool/tool_page.dart';
 import 'app_dependencies.dart';
@@ -43,6 +44,7 @@ class SaverQuestApp extends StatelessWidget {
             AppRoutes.report: (_) => ReportPage(dependencies: dependencies),
             AppRoutes.insights: (_) => InsightsPage(dependencies: dependencies),
             AppRoutes.settings: (_) => SettingsPage(dependencies: dependencies),
+            AppRoutes.privacyPolicy: (_) => const PrivacyPolicyPage(),
           },
         );
       },

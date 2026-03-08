@@ -5,4 +5,5 @@ class AppRoutes {
   static const String report = '/report';
   static const String insights = '/insights';
   static const String settings = '/settings';
+  static const String privacyPolicy = '/privacy-policy';
 }

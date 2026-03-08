@@ -296,9 +296,74 @@ class AppLocalizations {
     '현재는 이 화면에서 추가로 바꿀 항목이 없습니다.',
     'There is nothing extra to change from this screen right now.',
   );
+  String get settingsPrivacyPolicyTitle => _t('개인정보 처리방침', 'Privacy policy');
+  String get settingsPrivacyPolicySubtitle => _t(
+    '앱에서 처리하는 정보와 외부 서비스를 확인합니다.',
+    'Review what the app processes and which third-party services are used.',
+  );
   String get settingsLanguageTitle => _t('앱 언어', 'App Language');
   String get settingsLanguageSubtitle =>
       _t('한국어와 영어 중 하나를 선택합니다.', 'Choose Korean or English.');
+
+  String get privacyPolicyPageTitle => _t('개인정보 처리방침', 'Privacy Policy');
+  String get privacyPolicyHeroTitle =>
+      _t('앱에서 어떤 정보를 어떻게 다루는지 안내합니다', 'How the app handles information');
+  String get privacyPolicyHeroBody => _t(
+    'SaverQuest는 앱 운영, 안정성 개선, 광고 제공에 필요한 범위에서만 정보를 처리합니다. 자세한 내용은 아래 항목에서 확인할 수 있습니다.',
+    'SaverQuest processes information only where needed for app operation, stability, and advertising. The sections below explain the details.',
+  );
+  String get privacyPolicySectionTitle => _t('주요 정책 항목', 'Key policy sections');
+  String get privacyPolicySectionSubtitle => _t(
+    '스토어 등록 전에는 문의처와 공개 URL을 실제 운영 정보로 교체해야 합니다.',
+    'Before store submission, replace the contact details and public URL with live operating information.',
+  );
+  String get privacyPolicyOverviewTitle => _t('개요', 'Overview');
+  String get privacyPolicyOverviewBody => _t(
+    'SaverQuest는 절약 계산, 주간 리포트, 소비 인사이트 기능을 제공하는 모바일 앱입니다. 서비스 운영과 품질 개선을 위해 필요한 최소 범위의 정보를 처리할 수 있습니다.',
+    'SaverQuest is a mobile app for savings calculations, weekly reports, and spending insights. It may process a minimal set of information needed for service operation and quality improvement.',
+  );
+  String get privacyPolicyCollectedDataTitle =>
+      _t('처리할 수 있는 정보', 'Data that may be processed');
+  String get privacyPolicyCollectedDataBody => _t(
+    '앱 사용 기록, 화면 조회, 오류 및 크래시 정보, 앱 버전과 운영체제 정보, 언어 설정, 광고 요청 및 응답 상태를 처리할 수 있습니다.',
+    'The app may process usage events, screen views, crash and error data, app and operating-system versions, language preferences, and ad request or response status.',
+  );
+  String get privacyPolicyPurposeTitle =>
+      _t('이용 목적', 'Why the information is used');
+  String get privacyPolicyPurposeBody => _t(
+    '서비스 제공, 앱 안정성 향상, 오류 분석, 광고 제공, 개인정보 및 언어 설정 유지에 사용됩니다.',
+    'The information is used to provide the service, improve app stability, analyze errors, serve ads, and preserve privacy and language preferences.',
+  );
+  String get privacyPolicyThirdPartyTitle =>
+      _t('외부 서비스', 'Third-party services');
+  String get privacyPolicyThirdPartyBody => _t(
+    '광고 제공을 위해 Google AdMob을, 사용 흐름 분석을 위해 Firebase Analytics를, 오류 진단을 위해 Firebase Crashlytics를 사용할 수 있습니다.',
+    'The app may use Google AdMob for ads, Firebase Analytics for usage analysis, and Firebase Crashlytics for crash diagnostics.',
+  );
+  String get privacyPolicyChoicesTitle =>
+      _t('선택권 및 동의 관리', 'Choices and consent controls');
+  String get privacyPolicyChoicesBody => _t(
+    '필요한 경우 광고 및 개인정보 선택 화면이 먼저 표시될 수 있습니다. 앱 설정의 개인정보 설정 변경에서 동의 상태를 다시 확인하거나 바꿀 수 있습니다.',
+    'When required, the app may show a privacy or ad-choice prompt first. You can review or change those choices in Settings at any time.',
+  );
+  String get privacyPolicyRetentionTitle =>
+      _t('보관 기간 및 보안', 'Retention and security');
+  String get privacyPolicyRetentionBody => _t(
+    '서비스 운영과 법적 의무에 필요한 범위에서만 정보를 보관합니다. 합리적인 보안 조치를 적용하지만, 인터넷 전송과 전자 저장 방식의 특성상 절대적인 보안을 보장할 수는 없습니다.',
+    'Information is kept only as needed for service operation and legal obligations. Reasonable safeguards are applied, but absolute security cannot be guaranteed for internet transmission or electronic storage.',
+  );
+  String get privacyPolicyContactTitle =>
+      _t('문의 및 운영 정보', 'Contact and operator details');
+  String get privacyPolicyContactBody => _t(
+    '문의 이메일은 privacy@saverquest.app, 운영 주체는 SaverQuest Team으로 기재되어 있습니다. 실제 배포 전에는 운영 정보에 맞게 검토해야 합니다.',
+    'The current contact email is privacy@saverquest.app and the operator name is SaverQuest Team. Review these values before production release.',
+  );
+  String get privacyPolicyPublicUrlTitle =>
+      _t('공개 URL 안내', 'Public URL guidance');
+  String get privacyPolicyPublicUrlBody => _t(
+    '스토어 제출에는 로그인 없이 접근 가능한 HTTPS 정책 URL이 필요합니다. 권장 예시는 https://saverquest.app/privacy 입니다.',
+    'Store submission requires a public HTTPS privacy-policy URL that anyone can open. A recommended example is https://saverquest.app/privacy.',
+  );
 
   String get insightsHeroBody => _t(
     '이번 주 소비 흐름에서 바로 적용할 수 있는 절약 힌트를 정리했어요.',
