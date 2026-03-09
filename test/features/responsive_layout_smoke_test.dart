@@ -23,8 +23,33 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Today\'s Savings'), findsOneWidget);
+    expect(find.text('Budget Home'), findsOneWidget);
     expect(find.text('Estimate your savings'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('home quick actions remain stable on narrow large-text screens', (
+    tester,
+  ) async {
+    final dependencies = buildFakeDependencies();
+
+    await tester.pumpWidget(
+      _ResponsiveLocalizedTestApp(
+        locale: const Locale('en'),
+        home: HomePage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Quick actions'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quick actions'), findsOneWidget);
+    expect(find.text('Calculator'), findsOneWidget);
+    expect(find.text('Report'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

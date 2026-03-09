@@ -6,7 +6,7 @@ import '../../helpers/fakes.dart';
 import '../../helpers/widget_test_app.dart';
 
 void main() {
-  testWidgets('renders mission and CTA', (tester) async {
+  testWidgets('renders budget snapshot and primary CTA', (tester) async {
     final dependencies = buildFakeDependencies();
 
     await tester.pumpWidget(
@@ -17,12 +17,20 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘의 절약'), findsOneWidget);
-    expect(find.text('오늘의 추천'), findsOneWidget);
+    expect(find.text('가계부 홈'), findsOneWidget);
+    expect(find.text('이번 달 예산 현황'), findsOneWidget);
     expect(find.text('절약 금액 계산하기'), findsOneWidget);
+    expect(find.text('남은 예산'), findsWidgets);
+    await tester.scrollUntilVisible(
+      find.text('빠른 실행'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('빠른 실행'), findsOneWidget);
   });
 
-  testWidgets('renders english copy when locale is english', (tester) async {
+  testWidgets('renders english budget dashboard copy', (tester) async {
     final dependencies = buildFakeDependencies();
 
     await tester.pumpWidget(
@@ -33,8 +41,16 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Today\'s Savings'), findsOneWidget);
-    expect(find.text('Today\'s suggestion'), findsOneWidget);
+    expect(find.text('Budget Home'), findsOneWidget);
+    expect(find.text('Monthly budget overview'), findsOneWidget);
     expect(find.text('Estimate your savings'), findsOneWidget);
+    expect(find.text('Remaining budget'), findsWidgets);
+    await tester.scrollUntilVisible(
+      find.text('Quick actions'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Quick actions'), findsOneWidget);
   });
 }
