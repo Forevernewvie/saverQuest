@@ -6,6 +6,8 @@ class HomeDashboardContent {
   /// Creates an immutable home dashboard snapshot.
   const HomeDashboardContent({
     required this.weeklySavingsAmount,
+    required this.monthlyBudgetAmount,
+    required this.monthlySpentAmount,
     required this.streakDays,
     required this.missionCategory,
     required this.missionSavingsAmount,
@@ -13,10 +15,15 @@ class HomeDashboardContent {
   });
 
   final int weeklySavingsAmount;
+  final int monthlyBudgetAmount;
+  final int monthlySpentAmount;
   final int streakDays;
   final SpendingCategory missionCategory;
   final int missionSavingsAmount;
   final int goalProgressPercent;
+
+  /// Returns the remaining budget derived from the monthly plan and spend.
+  int get remainingBudgetAmount => monthlyBudgetAmount - monthlySpentAmount;
 }
 
 /// Supplies static data for the weekly report.
@@ -85,6 +92,8 @@ class StaticAppContentRepository implements AppContentRepository {
 
   static const HomeDashboardContent _homeContent = HomeDashboardContent(
     weeklySavingsAmount: 63200,
+    monthlyBudgetAmount: 420000,
+    monthlySpentAmount: 286800,
     streakDays: 7,
     missionCategory: SpendingCategory.coffee,
     missionSavingsAmount: 4500,

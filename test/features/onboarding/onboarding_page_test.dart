@@ -125,6 +125,6 @@ void main() {
     await tester.tap(find.text('계속하기'));
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘의 절약'), findsOneWidget);
+    expect(find.text('가계부 홈'), findsOneWidget);
   });
 }

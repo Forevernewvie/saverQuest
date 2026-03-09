@@ -4,6 +4,7 @@ import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/design/app_ui_tokens.dart';
+import '../../core/localization/app_localizations.dart';
 
 /// Renders a section title with an optional supporting subtitle.
 class AppSectionHeader extends StatelessWidget {
@@ -364,6 +365,119 @@ class AppFeatureCard extends StatelessWidget {
   }
 }
 
+/// Renders a budgeting overview card with progress and key monthly figures.
+class AppBudgetOverviewCard extends StatelessWidget {
+  const AppBudgetOverviewCard({
+    super.key,
+    required this.title,
+    required this.body,
+    required this.progressValue,
+    required this.remainingLabel,
+    required this.remainingValue,
+    required this.spentLabel,
+    required this.spentValue,
+    required this.limitLabel,
+    required this.limitValue,
+  });
+
+  final String title;
+  final String body;
+  final double progressValue;
+  final String remainingLabel;
+  final String remainingValue;
+  final String spentLabel;
+  final String spentValue;
+  final String limitLabel;
+  final String limitValue;
+
+  /// Builds a budget overview card optimized for narrow mobile layouts.
+  @override
+  Widget build(BuildContext context) {
+    final metricItems = [
+      _BudgetMetricColumn(label: remainingLabel, value: remainingValue),
+      _BudgetMetricColumn(label: spentLabel, value: spentValue),
+      _BudgetMetricColumn(label: limitLabel, value: limitValue),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.s),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: _surfaceDecoration(
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useStackedMetrics = AdaptiveLayout.useStackedLayout(
+            context,
+            constraints.maxWidth,
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                body,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.m),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  AppUiTokens.borderPillRadius,
+                ),
+                child: LinearProgressIndicator(
+                  value: progressValue.clamp(0.0, 1.0),
+                  minHeight: 10,
+                  backgroundColor: AppColors.surfaceMuted,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.accent,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.m),
+              if (useStackedMetrics)
+                Column(
+                  children: metricItems
+                      .map(
+                        (metric) => Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.s),
+                          child: metric,
+                        ),
+                      )
+                      .toList(),
+                )
+              else
+                Row(
+                  children: [
+                    for (
+                      var index = 0;
+                      index < metricItems.length;
+                      index++
+                    ) ...[
+                      Expanded(child: metricItems[index]),
+                      if (index < metricItems.length - 1)
+                        const SizedBox(width: AppSpacing.s),
+                    ],
+                  ],
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
 /// Renders a compact action card for frequently used navigation targets.
 class AppQuickActionCard extends StatelessWidget {
   const AppQuickActionCard({
@@ -372,18 +486,24 @@ class AppQuickActionCard extends StatelessWidget {
     required this.label,
     required this.body,
     required this.onTap,
-    this.expandToWidth = false,
+    this.categoryLabel,
+    this.trailingValue,
+    this.expandToWidth = true,
   });
 
   final IconData icon;
   final String label;
   final String body;
   final VoidCallback onTap;
+  final String? categoryLabel;
+  final String? trailingValue;
   final bool expandToWidth;
 
   /// Builds the quick action surface with consistent sizing constraints.
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return ConstrainedBox(
       constraints: BoxConstraints(
         minWidth: expandToWidth ? 0 : AppUiTokens.quickActionMinWidth,
@@ -396,32 +516,102 @@ class AppQuickActionCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
-          child: Ink(
-            padding: const EdgeInsets.all(AppSpacing.m),
-            decoration: _surfaceDecoration(
-              borderRadius: AppUiTokens.surfaceCornerRadius,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon, color: AppColors.accent),
-                const SizedBox(height: AppSpacing.s),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
+          child: Semantics(
+            button: true,
+            label: label,
+            child: Ink(
+              padding: const EdgeInsets.all(AppSpacing.m),
+              decoration: _surfaceDecoration(
+                fillColor: AppColors.surfaceAlt,
+                borderRadius: AppUiTokens.surfaceCornerRadius,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: AppUiTokens.quickActionMinHeight,
                 ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  body,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: AppUiTokens.heroIconContainerSize,
+                          height: AppUiTokens.heroIconContainerSize,
+                          decoration: _surfaceDecoration(
+                            fillColor: AppColors.accentSoft,
+                            borderRadius: AppUiTokens.cardCornerRadius,
+                            showBorder: false,
+                          ),
+                          child: Icon(icon, color: AppColors.accent),
+                        ),
+                        const SizedBox(width: AppSpacing.m),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                label,
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              if (categoryLabel != null) ...[
+                                const SizedBox(height: AppSpacing.xs),
+                                Text(
+                                  categoryLabel!,
+                                  style: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        if (trailingValue != null) ...[
+                          const SizedBox(width: AppSpacing.s),
+                          Text(
+                            trailingValue!,
+                            style: const TextStyle(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.m),
+                    Text(
+                      body,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.l),
+                    Row(
+                      children: [
+                        Text(
+                          l10n.homeQuickActionOpenLabel,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -441,4 +631,44 @@ BoxDecoration _surfaceDecoration({
     borderRadius: BorderRadius.circular(borderRadius),
     border: showBorder ? Border.all(color: AppColors.border) : null,
   );
+}
+
+/// Renders a compact label-value stack inside budget overview cards.
+class _BudgetMetricColumn extends StatelessWidget {
+  const _BudgetMetricColumn({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  /// Builds the compact metric surface for budget overview details.
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.s),
+      decoration: _surfaceDecoration(
+        fillColor: AppColors.surfaceAlt,
+        borderRadius: AppUiTokens.cardCornerRadius,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
