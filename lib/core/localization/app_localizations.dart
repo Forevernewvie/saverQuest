@@ -33,34 +33,50 @@ class AppLocalizations {
       _t('광고 비활성 (동의 필요)', 'Ads disabled (consent required)');
   String get adBannerSemanticLabel => _t('광고 배너', 'Ad banner');
 
-  String get homeTitle => _t('오늘의 절약', 'Today\'s Savings');
+  String get homeTitle => _t('가계부 홈', 'Budget Home');
   String get homeHeroTitle =>
-      _t('오늘 아낄 수 있는 금액을 바로 확인해보세요', 'See how much you could save today');
+      _t('이번 달 예산 흐름을 빠르게 확인하세요', 'See your budget flow at a glance');
   String get homeHeroBody => _t(
-    '반복 지출 하나만 바꿔도 목표에 더 가까워질 수 있어요. 계산기와 리포트에서 바로 확인해보세요.',
-    'A single change to a repeated expense can move you closer to your goal. Jump into the calculator or report to see it right away.',
+    '지출 계산, 주간 리포트, 절약 힌트를 한 화면에서 이어서 볼 수 있게 정리했습니다.',
+    'Your calculator, weekly report, and savings hints are organized into one clear budget dashboard.',
   );
   String get homeStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
+  String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
   String get homeStatStreakLabel => _t('연속 기록', 'Current streak');
-  String get homeTodaySectionTitle => _t('오늘 이렇게 시작해보세요', 'Start here today');
-  String get homeMissionTitle => _t('오늘의 추천', 'Today\'s suggestion');
-  String get homeProgressTitle => _t('이번 주 흐름', 'This week\'s progress');
+  String get homeTodaySectionTitle =>
+      _t('이번 달 예산 현황', 'Monthly budget overview');
+  String get homeBudgetOverviewTitle => _t('예산 진행률', 'Budget progress');
+  String get homeBudgetOverviewBody => _t(
+    '한 달 예산과 현재 사용 금액을 비교해 남은 여유를 확인하세요.',
+    'Compare your monthly budget with current spend to see how much room you have left.',
+  );
+  String get homeBudgetSpentLabel => _t('사용 금액', 'Spent');
+  String get homeBudgetLimitLabel => _t('예산 한도', 'Budget limit');
+  String get homeMissionTitle => _t('이번 주 제안', 'This week\'s suggestion');
   String get homePrimaryAction => _t('절약 금액 계산하기', 'Estimate your savings');
   String get homePrimaryActionSemantic =>
       _t('절약 금액 계산하기 버튼', 'Estimate your savings button');
   String get homeSecondaryAction => _t('주간 리포트 보기', 'View weekly report');
-  String get homeQuickActionsTitle => _t('지금 할 수 있는 것', 'What you can do now');
+  String get homeQuickActionsTitle => _t('빠른 실행', 'Quick actions');
+  String get homeQuickActionsSubtitle => _t(
+    '자주 쓰는 기능을 바로 열 수 있습니다.',
+    'Jump straight into the tools you use most.',
+  );
+  String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
+  String get homeQuickCalcTag => _t('입력과 비교', 'Input and compare');
   String get homeQuickCalcBody => _t(
-    '자주 쓰는 항목을 바꿨을 때 얼마나 아낄 수 있는지 계산해보세요.',
-    'Estimate how much you can save by changing one repeated expense.',
+    '반복 지출을 다른 선택지로 바꿨을 때 절약 금액을 바로 계산합니다.',
+    'Estimate savings instantly when you replace one repeated expense.',
   );
+  String get homeQuickReportTag => _t('주간 요약', 'Weekly summary');
   String get homeQuickReportBody => _t(
-    '이번 주 절약 흐름과 카테고리별 변화를 확인해보세요.',
-    'Review this week’s savings trend and category changes.',
+    '이번 주 절약 추세와 줄어든 카테고리를 요약해서 확인합니다.',
+    'Review this week’s savings trend and the categories that moved the most.',
   );
+  String get homeQuickInsightsTag => _t('다음 액션', 'Next move');
   String get homeQuickInsightsBody => _t(
-    '소비 습관에서 다음 절약 힌트를 찾아보세요.',
-    'Find your next savings hint from spending patterns.',
+    '소비 패턴을 바탕으로 다음에 줄일 항목을 빠르게 찾습니다.',
+    'Find the next category to cut based on your current spending pattern.',
   );
   String get navTool => _t('계산기', 'Calculator');
   String get navReport => _t('리포트', 'Report');
@@ -399,8 +415,14 @@ class AppLocalizations {
   /// Returns the home hero savings value from the supplied amount.
   String homeStatSavingsValue(int amount) => formatCurrency(amount);
 
+  /// Returns the remaining-budget value from the supplied amount.
+  String homeStatRemainingValue(int amount) => formatCurrency(amount);
+
   /// Returns the home hero streak value from the supplied day count.
   String homeStatStreakValue(int days) => formatDays(days);
+
+  /// Returns the localized goal-progress value.
+  String homeStatGoalValue(int progressPercent) => '$progressPercent%';
 
   /// Builds the home mission body from a category and savings amount.
   String homeMissionBodyForCategory({
@@ -422,8 +444,8 @@ class AppLocalizations {
   }) {
     final streakLabel = formatDays(streakDays);
     return _t(
-      '목표의 $goalProgressPercent%를 채웠고, $streakLabel째 꾸준히 이어가고 있어요.',
-      'You have reached $goalProgressPercent% of your goal and kept a $streakLabel streak.',
+      '이번 달 목표의 $goalProgressPercent%를 채웠고, $streakLabel째 기록을 이어가고 있어요.',
+      "You have completed $goalProgressPercent% of this month's goal and kept the routine for $streakLabel.",
     );
   }
 

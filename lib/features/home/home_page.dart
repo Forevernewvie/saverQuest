@@ -5,12 +5,13 @@ import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
-import '../../core/design/adaptive_layout.dart';
+import '../../core/content/app_content_repository.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../widgets/ad_banner_slot.dart';
 import '../../widgets/common/app_blocks.dart';
 import '../../widgets/screen_shell.dart';
+import 'widgets/home_dashboard_sections.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.dependencies});
@@ -22,18 +23,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  /// Returns whether quick actions should collapse into a single column.
-  bool _useSingleColumnQuickActions(BuildContext context) {
-    final availableWidth =
-        MediaQuery.sizeOf(context).width - (AppSpacing.l * 2);
-    return AdaptiveLayout.useStackedLayout(context, availableWidth);
-  }
-
   /// Logs the initial home screen impression for analytics.
   @override
   void initState() {
     super.initState();
     widget.dependencies.analyticsService.logScreen('home');
+  }
+
+  /// Opens the calculator and records the source of the primary CTA.
+  Future<void> _openCalculator() async {
+    await widget.dependencies.analyticsService.logEvent(
+      AnalyticsEvents.missionCompleted,
+      parameters: {'source': 'home_primary'},
+    );
+    if (!mounted) {
+      return;
+    }
+    Navigator.pushNamed(context, AppRoutes.tool);
+  }
+
+  /// Builds the stack of quick actions for the budgeting dashboard.
+  List<HomeQuickActionItem> _buildQuickActions(
+    BuildContext context,
+    HomeDashboardContent homeContent,
+  ) {
+    final l10n = context.l10n;
+    return [
+      HomeQuickActionItem(
+        icon: Icons.calculate_outlined,
+        label: l10n.navTool,
+        categoryLabel: l10n.homeQuickCalcTag,
+        trailingValue: l10n.formatCurrency(homeContent.missionSavingsAmount),
+        body: l10n.homeQuickCalcBody,
+        onTap: _openCalculator,
+      ),
+      HomeQuickActionItem(
+        icon: Icons.receipt_long_outlined,
+        label: l10n.navReport,
+        categoryLabel: l10n.homeQuickReportTag,
+        trailingValue: l10n.homeStatGoalValue(homeContent.goalProgressPercent),
+        body: l10n.homeQuickReportBody,
+        onTap: () => Navigator.pushNamed(context, AppRoutes.report),
+      ),
+      HomeQuickActionItem(
+        icon: Icons.insights_outlined,
+        label: l10n.navInsights,
+        categoryLabel: l10n.homeQuickInsightsTag,
+        trailingValue: l10n.homeStatStreakValue(homeContent.streakDays),
+        body: l10n.homeQuickInsightsBody,
+        onTap: () => Navigator.pushNamed(context, AppRoutes.insights),
+      ),
+    ];
   }
 
   /// Builds the personalized home dashboard using repository-provided content.
@@ -42,19 +82,6 @@ class _HomePageState extends State<HomePage> {
     final consentState = widget.dependencies.consentController.state;
     final homeContent = widget.dependencies.contentRepository.getHomeContent();
     final l10n = context.l10n;
-    final useSingleColumnQuickActions = _useSingleColumnQuickActions(context);
-
-    /// Opens the calculator and records the primary CTA source.
-    void openCalculator() async {
-      await widget.dependencies.analyticsService.logEvent(
-        AnalyticsEvents.missionCompleted,
-        parameters: {'source': 'home_primary'},
-      );
-      if (!context.mounted) {
-        return;
-      }
-      Navigator.pushNamed(context, AppRoutes.tool);
-    }
 
     return ScreenShell(
       title: l10n.homeTitle,
@@ -69,11 +96,13 @@ class _HomePageState extends State<HomePage> {
           eyebrow: l10n.appTitle,
           title: l10n.homeHeroTitle,
           body: l10n.homeHeroBody,
-          trailing: const AppHeroIcon(icon: Icons.savings_outlined),
+          trailing: const AppHeroIcon(
+            icon: Icons.account_balance_wallet_outlined,
+          ),
           primaryLabel: l10n.homePrimaryAction,
           secondaryLabel: l10n.homeSecondaryAction,
           primarySemanticLabel: l10n.homePrimaryActionSemantic,
-          onPrimary: openCalculator,
+          onPrimary: _openCalculator,
           onSecondary: () => Navigator.pushNamed(context, AppRoutes.report),
           pills: [
             AppMetricPill(
@@ -81,85 +110,40 @@ class _HomePageState extends State<HomePage> {
               value: l10n.homeStatSavingsValue(homeContent.weeklySavingsAmount),
             ),
             AppMetricPill(
+              label: l10n.homeStatRemainingLabel,
+              value: l10n.homeStatRemainingValue(
+                homeContent.remainingBudgetAmount,
+              ),
+            ),
+            AppMetricPill(
               label: l10n.homeStatStreakLabel,
               value: l10n.homeStatStreakValue(homeContent.streakDays),
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.l),
         AppSectionHeader(title: l10n.homeTodaySectionTitle),
+        HomeBudgetOverviewSection(content: homeContent, l10n: l10n),
         AppFeatureCard(
-          icon: Icons.local_cafe_outlined,
+          icon: Icons.savings_outlined,
           title: l10n.homeMissionTitle,
           body: l10n.homeMissionBodyForCategory(
             category: homeContent.missionCategory,
             savingsAmount: homeContent.missionSavingsAmount,
           ),
-        ),
-        AppFeatureCard(
-          icon: Icons.show_chart_outlined,
-          title: l10n.homeProgressTitle,
-          body: l10n.homeProgressBodyForProgress(
-            goalProgressPercent: homeContent.goalProgressPercent,
-            streakDays: homeContent.streakDays,
+          trailing: Text(
+            l10n.formatCurrency(homeContent.missionSavingsAmount),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.l),
-        AppSectionHeader(title: l10n.homeQuickActionsTitle),
-        useSingleColumnQuickActions
-            ? Column(
-                children: [
-                  AppQuickActionCard(
-                    icon: Icons.calculate_outlined,
-                    label: l10n.navTool,
-                    body: l10n.homeQuickCalcBody,
-                    onTap: openCalculator,
-                    expandToWidth: true,
-                  ),
-                  const SizedBox(height: AppSpacing.s),
-                  AppQuickActionCard(
-                    icon: Icons.receipt_long_outlined,
-                    label: l10n.navReport,
-                    body: l10n.homeQuickReportBody,
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.report),
-                    expandToWidth: true,
-                  ),
-                  const SizedBox(height: AppSpacing.s),
-                  AppQuickActionCard(
-                    icon: Icons.insights_outlined,
-                    label: l10n.navInsights,
-                    body: l10n.homeQuickInsightsBody,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.insights),
-                    expandToWidth: true,
-                  ),
-                ],
-              )
-            : Wrap(
-                spacing: AppSpacing.s,
-                runSpacing: AppSpacing.s,
-                children: [
-                  AppQuickActionCard(
-                    icon: Icons.calculate_outlined,
-                    label: l10n.navTool,
-                    body: l10n.homeQuickCalcBody,
-                    onTap: openCalculator,
-                  ),
-                  AppQuickActionCard(
-                    icon: Icons.receipt_long_outlined,
-                    label: l10n.navReport,
-                    body: l10n.homeQuickReportBody,
-                    onTap: () => Navigator.pushNamed(context, AppRoutes.report),
-                  ),
-                  AppQuickActionCard(
-                    icon: Icons.insights_outlined,
-                    label: l10n.navInsights,
-                    body: l10n.homeQuickInsightsBody,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.insights),
-                  ),
-                ],
-              ),
+        HomeQuickActionsSection(
+          title: l10n.homeQuickActionsTitle,
+          subtitle: l10n.homeQuickActionsSubtitle,
+          actions: _buildQuickActions(context, homeContent),
+        ),
         const SizedBox(height: AppSpacing.m),
         AdBannerSlot(
           adService: widget.dependencies.adService,
