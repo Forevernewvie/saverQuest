@@ -11,6 +11,11 @@ import 'package:flutter_saverquest_mvp/core/consent/consent_state.dart';
 import 'package:flutter_saverquest_mvp/core/content/app_content_repository.dart';
 import 'package:flutter_saverquest_mvp/core/crash/crash_reporter.dart';
 import 'package:flutter_saverquest_mvp/core/localization/app_locale_controller.dart';
+import 'package:flutter_saverquest_mvp/core/ledger/ledger_controller.dart';
+import 'package:flutter_saverquest_mvp/core/ledger/ledger_month_controller.dart';
+import 'package:flutter_saverquest_mvp/core/ledger/ledger_models.dart';
+import 'package:flutter_saverquest_mvp/core/ledger/ledger_presentation_service.dart';
+import 'package:flutter_saverquest_mvp/core/ledger/ledger_view_data_factory.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes.dart';
@@ -88,6 +93,20 @@ _buildDependencies({ConsentState? consentState}) async {
       localeController: localeController,
       crashReporter: CrashReporter(logger: logger),
       contentRepository: const StaticAppContentRepository(),
+      ledgerController: LedgerController(
+        repository: InMemoryLedgerRepository(
+          snapshot: const LedgerSnapshot(
+            entries: [],
+            monthlyBudgetAmount: 350000,
+          ),
+        ),
+        logger: logger,
+      ),
+      ledgerMonthController: LedgerMonthController(
+        initialMonth: DateTime.now(),
+      ),
+      ledgerPresentationService: const LedgerPresentationService(),
+      ledgerViewDataFactory: const LedgerViewDataFactory(),
       logger: logger,
     ),
     consentController: consentController,

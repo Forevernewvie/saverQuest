@@ -236,6 +236,270 @@ class AppMetricPill extends StatelessWidget {
   }
 }
 
+/// Arranges one or two child panes based on the current responsive breakpoint.
+class AppResponsiveTwoPane extends StatelessWidget {
+  const AppResponsiveTwoPane({
+    super.key,
+    required this.primary,
+    required this.secondary,
+    this.primaryFlex = 1,
+    this.secondaryFlex = 1,
+    this.spacing = AppSpacing.m,
+    this.margin = EdgeInsets.zero,
+  });
+
+  final Widget primary;
+  final Widget secondary;
+  final int primaryFlex;
+  final int secondaryFlex;
+  final double spacing;
+  final EdgeInsetsGeometry margin;
+
+  /// Builds stacked panes on compact layouts and side-by-side panes on wide layouts.
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: margin,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useTwoPane = AdaptiveLayout.useTwoPaneLayout(
+            context,
+            constraints.maxWidth,
+          );
+
+          if (!useTwoPane) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                primary,
+                SizedBox(height: spacing),
+                secondary,
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: primaryFlex, child: primary),
+              SizedBox(width: spacing),
+              Expanded(flex: secondaryFlex, child: secondary),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Renders a compact month-navigation control for ledger dashboards.
+class AppMonthSwitcher extends StatelessWidget {
+  const AppMonthSwitcher({
+    super.key,
+    required this.label,
+    required this.onPrevious,
+    required this.onNext,
+    required this.onReset,
+    required this.nextEnabled,
+  });
+
+  final String label;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
+  final VoidCallback onReset;
+  final bool nextEnabled;
+
+  /// Builds the shared month switcher used by report-style screens.
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.m),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: _surfaceDecoration(
+        fillColor: AppColors.surfaceAlt,
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: onPrevious,
+            tooltip: l10n.monthSwitcherPreviousSemantic,
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                TextButton(
+                  onPressed: onReset,
+                  child: Text(l10n.monthSwitcherCurrentAction),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: nextEnabled ? onNext : null,
+            tooltip: l10n.monthSwitcherNextSemantic,
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Renders a wrap of selectable filter chips for report exploration.
+class AppFilterChips extends StatelessWidget {
+  const AppFilterChips({
+    super.key,
+    required this.options,
+    required this.onSelected,
+  });
+
+  final List<({String label, bool selected, Object? value})> options;
+  final ValueChanged<Object?> onSelected;
+
+  /// Builds the reusable chip row for category-style filters.
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.s,
+      runSpacing: AppSpacing.s,
+      children: options
+          .map(
+            (option) => ChoiceChip(
+              label: Text(option.label),
+              selected: option.selected,
+              onSelected: (_) => onSelected(option.value),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+/// Carries the display data for one category row inside a compact chart.
+class AppCategoryBarChartRowData {
+  /// Creates an immutable chart row model.
+  const AppCategoryBarChartRowData({
+    required this.icon,
+    required this.label,
+    required this.amount,
+    required this.progress,
+    required this.highlighted,
+  });
+
+  final IconData icon;
+  final String label;
+  final String amount;
+  final double progress;
+  final bool highlighted;
+}
+
+/// Renders a compact horizontal category chart for finance reports.
+class AppCategoryBarChartCard extends StatelessWidget {
+  const AppCategoryBarChartCard({super.key, required this.rows});
+
+  final List<AppCategoryBarChartRowData> rows;
+
+  /// Builds the reusable category distribution chart surface.
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.m),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: _surfaceDecoration(
+        fillColor: AppColors.surface,
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: Column(
+        children: rows
+            .map(
+              (row) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.m),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: AppUiTokens.featureIconContainerSize,
+                      height: AppUiTokens.featureIconContainerSize,
+                      decoration: _surfaceDecoration(
+                        fillColor: AppColors.surfaceAlt,
+                        borderRadius: AppUiTokens.cardCornerRadius,
+                        showBorder: false,
+                      ),
+                      child: Icon(
+                        row.icon,
+                        color: row.highlighted
+                            ? AppColors.accent
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.m),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  row.label,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: row.highlighted
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.s),
+                              Text(
+                                row.amount,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.s),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: LinearProgressIndicator(
+                              minHeight: 10,
+                              value: row.progress.clamp(0, 1),
+                              backgroundColor: AppColors.surfaceMuted,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                row.highlighted
+                                    ? AppColors.accent
+                                    : AppColors.border,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
 /// Builds the accent icon chip used inside hero cards.
 class AppHeroIcon extends StatelessWidget {
   const AppHeroIcon({super.key, required this.icon});
@@ -529,51 +793,78 @@ class AppQuickActionCard extends StatelessWidget {
                 constraints: const BoxConstraints(
                   minHeight: AppUiTokens.quickActionMinHeight,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final useStackedTrailing =
+                        trailingValue != null &&
+                        AdaptiveLayout.useStackedLayout(
+                          context,
+                          constraints.maxWidth,
+                        );
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: AppUiTokens.heroIconContainerSize,
-                          height: AppUiTokens.heroIconContainerSize,
-                          decoration: _surfaceDecoration(
-                            fillColor: AppColors.accentSoft,
-                            borderRadius: AppUiTokens.cardCornerRadius,
-                            showBorder: false,
-                          ),
-                          child: Icon(icon, color: AppColors.accent),
-                        ),
-                        const SizedBox(width: AppSpacing.m),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                label,
-                                style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: AppUiTokens.heroIconContainerSize,
+                              height: AppUiTokens.heroIconContainerSize,
+                              decoration: _surfaceDecoration(
+                                fillColor: AppColors.accentSoft,
+                                borderRadius: AppUiTokens.cardCornerRadius,
+                                showBorder: false,
+                              ),
+                              child: Icon(icon, color: AppColors.accent),
+                            ),
+                            const SizedBox(width: AppSpacing.m),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    label,
+                                    style: const TextStyle(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  if (categoryLabel != null) ...[
+                                    const SizedBox(height: AppSpacing.xs),
+                                    Text(
+                                      categoryLabel!,
+                                      style: const TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            if (trailingValue != null &&
+                                !useStackedTrailing) ...[
+                              const SizedBox(width: AppSpacing.s),
+                              Flexible(
+                                child: Text(
+                                  trailingValue!,
+                                  style: const TextStyle(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (categoryLabel != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                Text(
-                                  categoryLabel!,
-                                  style: const TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
                             ],
-                          ),
+                          ],
                         ),
-                        if (trailingValue != null) ...[
-                          const SizedBox(width: AppSpacing.s),
+                        if (trailingValue != null && useStackedTrailing) ...[
+                          const SizedBox(height: AppSpacing.s),
                           Text(
                             trailingValue!,
                             style: const TextStyle(
@@ -582,39 +873,540 @@ class AppQuickActionCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.m),
-                    Text(
-                      body,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.l),
-                    Row(
-                      children: [
+                        const SizedBox(height: AppSpacing.m),
                         Text(
-                          l10n.homeQuickActionOpenLabel,
+                          body,
                           style: const TextStyle(
                             color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
+                            height: 1.5,
                           ),
                         ),
-                        const Spacer(),
-                        const Icon(
-                          Icons.arrow_forward_rounded,
-                          color: AppColors.textSecondary,
+                        const SizedBox(height: AppSpacing.l),
+                        Row(
+                          children: [
+                            Text(
+                              l10n.homeQuickActionOpenLabel,
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Renders an empty-state surface with one primary message and supporting text.
+class AppEmptyStateCard extends StatelessWidget {
+  const AppEmptyStateCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.body,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  /// Builds a calm empty-state card for screens without user records yet.
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.s),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: _surfaceDecoration(
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: AppUiTokens.featureIconContainerSize,
+            height: AppUiTokens.featureIconContainerSize,
+            decoration: _surfaceDecoration(
+              fillColor: AppColors.surfaceAlt,
+              borderRadius: AppUiTokens.cardCornerRadius,
+              showBorder: false,
+            ),
+            child: Icon(icon, color: AppColors.accent),
+          ),
+          const SizedBox(height: AppSpacing.m),
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              height: 1.45,
+            ),
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: AppSpacing.m),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton(
+                onPressed: onAction,
+                child: Text(actionLabel!),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Renders a transaction row with category, note, date, and signed amount.
+class AppTransactionTile extends StatelessWidget {
+  const AppTransactionTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+    this.trailingAction,
+    this.onTap,
+    this.margin = const EdgeInsets.only(bottom: AppSpacing.s),
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String trailing;
+  final Widget? trailingAction;
+  final VoidCallback? onTap;
+  final EdgeInsetsGeometry margin;
+
+  /// Builds a compact transaction tile for recent activity sections.
+  @override
+  Widget build(BuildContext context) {
+    final shouldStackTrailing =
+        MediaQuery.sizeOf(context).width < 360 ||
+        MediaQuery.textScalerOf(context).scale(1) > 1.15;
+
+    final content = Padding(
+      padding: const EdgeInsets.all(AppSpacing.m),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: AppUiTokens.featureIconContainerSize,
+                height: AppUiTokens.featureIconContainerSize,
+                decoration: _surfaceDecoration(
+                  fillColor: AppColors.surfaceMuted,
+                  borderRadius: AppUiTokens.cardCornerRadius,
+                  showBorder: false,
+                ),
+                child: Icon(icon, color: AppColors.accent),
+              ),
+              const SizedBox(width: AppSpacing.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!shouldStackTrailing) ...[
+                const SizedBox(width: AppSpacing.m),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 72,
+                    maxWidth: 124,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        trailing,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (trailingAction != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        trailingAction!,
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (shouldStackTrailing) ...[
+            const SizedBox(height: AppSpacing.s),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    trailing,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (trailingAction != null) ...[
+                  const SizedBox(width: AppSpacing.s),
+                  trailingAction!,
+                ],
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+
+    return Container(
+      key: key,
+      margin: margin,
+      decoration: _surfaceDecoration(
+        fillColor: AppColors.surfaceAlt,
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
+          child: content,
+        ),
+      ),
+    );
+  }
+}
+
+/// Builds a non-scrollable transaction list using builder semantics for stability.
+class AppTransactionList extends StatelessWidget {
+  const AppTransactionList({
+    super.key,
+    required this.itemCount,
+    required this.itemBuilder,
+  });
+
+  final int itemCount;
+  final Widget Function(BuildContext context, int index) itemBuilder;
+
+  /// Builds a shrink-wrapped transaction list for embedding inside screen sections.
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: itemCount,
+      itemBuilder: itemBuilder,
+    );
+  }
+}
+
+/// Renders a bottom sheet with key transaction details and follow-up actions.
+class AppTransactionDetailSheet extends StatelessWidget {
+  const AppTransactionDetailSheet({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.amount,
+    required this.typeValue,
+    required this.categoryValue,
+    required this.dateValue,
+    required this.noteValue,
+    required this.hint,
+    this.onEdit,
+    this.onDelete,
+  });
+
+  final IconData icon;
+  final String title;
+  final String amount;
+  final String typeValue;
+  final String categoryValue;
+  final String dateValue;
+  final String noteValue;
+  final String hint;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  /// Builds the reusable bottom sheet used to inspect one transaction entry.
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.l,
+          AppSpacing.m,
+          AppSpacing.l,
+          AppSpacing.xl,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(
+                    AppUiTokens.borderPillRadius,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.l),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: AppUiTokens.heroIconContainerSize,
+                  height: AppUiTokens.heroIconContainerSize,
+                  decoration: _surfaceDecoration(
+                    fillColor: AppColors.surfaceAlt,
+                    borderRadius: AppUiTokens.surfaceCornerRadius,
+                    showBorder: false,
+                  ),
+                  child: Icon(icon, color: AppColors.accent),
+                ),
+                const SizedBox(width: AppSpacing.m),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        hint,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s),
+                Text(
+                  amount,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.l),
+            _AppDetailInfoRow(
+              label: AppLocalizations.of(context).toolDetailTypeLabel,
+              value: typeValue,
+            ),
+            _AppDetailInfoRow(
+              label: AppLocalizations.of(context).toolDetailCategoryLabel,
+              value: categoryValue,
+            ),
+            _AppDetailInfoRow(
+              label: AppLocalizations.of(context).toolDetailDateLabel,
+              value: dateValue,
+            ),
+            const SizedBox(height: AppSpacing.s),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.m),
+              decoration: _surfaceDecoration(
+                fillColor: AppColors.surfaceAlt,
+                borderRadius: AppUiTokens.surfaceCornerRadius,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).toolDetailNoteLabel,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    noteValue,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onEdit != null || onDelete != null) ...[
+              const SizedBox(height: AppSpacing.l),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final useRow = AdaptiveLayout.useTwoPaneLayout(
+                    context,
+                    constraints.maxWidth,
+                  );
+                  if (useRow) {
+                    return Row(
+                      children: [
+                        if (onEdit != null)
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: onEdit,
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                ).toolEditEntryAction,
+                              ),
+                            ),
+                          ),
+                        if (onEdit != null && onDelete != null)
+                          const SizedBox(width: AppSpacing.s),
+                        if (onDelete != null)
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: onDelete,
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                ).toolDeleteEntryAction,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      if (onEdit != null)
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: onEdit,
+                            child: Text(
+                              AppLocalizations.of(context).toolEditEntryAction,
+                            ),
+                          ),
+                        ),
+                      if (onEdit != null && onDelete != null)
+                        const SizedBox(height: AppSpacing.s),
+                      if (onDelete != null)
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: onDelete,
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              ).toolDeleteEntryAction,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Renders a compact label-value row inside the transaction detail sheet.
+class _AppDetailInfoRow extends StatelessWidget {
+  const _AppDetailInfoRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  /// Builds one metadata row with a muted label and primary value.
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.s),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.s),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

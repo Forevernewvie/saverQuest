@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/content/app_content_repository.dart';
+import '../../../core/design/adaptive_layout.dart';
 import '../../../core/design/app_spacing.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../widgets/common/app_blocks.dart';
@@ -30,11 +30,15 @@ class HomeBudgetOverviewSection extends StatelessWidget {
   /// Creates the budget overview section with home content and localization.
   const HomeBudgetOverviewSection({
     super.key,
-    required this.content,
+    required this.monthlyBudgetAmount,
+    required this.monthlyExpenseAmount,
+    required this.remainingBudgetAmount,
     required this.l10n,
   });
 
-  final HomeDashboardContent content;
+  final int monthlyBudgetAmount;
+  final int monthlyExpenseAmount;
+  final int remainingBudgetAmount;
   final AppLocalizations l10n;
 
   /// Builds the budget overview card with progress and summary figures.
@@ -43,15 +47,15 @@ class HomeBudgetOverviewSection extends StatelessWidget {
     return AppBudgetOverviewCard(
       title: l10n.homeBudgetOverviewTitle,
       body: l10n.homeBudgetOverviewBody,
-      progressValue: content.monthlySpentAmount / content.monthlyBudgetAmount,
+      progressValue: monthlyBudgetAmount <= 0
+          ? 0
+          : monthlyExpenseAmount / monthlyBudgetAmount,
       remainingLabel: l10n.homeStatRemainingLabel,
-      remainingValue: l10n.homeStatRemainingValue(
-        content.remainingBudgetAmount,
-      ),
+      remainingValue: l10n.homeStatRemainingValue(remainingBudgetAmount),
       spentLabel: l10n.homeBudgetSpentLabel,
-      spentValue: l10n.formatCurrency(content.monthlySpentAmount),
+      spentValue: l10n.formatCurrency(monthlyExpenseAmount),
       limitLabel: l10n.homeBudgetLimitLabel,
-      limitValue: l10n.formatCurrency(content.monthlyBudgetAmount),
+      limitValue: l10n.formatCurrency(monthlyBudgetAmount),
     );
   }
 }
@@ -70,25 +74,80 @@ class HomeQuickActionsSection extends StatelessWidget {
   final String subtitle;
   final List<HomeQuickActionItem> actions;
 
-  /// Builds a single-column quick-action stack optimized for mobile use.
+  /// Builds a single-column mobile stack or a two-column wide-screen action grid.
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppSectionHeader(title: title, subtitle: subtitle),
-        for (var index = 0; index < actions.length; index++) ...[
-          AppQuickActionCard(
-            icon: actions[index].icon,
-            label: actions[index].label,
-            categoryLabel: actions[index].categoryLabel,
-            trailingValue: actions[index].trailingValue,
-            body: actions[index].body,
-            onTap: actions[index].onTap,
-          ),
-          if (index < actions.length - 1) const SizedBox(height: AppSpacing.s),
-        ],
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useTwoPane = AdaptiveLayout.useTwoPaneLayout(
+          context,
+          constraints.maxWidth,
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppSectionHeader(title: title, subtitle: subtitle),
+            if (!useTwoPane)
+              for (var index = 0; index < actions.length; index++) ...[
+                AppQuickActionCard(
+                  icon: actions[index].icon,
+                  label: actions[index].label,
+                  categoryLabel: actions[index].categoryLabel,
+                  trailingValue: actions[index].trailingValue,
+                  body: actions[index].body,
+                  onTap: actions[index].onTap,
+                ),
+                if (index < actions.length - 1)
+                  const SizedBox(height: AppSpacing.s),
+              ]
+            else
+              ..._buildGridRows(),
+          ],
+        );
+      },
     );
+  }
+
+  /// Groups action cards into responsive two-column rows for wider screens.
+  List<Widget> _buildGridRows() {
+    final rows = <Widget>[];
+
+    for (var index = 0; index < actions.length; index += 2) {
+      final rowActions = actions.skip(index).take(2).toList();
+      rows.add(
+        Padding(
+          padding: EdgeInsets.only(
+            bottom: index + 2 < actions.length ? AppSpacing.s : 0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (
+                var itemIndex = 0;
+                itemIndex < rowActions.length;
+                itemIndex++
+              ) ...[
+                Expanded(
+                  child: AppQuickActionCard(
+                    icon: rowActions[itemIndex].icon,
+                    label: rowActions[itemIndex].label,
+                    categoryLabel: rowActions[itemIndex].categoryLabel,
+                    trailingValue: rowActions[itemIndex].trailingValue,
+                    body: rowActions[itemIndex].body,
+                    onTap: rowActions[itemIndex].onTap,
+                  ),
+                ),
+                if (itemIndex < rowActions.length - 1)
+                  const SizedBox(width: AppSpacing.s),
+              ],
+              if (rowActions.length == 1) const Expanded(child: SizedBox()),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return rows;
   }
 }

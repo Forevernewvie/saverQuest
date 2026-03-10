@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../ads/ad_result.dart';
 import '../content/app_content_repository.dart';
+import '../ledger/ledger_models.dart';
 
 class AppLocalizations {
   AppLocalizations(this.locale);
@@ -35,14 +36,14 @@ class AppLocalizations {
 
   String get homeTitle => _t('가계부 홈', 'Budget Home');
   String get homeHeroTitle =>
-      _t('이번 달 예산 흐름을 빠르게 확인하세요', 'See your budget flow at a glance');
+      _t('이번 달 지출과 예산을 한눈에 확인하세요', 'Track this month’s spending at a glance');
   String get homeHeroBody => _t(
-    '지출 계산, 주간 리포트, 절약 힌트를 한 화면에서 이어서 볼 수 있게 정리했습니다.',
-    'Your calculator, weekly report, and savings hints are organized into one clear budget dashboard.',
+    '월 예산, 최근 기록, 지출 인사이트를 한 화면에서 이어서 확인할 수 있도록 정리했습니다.',
+    'Monthly budget, recent records, and spending insights are organized into one clear ledger dashboard.',
   );
-  String get homeStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
+  String get homeStatSavingsLabel => _t('이번 달 지출', 'Spent this month');
   String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
-  String get homeStatStreakLabel => _t('연속 기록', 'Current streak');
+  String get homeStatStreakLabel => _t('이번 달 수입', 'Income this month');
   String get homeTodaySectionTitle =>
       _t('이번 달 예산 현황', 'Monthly budget overview');
   String get homeBudgetOverviewTitle => _t('예산 진행률', 'Budget progress');
@@ -52,50 +53,60 @@ class AppLocalizations {
   );
   String get homeBudgetSpentLabel => _t('사용 금액', 'Spent');
   String get homeBudgetLimitLabel => _t('예산 한도', 'Budget limit');
-  String get homeMissionTitle => _t('이번 주 제안', 'This week\'s suggestion');
-  String get homePrimaryAction => _t('절약 금액 계산하기', 'Estimate your savings');
+  String get homeMissionTitle => _t('가장 큰 지출 항목', 'Largest spending category');
+  String get homePrimaryAction => _t('거래 기록하기', 'Add transaction');
   String get homePrimaryActionSemantic =>
-      _t('절약 금액 계산하기 버튼', 'Estimate your savings button');
-  String get homeSecondaryAction => _t('주간 리포트 보기', 'View weekly report');
+      _t('거래 기록하기 버튼', 'Add transaction button');
+  String get homeSecondaryAction => _t('월간 리포트 보기', 'Open monthly report');
+  String get monthSwitcherPreviousSemantic =>
+      _t('이전 달 보기', 'Show previous month');
+  String get monthSwitcherNextSemantic => _t('다음 달 보기', 'Show next month');
+  String get monthSwitcherCurrentAction => _t('이번 달', 'Current month');
+  String get homeRecentEntriesTitle => _t('최근 기록', 'Recent activity');
+  String get homeRecentEntriesSubtitle => _t(
+    '가장 최근에 입력한 거래를 확인할 수 있습니다.',
+    'Review the latest transactions you recorded.',
+  );
+  String get homeEmptyRecordsTitle => _t('아직 기록이 없습니다', 'No records yet');
+  String get homeEmptyRecordsBody => _t(
+    '첫 지출이나 수입을 기록하면 이번 달 흐름이 여기서 바로 보입니다.',
+    'Once you record your first expense or income, this month’s flow will appear here.',
+  );
   String get homeQuickActionsTitle => _t('빠른 실행', 'Quick actions');
   String get homeQuickActionsSubtitle => _t(
-    '자주 쓰는 기능을 바로 열 수 있습니다.',
-    'Jump straight into the tools you use most.',
+    '기록, 리포트, 인사이트로 바로 이동할 수 있습니다.',
+    'Jump straight into entry, reports, and insights.',
   );
   String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
-  String get homeQuickCalcTag => _t('입력과 비교', 'Input and compare');
+  String get homeQuickCalcTag => _t('빠른 입력', 'Quick entry');
   String get homeQuickCalcBody => _t(
-    '반복 지출을 다른 선택지로 바꿨을 때 절약 금액을 바로 계산합니다.',
-    'Estimate savings instantly when you replace one repeated expense.',
+    '지출 또는 수입을 오늘 기준으로 빠르게 기록합니다.',
+    'Capture a new expense or income right away.',
   );
-  String get homeQuickReportTag => _t('주간 요약', 'Weekly summary');
+  String get homeQuickReportTag => _t('카테고리 합계', 'Category totals');
   String get homeQuickReportBody => _t(
-    '이번 주 절약 추세와 줄어든 카테고리를 요약해서 확인합니다.',
-    'Review this week’s savings trend and the categories that moved the most.',
+    '이번 달 지출과 수입 흐름을 카테고리 기준으로 정리해서 봅니다.',
+    'Review this month’s income and expense flow by category.',
   );
-  String get homeQuickInsightsTag => _t('다음 액션', 'Next move');
+  String get homeQuickInsightsTag => _t('패턴 점검', 'Pattern review');
   String get homeQuickInsightsBody => _t(
-    '소비 패턴을 바탕으로 다음에 줄일 항목을 빠르게 찾습니다.',
-    'Find the next category to cut based on your current spending pattern.',
+    '현재 기록을 바탕으로 어디를 먼저 조정할지 확인합니다.',
+    'See which category should be adjusted first.',
   );
-  String get navTool => _t('계산기', 'Calculator');
-  String get navReport => _t('리포트', 'Report');
+  String get navTool => _t('기록', 'Entry');
+  String get navReport => _t('월간 리포트', 'Report');
   String get navInsights => _t('인사이트', 'Insights');
 
-  String get insightsTitle => _t('소비 인사이트', 'Spending Insights');
-  String get insightsNoAdTitle => _t('집중해서 보기', 'Focus view');
+  String get insightsTitle => _t('가계부 인사이트', 'Ledger Insights');
+  String get insightsNoAdTitle => _t('이번 달 해석', 'This month at a glance');
   String get insightsNoAdBody => _t(
-    '이번 주 소비 흐름을 광고 없이 편하게 살펴볼 수 있어요.',
-    'Review this week’s spending patterns without distraction.',
+    '이번 달 기록을 기반으로 지출 패턴과 다음 액션을 정리합니다.',
+    'Review the spending pattern and next actions based on this month’s records.',
   );
-  String get insightsSegmentATitle =>
-      _t('이번 주에 잘한 점', 'What went well this week');
-  String get insightsSegmentBTitle => _t('다음으로 시도해볼 점', 'What to try next');
-  String get insightsResultTitle => _t('한줄 정리', 'Quick takeaway');
-  String get insightsResultBody => _t(
-    '지금 흐름이면 작은 반복 지출만 더 줄여도 목표에 더 빨리 도달할 수 있어요.',
-    'At this pace, trimming a few repeated small expenses can get you to your goal faster.',
-  );
+  String get insightsSegmentATitle => _t('가장 큰 지출 축', 'Largest expense driver');
+  String get insightsSegmentBTitle =>
+      _t('다음으로 볼 항목', 'Next category to review');
+  String get insightsResultTitle => _t('예산 상태', 'Budget status');
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
@@ -142,116 +153,118 @@ class AppLocalizations {
       _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
   String get onboardingLater => _t('나중에 설정에서 변경', 'Change later in Settings');
 
-  String get toolTitle => _t('절약 계산기', 'Savings Calculator');
-  String get toolHeroTitle => _t(
-    '반복 지출 하나만 바꿔도 얼마나 아낄 수 있을까요?',
-    'How much could you save by changing one repeated expense?',
-  );
+  String get toolTitle => _t('빠른 기록', 'Quick Entry');
+  String get toolHeroTitle =>
+      _t('지출과 수입을 빠르게 기록하세요', 'Capture an expense or income in a few seconds');
   String get toolHeroBody => _t(
-    '기존 금액, 대체 금액, 한 달 횟수를 입력하면 예상 절약 금액을 바로 확인할 수 있어요.',
-    'Enter the current amount, alternative amount, and monthly frequency to estimate your savings right away.',
+    '거래를 입력하고 월 예산을 조정하면 홈과 리포트가 바로 업데이트됩니다.',
+    'Add a transaction and adjust your monthly budget to update the dashboard right away.',
   );
-  String get toolInputSectionTitle => _t('계산할 항목 입력', 'Enter your numbers');
+  String get toolInputSectionTitle => _t('거래 입력', 'Transaction details');
   String get toolInputSectionBody => _t(
-    '자주 쓰는 지출 항목을 기준으로 입력해보세요.',
-    'Use one of your repeated spending habits as the example.',
+    '금액, 카테고리, 날짜를 입력해 지출이나 수입을 남길 수 있습니다.',
+    'Record an expense or income with amount, category, and date.',
   );
-  String get toolInterstitialRulesTitle => _t('계산 안내', 'Calculation guide');
-  String toolInterstitialRulesBody(int interval) => _t(
-    '자주 쓰는 지출 항목을 바꿨을 때 한 달에 얼마나 아낄 수 있는지 바로 확인할 수 있어요.',
-    'See how much you could save each month by changing one repeated expense.',
+  String get toolEntryTypeLabel => _t('거래 유형', 'Entry type');
+  String get toolExpenseType => _t('지출', 'Expense');
+  String get toolIncomeType => _t('수입', 'Income');
+  String get toolCategoryLabel => _t('카테고리', 'Category');
+  String get toolAmountLabel => _t('금액(원)', 'Amount (KRW)');
+  String get toolAmountHint => _t('예: 12500', 'Example: 12500');
+  String get toolNoteLabel => _t('메모', 'Note');
+  String get toolNoteHint => _t('예: 퇴근길 장보기', 'Example: after-work groceries');
+  String get toolDateLabel => _t('날짜', 'Date');
+  String get toolDateAction => _t('날짜 선택', 'Choose date');
+  String get toolSubmit => _t('거래 저장', 'Save entry');
+  String get toolSubmitSuccess => _t('거래를 저장했습니다.', 'Transaction saved.');
+  String get toolUpdateSubmit => _t('수정 내용 저장', 'Save changes');
+  String get toolUpdateSuccess => _t('거래를 수정했습니다.', 'Transaction updated.');
+  String get toolEditEntryAction => _t('수정', 'Edit');
+  String get toolDeleteEntryAction => _t('삭제', 'Delete');
+  String get toolDeleteDialogTitle =>
+      _t('이 거래를 삭제할까요?', 'Delete this transaction?');
+  String get toolDeleteDialogBody =>
+      _t('삭제한 거래는 다시 복구할 수 없습니다.', 'Deleted transactions cannot be restored.');
+  String get toolDeleteConfirm => _t('삭제하기', 'Delete');
+  String get toolDeleteCancel => _t('취소', 'Cancel');
+  String get toolDeleteSuccess => _t('거래를 삭제했습니다.', 'Transaction deleted.');
+  String get toolDetailTitle => _t('거래 상세', 'Transaction details');
+  String get toolDetailTypeLabel => _t('거래 유형', 'Entry type');
+  String get toolDetailCategoryLabel => _t('카테고리', 'Category');
+  String get toolDetailDateLabel => _t('기록 날짜', 'Recorded on');
+  String get toolDetailNoteLabel => _t('메모', 'Note');
+  String get toolDetailEmptyNote => _t('메모가 없습니다.', 'No note added.');
+  String get toolDetailSheetHint => _t(
+    '항목을 검토한 뒤 수정하거나 삭제할 수 있습니다.',
+    'Review this entry and edit or delete it if needed.',
   );
-  String get toolCurrentPriceLabel => _t('기존 금액(원)', 'Current price (KRW)');
-  String get toolAlternativePriceLabel =>
-      _t('대체 금액(원)', 'Alternative price (KRW)');
-  String get toolMonthlyCountLabel => _t('월 횟수', 'Monthly count');
-  String get toolCalculate => _t('절약 금액 계산', 'Calculate savings');
-  String get toolGoToReport => _t('리포트로 이동', 'Go to report');
-  String get toolSimulationResultTitle => _t('계산 결과', 'Calculation result');
-  String get toolMonthlyResultLabel => _t('한 달 기준', 'Per month');
-  String get toolYearlyResultLabel => _t('1년 기준', 'Per year');
-  String get toolEmptyResultBody => _t(
-    '금액을 입력하고 계산하면 예상 절약 금액이 여기에 표시됩니다.',
-    'Your estimated savings will appear here once you enter your numbers.',
+  String get toolEditingBannerTitle =>
+      _t('거래를 수정하는 중입니다', 'Editing an existing transaction');
+  String get toolEditingBannerBody => _t(
+    '내용을 바꾼 뒤 저장하면 기존 거래가 업데이트됩니다.',
+    'Save after making changes to update the existing transaction.',
   );
-  String toolSimulationResultBody({
-    required int monthlySavings,
-    required String latestStatus,
-  }) {
-    final monthlyLabel = formatCurrency(monthlySavings);
-    final yearlyLabel = formatCurrency(monthlySavings * 12);
-    return _t(
-      '한 달에 약 $monthlyLabel을 아낄 수 있어요.\n1년으로 보면 약 $yearlyLabel입니다.',
-      'You could save about $monthlyLabel each month.\nThat is about $yearlyLabel over a year.',
-    );
-  }
+  String get toolEditingCancel => _t('수정 취소', 'Cancel edit');
+  String get toolRecentRecordsTitle => _t('방금 기록한 항목', 'Latest entries');
+  String get toolRecentRecordsBody =>
+      _t('최근에 저장한 거래가 아래에 표시됩니다.', 'Recently saved entries are shown below.');
+  String get toolBudgetSectionTitle => _t('월 예산', 'Monthly budget');
+  String get toolBudgetSectionBody => _t(
+    '이번 달 지출 목표를 설정하면 홈과 인사이트에서 바로 반영됩니다.',
+    'Set the budget target for this month and the dashboard will reflect it right away.',
+  );
+  String get toolBudgetAmountLabel => _t('월 예산 금액', 'Monthly budget amount');
+  String get toolBudgetAmountHint => _t('예: 450000', 'Example: 450000');
+  String get toolBudgetSave => _t('예산 저장', 'Save budget');
+  String get toolBudgetSaved => _t('월 예산을 저장했습니다.', 'Monthly budget saved.');
+  String get toolAmountValidation => _t(
+    '금액은 1원 이상 숫자로 입력해야 합니다.',
+    'Enter a numeric amount greater than zero.',
+  );
+  String get toolBudgetValidation => _t(
+    '예산은 1원 이상 숫자로 입력해야 합니다.',
+    'Enter a numeric budget greater than zero.',
+  );
+  String get toolDateToday => _t('오늘', 'Today');
+  String get toolEmptyRecentTitle =>
+      _t('아직 저장한 거래가 없습니다', 'No recent entries yet');
+  String get toolEmptyRecentBody => _t(
+    '지출이나 수입을 한 건 저장하면 여기서 바로 확인할 수 있습니다.',
+    'Save your first expense or income to see it here.',
+  );
 
-  String get toolOnlyNumbersAllowed =>
-      _t('입력값은 숫자만 가능합니다.', 'Only numeric values are allowed.');
-  String get toolBeforePriceMustBeHigher => _t(
-    '기존 금액은 대체 금액보다 커야 합니다.',
-    'The current price must be greater than the alternative price.',
-  );
-  String get toolMonthlyCountMustBePositive =>
-      _t('월 횟수는 1 이상이어야 합니다.', 'Monthly count must be at least 1.');
-  String toolAdSkippedOrFailed(String status) => _t(
-    '광고를 불러오지 못했지만 계산 결과는 그대로 확인할 수 있어요.',
-    'The ad could not be loaded, but your result is still available.',
-  );
-
-  String get reportTitle => _t('주간 절약 리포트', 'Weekly Savings Report');
+  String get reportTitle => _t('월간 리포트', 'Monthly Report');
   String get reportHeroTitle =>
-      _t('이번 주 절약 흐름을 한눈에 확인해보세요', 'See your weekly savings trend at a glance');
+      _t('이번 달 지출과 수입 흐름을 정리했습니다', 'Your monthly income and spending summary');
   String get reportHeroBody => _t(
-    '요약부터 자세한 분석까지, 이번 주 소비 패턴을 차분하게 살펴볼 수 있어요.',
-    'From a quick summary to deeper analysis, review this week’s spending pattern in one place.',
+    '월 예산 대비 사용 금액, 카테고리별 지출, 최근 거래를 한 번에 확인할 수 있습니다.',
+    'Review budget usage, category totals, and recent transactions in one place.',
   );
-  String get reportStatSavingsLabel => _t('이번 주 절약', 'Saved this week');
-  String get reportStatTopCategoryLabel =>
-      _t('가장 크게 줄인 항목', 'Top reduced category');
-  String get reportStatDetailLabel => _t('상세 보기 상태', 'Detailed view');
-  String get reportDetailReadyValue => _t('열림', 'Open');
-  String get reportDetailLockedValue => _t('요약만 보기', 'Summary only');
-  String get reportDetailComingSoonValue => _t('준비 중', 'Coming soon');
-  String get reportRewardUnitMissing =>
-      _t('추가 리포트 기능을 준비 중입니다.', 'Detailed report access is being prepared.');
-  String reportRewardBlocked(String status) => _t(
-    '지금은 추가 리포트를 열 수 없어요. 잠시 후 다시 시도해주세요.',
-    'The detailed report is unavailable right now. Please try again shortly.',
+  String get reportStatSavingsLabel => _t('지출 합계', 'Expenses');
+  String get reportStatTopCategoryLabel => _t('수입 합계', 'Income');
+  String get reportStatDetailLabel => _t('월간 잔액', 'Balance');
+  String get reportSummaryTitle => _t('카테고리별 지출', 'Spending by category');
+  String get reportChartTitle => _t('지출 비중', 'Spending distribution');
+  String get reportChartSubtitle => _t(
+    '이번 달 지출 카테고리를 비중 순서로 살펴보세요.',
+    'Review this month’s expense categories in descending order.',
   );
-  String get reportFreeSummaryTitle => _t('이번 주 요약', 'This week at a glance');
-  String get reportUnlockedTitle => _t('상세 분석', 'Detailed insights');
-  String get reportLockedTitle => _t('더 자세히 보기', 'See more detail');
-  String get reportUnlockedBody => _t(
-    '더 자세한 절약 흐름과 카테고리 분석을 확인할 수 있어요.',
-    'You can now view deeper savings trends and category analysis.',
+  String get reportFilterTitle => _t('카테고리 필터', 'Category filter');
+  String get reportFilterSubtitle => _t(
+    '최근 거래를 원하는 카테고리 기준으로 좁혀볼 수 있습니다.',
+    'Narrow recent transactions by category when needed.',
   );
-  String get reportUnlockedTrendTitle => _t('카테고리 흐름', 'Category trend');
-  String get reportUnlockedFocusTitle => _t('다음 주 집중 포인트', 'Next-week focus');
-  String get reportLockedBody => _t(
-    '광고를 보고 더 자세한 절약 분석을 확인할 수 있어요.',
-    'Watch an ad to open a more detailed savings view.',
+  String get reportFilterAllLabel => _t('전체', 'All');
+  String get reportRecentEntriesTitle => _t('최근 거래', 'Recent transactions');
+  String get reportBudgetStatusTitle => _t('예산 상태', 'Budget status');
+  String get reportEmptyTitle =>
+      _t('이번 달 기록이 없습니다', 'No transactions this month');
+  String get reportEmptyBody => _t(
+    '지출이나 수입을 기록하면 카테고리별 합계와 최근 거래가 이 화면에 표시됩니다.',
+    'Once you add expenses or income, category totals and recent transactions will appear here.',
   );
-  String get reportPreviewTitle =>
-      _t('상세 리포트 준비 중', 'Detailed report is on the way');
-  String get reportPreviewBody => _t(
-    '지금은 요약과 인사이트 중심으로 확인할 수 있어요. 상세 리포트는 다음 업데이트에서 더 자연스럽게 제공될 예정입니다.',
-    'For now, the experience focuses on the summary and insights. A deeper report will arrive in a future update.',
-  );
-  String get reportPreviewAction => _t('인사이트 먼저 보기', 'Open insights instead');
-  String get reportLoadingAd => _t('광고 로딩 중...', 'Loading ad...');
-  String get reportWatchAd => _t('광고 보고 자세히 보기', 'Watch ad and continue');
-  String get reportKeepSummary => _t('지금은 요약만 보기', 'Keep the summary for now');
-  String get reportFlowTitle => _t('이용 안내', 'How it works');
-  String get reportNextSectionTitle => _t('다음 단계', 'Next step');
-  String get reportNextSectionBody => _t(
-    '계산기에서 자주 쓰는 지출을 먼저 정리하고, 인사이트 화면에서 다음 절약 힌트를 확인해보세요.',
-    'Start with the calculator for one repeated expense, then use Insights to decide your next savings move.',
-  );
-  String reportFlowBody(String status) => _t(
-    '광고를 본 뒤 바로 더 자세한 리포트를 확인할 수 있어요. 원하지 않으면 요약만 보고 넘어가도 됩니다.',
-    'After watching the ad, you can open a more detailed report right away. You can also stay with the summary if you prefer.',
-  );
+  String reportEntryCountLabel(int count) =>
+      _t('지출 $count건', '$count expense entries');
 
   String get settingsTitle => _t('개인정보 및 앱 설정', 'Privacy & app settings');
   String get settingsHeroBody => _t(
@@ -382,8 +395,8 @@ class AppLocalizations {
   );
 
   String get insightsHeroBody => _t(
-    '이번 주 소비 흐름에서 바로 적용할 수 있는 절약 힌트를 정리했어요.',
-    'Here are practical savings hints based on this week’s spending pattern.',
+    '기록된 거래를 바탕으로 예산 압박 구간과 다음 조정 포인트를 정리했습니다.',
+    'Here are the categories putting pressure on your budget and the next actions to take.',
   );
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';
@@ -396,6 +409,60 @@ class AppLocalizations {
 
   /// Formats a streak duration for the active locale.
   String formatDays(int days) => _isKorean ? '$days일' : '$days days';
+
+  /// Formats a compact month-day label for transaction rows.
+  String formatShortDate(DateTime date) {
+    return _isKorean
+        ? '${date.month}월 ${date.day}일'
+        : '${_englishMonth(date.month)} ${date.day}';
+  }
+
+  /// Formats a month label used by dashboard navigation surfaces.
+  String formatMonthYear(DateTime date) {
+    return _isKorean
+        ? '${date.year}년 ${date.month}월'
+        : '${_englishMonth(date.month)} ${date.year}';
+  }
+
+  /// Returns the localized label for a ledger entry type.
+  String ledgerEntryTypeLabel(LedgerEntryType type) {
+    return switch (type) {
+      LedgerEntryType.expense => _t('지출', 'Expense'),
+      LedgerEntryType.income => _t('수입', 'Income'),
+    };
+  }
+
+  /// Returns the localized label for a ledger category.
+  String ledgerCategoryLabel(LedgerCategory category) {
+    return switch (category) {
+      LedgerCategory.groceries => _t('식비', 'Groceries'),
+      LedgerCategory.dining => _t('외식', 'Dining'),
+      LedgerCategory.transport => _t('교통', 'Transport'),
+      LedgerCategory.coffee => _t('커피', 'Coffee'),
+      LedgerCategory.shopping => _t('쇼핑', 'Shopping'),
+      LedgerCategory.housing => _t('주거', 'Housing'),
+      LedgerCategory.subscriptions => _t('구독', 'Subscriptions'),
+      LedgerCategory.health => _t('건강', 'Health'),
+      LedgerCategory.entertainment => _t('여가', 'Entertainment'),
+      LedgerCategory.salary => _t('급여', 'Salary'),
+      LedgerCategory.freelance => _t('부수입', 'Freelance'),
+      LedgerCategory.savings => _t('저축', 'Savings'),
+    };
+  }
+
+  /// Joins localized ledger category labels for compact summaries.
+  String ledgerCategoryList(Iterable<LedgerCategory> categories) {
+    return categories.map(ledgerCategoryLabel).join(', ');
+  }
+
+  /// Formats a signed amount for a transaction based on its entry type.
+  String formatSignedCurrency({
+    required LedgerEntryType type,
+    required int amount,
+  }) {
+    final prefix = type == LedgerEntryType.expense ? '-' : '+';
+    return '$prefix${formatCurrency(amount)}';
+  }
 
   /// Returns the localized label for a supported spending category.
   String spendingCategoryLabel(SpendingCategory category) {
@@ -423,6 +490,96 @@ class AppLocalizations {
 
   /// Returns the localized goal-progress value.
   String homeStatGoalValue(int progressPercent) => '$progressPercent%';
+
+  /// Builds the home top-category body from the category and amount.
+  String homeTopCategoryBody({
+    required LedgerCategory? category,
+    required int amount,
+  }) {
+    if (category == null) {
+      return _t(
+        '지금은 가장 큰 지출 항목을 계산할 기록이 부족합니다.',
+        'There is not enough data yet to identify the largest spending category.',
+      );
+    }
+
+    return _t(
+      '${ledgerCategoryLabel(category)} 항목이 ${formatCurrency(amount)}으로 가장 큰 비중을 차지하고 있어요.',
+      '${ledgerCategoryLabel(category)} is the largest expense so far at ${formatCurrency(amount)}.',
+    );
+  }
+
+  /// Builds the report budget status body from remaining budget and balance.
+  String reportBudgetStatusBody({
+    required int remainingBudgetAmount,
+    required int balanceAmount,
+  }) {
+    final remainingLabel = formatCurrency(remainingBudgetAmount.abs());
+    final balanceLabel = formatCurrency(balanceAmount.abs());
+
+    if (remainingBudgetAmount >= 0) {
+      return _t(
+        '예산에서 $remainingLabel이 남아 있습니다. 월간 잔액은 ${balanceAmount >= 0 ? '+' : '-'}$balanceLabel입니다.',
+        'You still have $remainingLabel left in the budget. Your monthly balance is ${balanceAmount >= 0 ? '+' : '-'}$balanceLabel.',
+      );
+    }
+
+    return _t(
+      '예산을 $remainingLabel 초과했습니다. 월간 잔액은 ${balanceAmount >= 0 ? '+' : '-'}$balanceLabel입니다.',
+      'You are $remainingLabel over budget. Your monthly balance is ${balanceAmount >= 0 ? '+' : '-'}$balanceLabel.',
+    );
+  }
+
+  /// Builds the primary insight narrative from the highest expense category.
+  String insightsPrimaryBodyFor({
+    required LedgerCategory? topExpenseCategory,
+    required int monthlyExpenseAmount,
+  }) {
+    if (topExpenseCategory == null) {
+      return _t(
+        '기록이 충분하지 않아 가장 큰 지출 축을 아직 판단할 수 없습니다.',
+        'There is not enough data yet to identify the main expense driver.',
+      );
+    }
+
+    return _t(
+      '${ledgerCategoryLabel(topExpenseCategory)} 항목이 이번 달 ${formatCurrency(monthlyExpenseAmount)} 지출 흐름에서 가장 큰 영향을 주고 있어요.',
+      '${ledgerCategoryLabel(topExpenseCategory)} is currently the biggest driver in your ${formatCurrency(monthlyExpenseAmount)} monthly spending.',
+    );
+  }
+
+  /// Builds the secondary insight narrative from the next category to review.
+  String insightsSecondaryBodyFor({
+    required LedgerCategory? secondaryExpenseCategory,
+    required int recentExpenseCount,
+  }) {
+    if (secondaryExpenseCategory == null) {
+      return _t(
+        '거래가 더 쌓이면 다음으로 점검할 카테고리를 더 정확하게 제안할 수 있어요.',
+        'Record more transactions and the app will suggest the next category to review more accurately.',
+      );
+    }
+
+    return _t(
+      '최근 $recentExpenseCount건의 지출을 보면 ${ledgerCategoryLabel(secondaryExpenseCategory)} 항목도 함께 점검할 가치가 있어요.',
+      'Across your last $recentExpenseCount expense records, ${ledgerCategoryLabel(secondaryExpenseCategory)} also looks worth reviewing.',
+    );
+  }
+
+  /// Builds the budget insight narrative from the remaining budget state.
+  String insightsBudgetBodyFor(int remainingBudgetAmount) {
+    if (remainingBudgetAmount >= 0) {
+      return _t(
+        '이번 달 예산에서 ${formatCurrency(remainingBudgetAmount)}이 남아 있습니다. 지금 속도를 유지하면 월말까지 안정적으로 관리할 수 있어요.',
+        '${formatCurrency(remainingBudgetAmount)} remains in this month’s budget. If you keep this pace, the month should stay stable.',
+      );
+    }
+
+    return _t(
+      '이번 달 예산을 ${formatCurrency(remainingBudgetAmount.abs())} 초과했습니다. 큰 지출 카테고리부터 먼저 조정하는 편이 좋습니다.',
+      'You are ${formatCurrency(remainingBudgetAmount.abs())} over budget this month. Start by adjusting the largest expense category first.',
+    );
+  }
 
   /// Builds the home mission body from a category and savings amount.
   String homeMissionBodyForCategory({
@@ -519,6 +676,25 @@ class AppLocalizations {
       case null:
         return _t('없음', 'none');
     }
+  }
+
+  /// Returns an English month abbreviation used in compact date labels.
+  String _englishMonth(int month) {
+    const labels = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return labels[month - 1];
   }
 
   String _t(String korean, String english) {
