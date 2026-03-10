@@ -16,4 +16,10 @@ class AdaptiveLayout {
     return availableWidth <= AppUiTokens.compactLayoutWidth ||
         textScale(context) >= AppUiTokens.largeTextScaleThreshold;
   }
+
+  /// Returns whether content can safely switch to a two-pane layout.
+  static bool useTwoPaneLayout(BuildContext context, double availableWidth) {
+    return availableWidth >= AppUiTokens.twoPaneLayoutWidth &&
+        textScale(context) < AppUiTokens.largeTextScaleThreshold;
+  }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/ads/ad_guardrails.dart';
 import '../core/ads/admob_ids.dart';
@@ -15,6 +16,11 @@ import '../core/consent/att_transparency_service.dart';
 import '../core/consent/consent_controller.dart';
 import '../core/crash/crash_reporter.dart';
 import '../core/localization/app_locale_controller.dart';
+import '../core/ledger/ledger_controller.dart';
+import '../core/ledger/ledger_month_controller.dart';
+import '../core/ledger/ledger_presentation_service.dart';
+import '../core/ledger/ledger_repository.dart';
+import '../core/ledger/ledger_view_data_factory.dart';
 import '../core/logging/app_logger.dart';
 import 'app_dependencies.dart';
 
@@ -50,6 +56,15 @@ class AppBootstrapper {
 
     final localeController = AppLocaleController();
     await localeController.initialize();
+
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final ledgerController = LedgerController(
+      repository: SharedPreferencesLedgerRepository(
+        preferences: sharedPreferences,
+      ),
+      logger: logger,
+    );
+    await ledgerController.initialize();
 
     final consentController = ConsentController(
       analyticsService: analyticsService,
@@ -87,6 +102,10 @@ class AppBootstrapper {
       localeController: localeController,
       crashReporter: crashReporter,
       contentRepository: const StaticAppContentRepository(),
+      ledgerController: ledgerController,
+      ledgerMonthController: LedgerMonthController(),
+      ledgerPresentationService: const LedgerPresentationService(),
+      ledgerViewDataFactory: const LedgerViewDataFactory(),
       logger: logger,
     );
   }
