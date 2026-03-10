@@ -8,6 +8,10 @@ import '../core/consent/att_transparency_service.dart';
 import '../core/consent/consent_controller.dart';
 import '../core/crash/crash_reporter.dart';
 import '../core/localization/app_locale_controller.dart';
+import '../core/ledger/ledger_controller.dart';
+import '../core/ledger/ledger_month_controller.dart';
+import '../core/ledger/ledger_presentation_service.dart';
+import '../core/ledger/ledger_view_data_factory.dart';
 import '../core/logging/app_logger.dart';
 
 class AppDependencies {
@@ -22,6 +26,10 @@ class AppDependencies {
     required this.localeController,
     required this.crashReporter,
     required this.contentRepository,
+    required this.ledgerController,
+    required this.ledgerMonthController,
+    required this.ledgerPresentationService,
+    required this.ledgerViewDataFactory,
     required this.logger,
   });
 
@@ -35,5 +43,9 @@ class AppDependencies {
   final AppLocaleController localeController;
   final CrashReporter crashReporter;
   final AppContentRepository contentRepository;
+  final LedgerController ledgerController;
+  final LedgerMonthController ledgerMonthController;
+  final LedgerPresentationService ledgerPresentationService;
+  final LedgerViewDataFactory ledgerViewDataFactory;
   final AppLogger logger;
 }
