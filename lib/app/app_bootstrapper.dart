@@ -176,6 +176,15 @@ class AppBootstrapper {
 
   /// Tries to initialize Firebase and degrades gracefully when config is absent.
   Future<bool> _tryInitializeFirebase() async {
+    if (!runtimeOptions.enableFirebase) {
+      logger.info(
+        'Firebase disabled by runtime options. Continuing without Firebase.',
+        scope: 'bootstrap',
+        metadata: {'environment': runtimeOptions.environment.name},
+      );
+      return false;
+    }
+
     try {
       await Firebase.initializeApp();
       logger.info(

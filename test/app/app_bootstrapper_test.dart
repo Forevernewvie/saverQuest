@@ -116,6 +116,7 @@ void main() {
   const runtimeOptions = AppRuntimeOptions(
     environment: AppEnvironment.dev,
     adTestDeviceIds: [],
+    enableFirebase: false,
   );
 
   setUp(() {
