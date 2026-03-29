@@ -34,6 +34,7 @@ class _TestConsentController extends ConsentController {
 
   final ConsentState _state;
   int showPrivacyOptionsCalls = 0;
+  bool throwOnFirstPrivacyOptionsOpen = false;
 
   @override
   ConsentState get state => _state;
@@ -47,6 +48,9 @@ class _TestConsentController extends ConsentController {
   @override
   Future<void> showPrivacyOptionsForm() async {
     showPrivacyOptionsCalls += 1;
+    if (throwOnFirstPrivacyOptionsOpen && showPrivacyOptionsCalls == 1) {
+      throw StateError('modal failed');
+    }
   }
 }
 
@@ -221,4 +225,42 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'privacy options action resets after an exception so user can retry',
+    (tester) async {
+      final context = await _buildDependencies(
+        consentState: const ConsentState(
+          initialized: true,
+          canRequestAds: true,
+          serveNonPersonalizedAds: false,
+          privacyOptionsRequired: true,
+        ),
+      );
+      context.consentController.throwOnFirstPrivacyOptionsOpen = true;
+
+      await tester.pumpWidget(
+        WidgetTestApp(
+          locale: const Locale('ko'),
+          home: SettingsPage(dependencies: context.dependencies),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final privacyOptionsAction = find.text('개인정보 설정 변경').first;
+
+      await tester.ensureVisible(privacyOptionsAction);
+      await tester.tap(privacyOptionsAction);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('개인정보 설정 변경 실패:'), findsOneWidget);
+
+      await tester.ensureVisible(privacyOptionsAction);
+      await tester.tap(privacyOptionsAction, warnIfMissed: false);
+      await tester.pumpAndSettle();
+
+      expect(context.consentController.showPrivacyOptionsCalls, 2);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    },
+  );
 }

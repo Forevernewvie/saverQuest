@@ -30,6 +30,7 @@ class _TestConsentController extends ConsentController {
   final ConsentState _state;
   int refreshCalls = 0;
   int gatherCalls = 0;
+  bool throwOnFirstRefresh = false;
 
   @override
   ConsentState get state => _state;
@@ -37,6 +38,9 @@ class _TestConsentController extends ConsentController {
   @override
   Future<void> refreshConsent() async {
     refreshCalls += 1;
+    if (throwOnFirstRefresh && refreshCalls == 1) {
+      throw StateError('network unavailable');
+    }
   }
 
   @override
@@ -146,4 +150,25 @@ void main() {
 
     expect(find.text('가계부 홈'), findsOneWidget);
   });
+
+  testWidgets(
+    'recovers from bootstrap failure without leaving onboarding stuck',
+    (tester) async {
+      final context = await _buildDependencies();
+      context.consentController.throwOnFirstRefresh = true;
+
+      await tester.pumpWidget(
+        SaverQuestApp(dependencies: context.dependencies),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('준비 중...'), findsNothing);
+
+      await tester.tap(find.text('계속하기'));
+      await tester.pumpAndSettle();
+
+      expect(context.consentController.refreshCalls, 2);
+      expect(find.text('가계부 홈'), findsOneWidget);
+    },
+  );
 }

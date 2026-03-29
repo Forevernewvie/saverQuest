@@ -183,10 +183,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.textContaining('Bought a very long weekly h…'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Bought a very long weekly h…'), findsOneWidget);
     expect(find.textContaining('bundle for the entire month'), findsNothing);
     expect(find.byType(HomePage), findsOneWidget);
     expect(tester.takeException(), isNull);

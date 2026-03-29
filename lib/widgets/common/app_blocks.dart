@@ -321,38 +321,75 @@ class AppMonthSwitcher extends StatelessWidget {
         fillColor: AppColors.surfaceAlt,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onPrevious,
-            tooltip: l10n.monthSwitcherPreviousSemantic,
-            icon: const Icon(Icons.chevron_left),
-          ),
-          Expanded(
-            child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useStackedLayout =
+              AdaptiveLayout.useStackedLayout(context, constraints.maxWidth) ||
+              MediaQuery.textScalerOf(context).scale(1) > 1.1;
+
+          final monthLabel = Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          );
+          final resetButton = TextButton(
+            onPressed: onReset,
+            child: Text(l10n.monthSwitcherCurrentAction),
+          );
+
+          if (useStackedLayout) {
+            return Column(
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                monthLabel,
                 const SizedBox(height: AppSpacing.xs),
-                TextButton(
-                  onPressed: onReset,
-                  child: Text(l10n.monthSwitcherCurrentAction),
+                resetButton,
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: onPrevious,
+                      tooltip: l10n.monthSwitcherPreviousSemantic,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    IconButton(
+                      onPressed: nextEnabled ? onNext : null,
+                      tooltip: l10n.monthSwitcherNextSemantic,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ),
-          IconButton(
-            onPressed: nextEnabled ? onNext : null,
-            tooltip: l10n.monthSwitcherNextSemantic,
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
+            );
+          }
+
+          return Row(
+            children: [
+              IconButton(
+                onPressed: onPrevious,
+                tooltip: l10n.monthSwitcherPreviousSemantic,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    monthLabel,
+                    const SizedBox(height: AppSpacing.xs),
+                    resetButton,
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: nextEnabled ? onNext : null,
+                tooltip: l10n.monthSwitcherNextSemantic,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -1006,106 +1043,6 @@ class AppTransactionTile extends StatelessWidget {
   /// Builds a compact transaction tile for recent activity sections.
   @override
   Widget build(BuildContext context) {
-    final shouldStackTrailing =
-        MediaQuery.sizeOf(context).width < 360 ||
-        MediaQuery.textScalerOf(context).scale(1) > 1.15;
-
-    final content = Padding(
-      padding: const EdgeInsets.all(AppSpacing.m),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: AppUiTokens.featureIconContainerSize,
-                height: AppUiTokens.featureIconContainerSize,
-                decoration: _surfaceDecoration(
-                  fillColor: AppColors.surfaceMuted,
-                  borderRadius: AppUiTokens.cardCornerRadius,
-                  showBorder: false,
-                ),
-                child: Icon(icon, color: AppColors.accent),
-              ),
-              const SizedBox(width: AppSpacing.m),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (!shouldStackTrailing) ...[
-                const SizedBox(width: AppSpacing.m),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 72,
-                    maxWidth: 124,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        trailing,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.right,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (trailingAction != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        trailingAction!,
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          if (shouldStackTrailing) ...[
-            const SizedBox(height: AppSpacing.s),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    trailing,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                if (trailingAction != null) ...[
-                  const SizedBox(width: AppSpacing.s),
-                  trailingAction!,
-                ],
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-
     return Container(
       key: key,
       margin: margin,
@@ -1118,7 +1055,112 @@ class AppTransactionTile extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
-          child: content,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final shouldStackTrailing =
+                  AdaptiveLayout.useStackedLayout(
+                    context,
+                    constraints.maxWidth,
+                  ) ||
+                  MediaQuery.textScalerOf(context).scale(1) > 1.15;
+
+              return Padding(
+                padding: const EdgeInsets.all(AppSpacing.m),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: AppUiTokens.featureIconContainerSize,
+                          height: AppUiTokens.featureIconContainerSize,
+                          decoration: _surfaceDecoration(
+                            fillColor: AppColors.surfaceMuted,
+                            borderRadius: AppUiTokens.cardCornerRadius,
+                            showBorder: false,
+                          ),
+                          child: Icon(icon, color: AppColors.accent),
+                        ),
+                        const SizedBox(width: AppSpacing.m),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                subtitle,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (!shouldStackTrailing) ...[
+                          const SizedBox(width: AppSpacing.m),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              minWidth: 72,
+                              maxWidth: 124,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  trailing,
+                                  style: const TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (trailingAction != null) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  trailingAction!,
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (shouldStackTrailing) ...[
+                      const SizedBox(height: AppSpacing.s),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              trailing,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          if (trailingAction != null) ...[
+                            const SizedBox(width: AppSpacing.s),
+                            trailingAction!,
+                          ],
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1133,12 +1175,23 @@ class AppTransactionList extends StatelessWidget {
     required this.itemBuilder,
   });
 
+  static const int _inlineColumnThreshold = 8;
+
   final int itemCount;
   final Widget Function(BuildContext context, int index) itemBuilder;
 
   /// Builds a shrink-wrapped transaction list for embedding inside screen sections.
   @override
   Widget build(BuildContext context) {
+    if (itemCount <= _inlineColumnThreshold) {
+      return Column(
+        children: [
+          for (var index = 0; index < itemCount; index++)
+            itemBuilder(context, index),
+        ],
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

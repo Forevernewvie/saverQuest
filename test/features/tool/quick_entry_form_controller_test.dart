@@ -79,4 +79,45 @@ void main() {
     expect(rebuilt.note, '생활용품');
     controller.dispose();
   });
+
+  test('buildEntry throws a clear state error for invalid amount text', () {
+    final controller = QuickEntryFormController(
+      initialMonthlyBudgetAmount: 420000,
+    );
+    controller.amountController.text = '';
+
+    expect(
+      controller.buildEntry,
+      throwsA(
+        isA<StateError>().having(
+          (error) => error.message,
+          'message',
+          'entry amount must be a positive integer.',
+        ),
+      ),
+    );
+    controller.dispose();
+  });
+
+  test(
+    'parseBudgetAmount throws a clear state error for invalid budget text',
+    () {
+      final controller = QuickEntryFormController(
+        initialMonthlyBudgetAmount: 420000,
+      );
+      controller.budgetController.text = '0';
+
+      expect(
+        controller.parseBudgetAmount,
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'budget amount must be a positive integer.',
+          ),
+        ),
+      );
+      controller.dispose();
+    },
+  );
 }
