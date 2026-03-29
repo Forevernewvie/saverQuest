@@ -4,6 +4,7 @@ import '../../app/app_dependencies.dart';
 import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/ledger/ledger_models.dart';
 import '../../core/ledger/ledger_view_data.dart';
@@ -128,7 +129,7 @@ class _ReportPageState extends State<ReportPage> {
             trailing: Text(
               total.trailing,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),

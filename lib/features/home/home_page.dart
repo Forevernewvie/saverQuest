@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../core/ads/ad_placement.dart';
 import '../../core/ads/admob_ids.dart';
 import '../../core/analytics/analytics_events.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/ledger/ledger_models.dart';
 import '../../core/ledger/ledger_view_data.dart';
@@ -155,7 +156,7 @@ class _HomePageState extends State<HomePage> {
       trailing: Text(
         viewData.topCategoryValue,
         style: const TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontWeight: FontWeight.w700,
         ),
       ),
