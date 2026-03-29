@@ -78,6 +78,7 @@ flutter build apk --debug
 
 - 로드맵: `docs/product/saverquest-ledger-roadmap.md`
 - 내부 테스트 핸드오프: `docs/release/android-internal-testing-handoff.md`
+- Firebase / AdMob 설정 메모: `docs/release/firebase-admob-setup.md`
 - 개인정보 처리방침 문서: `docs/legal/privacy-policy.md`
 - 정적 개인정보 페이지: `docs/privacy/index.html`
 
