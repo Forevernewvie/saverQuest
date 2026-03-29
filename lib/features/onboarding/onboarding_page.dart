@@ -41,14 +41,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _bootstrappedConsent = true;
     setState(() => _loading = true);
 
-    await widget.dependencies.consentController.refreshConsent();
-    await widget.dependencies.consentController.gatherConsentIfRequired();
-    await widget.dependencies.attTransparencyService.requestIfNeeded();
+    var completed = false;
 
-    if (!mounted) {
-      return;
+    try {
+      await widget.dependencies.consentController.refreshConsent();
+      await widget.dependencies.consentController.gatherConsentIfRequired();
+      await widget.dependencies.attTransparencyService.requestIfNeeded();
+      completed = true;
+    } catch (error, stackTrace) {
+      _bootstrappedConsent = false;
+      await widget.dependencies.crashReporter.recordNonFatal(error, stackTrace);
+    } finally {
+      if (!completed) {
+        _bootstrappedConsent = false;
+      }
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
-    setState(() => _loading = false);
   }
 
   Future<void> _startWithConsent() async {

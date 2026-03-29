@@ -120,7 +120,10 @@ class QuickEntryFormController extends ChangeNotifier {
       id: _editingEntryId ?? DateTime.now().microsecondsSinceEpoch.toString(),
       type: _selectedType,
       category: _selectedCategory,
-      amount: int.parse(_amountController.text),
+      amount: _parseRequiredPositiveInt(
+        _amountController.text,
+        fieldName: 'entry amount',
+      ),
       note: _noteController.text.trim(),
       occurredOn: _selectedDate,
     );
@@ -128,7 +131,21 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Parses the monthly budget value from the current budget field.
   int parseBudgetAmount() {
-    return int.parse(_budgetController.text);
+    return _parseRequiredPositiveInt(
+      _budgetController.text,
+      fieldName: 'budget amount',
+    );
+  }
+
+  static int _parseRequiredPositiveInt(
+    String rawValue, {
+    required String fieldName,
+  }) {
+    final value = int.tryParse(rawValue);
+    if (value == null || value <= 0) {
+      throw StateError('$fieldName must be a positive integer.');
+    }
+    return value;
   }
 
   /// Disposes text editing controllers owned by the form controller.

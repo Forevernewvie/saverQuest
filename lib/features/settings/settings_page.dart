@@ -44,20 +44,26 @@ class _SettingsPageState extends State<SettingsPage> {
       return;
     }
 
+    String? thrownErrorMessage;
     setState(() => _updatingPrivacyOptions = true);
-    await widget.dependencies.consentController.showPrivacyOptionsForm();
-    final latestState = widget.dependencies.consentController.state;
-
-    if (!mounted) {
-      return;
+    try {
+      await widget.dependencies.consentController.showPrivacyOptionsForm();
+    } catch (error, stackTrace) {
+      thrownErrorMessage = error.toString();
+      await widget.dependencies.crashReporter.recordNonFatal(error, stackTrace);
+    } finally {
+      if (mounted) {
+        setState(() => _updatingPrivacyOptions = false);
+      }
     }
 
-    setState(() => _updatingPrivacyOptions = false);
+    final latestState = widget.dependencies.consentController.state;
+    final errorMessage = latestState.errorMessage ?? thrownErrorMessage;
 
-    if (latestState.errorMessage != null) {
+    if (errorMessage != null) {
       await widget.dependencies.analyticsService.logEvent(
         AnalyticsEvents.privacyOptionsFailed,
-        parameters: {'error': latestState.errorMessage!},
+        parameters: {'error': errorMessage},
       );
       if (!mounted) {
         return;
@@ -65,9 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            context.l10n.settingsPrivacyOptionsFailed(
-              latestState.errorMessage!,
-            ),
+            context.l10n.settingsPrivacyOptionsFailed(errorMessage),
           ),
         ),
       );
