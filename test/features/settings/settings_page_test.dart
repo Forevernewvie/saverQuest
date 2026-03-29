@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_saverquest_mvp/app/app_dependencies.dart';
@@ -30,9 +32,11 @@ class _TestConsentController extends ConsentController {
     required super.analyticsService,
     required super.logger,
     required ConsentState state,
+    this.onShowPrivacyOptionsForm,
   }) : _state = state;
 
   final ConsentState _state;
+  final Future<void> Function()? onShowPrivacyOptionsForm;
   int showPrivacyOptionsCalls = 0;
 
   @override
@@ -47,6 +51,7 @@ class _TestConsentController extends ConsentController {
   @override
   Future<void> showPrivacyOptionsForm() async {
     showPrivacyOptionsCalls += 1;
+    await onShowPrivacyOptionsForm?.call();
   }
 }
 
@@ -71,6 +76,63 @@ _buildDependencies({required ConsentState consentState}) async {
     analyticsService: analytics,
     logger: logger,
     state: consentState,
+  );
+
+  return (
+    dependencies: AppDependencies(
+      environment: AppEnvironment.dev,
+      adGuardrails: AdGuardrails(
+        interstitialInterval: 3,
+        interstitialCooldownSec: 45,
+        rewardedDailyCap: 2,
+      ),
+      adService: FakeAdService(),
+      analyticsService: analytics,
+      remoteConfigService: RemoteConfigService(logger: logger),
+      consentController: consentController,
+      attTransparencyService: _TestAttTransparencyService(
+        analyticsService: analytics,
+      ),
+      localeController: localeController,
+      crashReporter: CrashReporter(logger: logger),
+      contentRepository: const StaticAppContentRepository(),
+      ledgerController: LedgerController(
+        repository: InMemoryLedgerRepository(
+          snapshot: const LedgerSnapshot(
+            entries: [],
+            monthlyBudgetAmount: 350000,
+          ),
+        ),
+        logger: logger,
+      ),
+      ledgerMonthController: LedgerMonthController(
+        initialMonth: DateTime.now(),
+      ),
+      ledgerPresentationService: const LedgerPresentationService(),
+      ledgerViewDataFactory: const LedgerViewDataFactory(),
+      logger: logger,
+    ),
+    consentController: consentController,
+  );
+}
+
+Future<
+  ({AppDependencies dependencies, _TestConsentController consentController})
+>
+_buildDependenciesWithHandler({
+  required ConsentState consentState,
+  Future<void> Function()? onShowPrivacyOptionsForm,
+}) async {
+  final logger = FakeLogger();
+  final analytics = AnalyticsService(logger: logger);
+  final localeController = AppLocaleController(storage: FakeLocaleStorage());
+  await localeController.setLocale(const Locale('ko'));
+
+  final consentController = _TestConsentController(
+    analyticsService: analytics,
+    logger: logger,
+    state: consentState,
+    onShowPrivacyOptionsForm: onShowPrivacyOptionsForm,
   );
 
   return (
@@ -220,5 +282,40 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('restores the privacy options control when the dialog throws', (
+    tester,
+  ) async {
+    final error = StateError('privacy dialog failed');
+    final dialogCompleter = Completer<void>();
+    final context = await _buildDependenciesWithHandler(
+      consentState: const ConsentState(
+        initialized: true,
+        canRequestAds: true,
+        serveNonPersonalizedAds: false,
+        privacyOptionsRequired: true,
+      ),
+      onShowPrivacyOptionsForm: () => dialogCompleter.future,
+    );
+
+    await tester.pumpWidget(
+      WidgetTestApp(
+        locale: const Locale('ko'),
+        home: SettingsPage(dependencies: context.dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('개인정보 설정 변경'));
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    dialogCompleter.completeError(error);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byIcon(Icons.chevron_right), findsWidgets);
   });
 }

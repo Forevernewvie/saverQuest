@@ -1006,104 +1006,108 @@ class AppTransactionTile extends StatelessWidget {
   /// Builds a compact transaction tile for recent activity sections.
   @override
   Widget build(BuildContext context) {
-    final shouldStackTrailing =
-        MediaQuery.sizeOf(context).width < 360 ||
-        MediaQuery.textScalerOf(context).scale(1) > 1.15;
+    final content = LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStackTrailing =
+            constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.15;
 
-    final content = Padding(
-      padding: const EdgeInsets.all(AppSpacing.m),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.m),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: AppUiTokens.featureIconContainerSize,
-                height: AppUiTokens.featureIconContainerSize,
-                decoration: _surfaceDecoration(
-                  fillColor: AppColors.surfaceMuted,
-                  borderRadius: AppUiTokens.cardCornerRadius,
-                  showBorder: false,
-                ),
-                child: Icon(icon, color: AppColors.accent),
-              ),
-              const SizedBox(width: AppSpacing.m),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: AppUiTokens.featureIconContainerSize,
+                    height: AppUiTokens.featureIconContainerSize,
+                    decoration: _surfaceDecoration(
+                      fillColor: AppColors.surfaceMuted,
+                      borderRadius: AppUiTokens.cardCornerRadius,
+                      showBorder: false,
                     ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        height: 1.4,
+                    child: Icon(icon, color: AppColors.accent),
+                  ),
+                  const SizedBox(width: AppSpacing.m),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!shouldStackTrailing) ...[
+                    const SizedBox(width: AppSpacing.m),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 72,
+                        maxWidth: 124,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            trailing,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.right,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (trailingAction != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            trailingAction!,
+                          ],
+                        ],
                       ),
                     ),
                   ],
-                ),
+                ],
               ),
-              if (!shouldStackTrailing) ...[
-                const SizedBox(width: AppSpacing.m),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: 72,
-                    maxWidth: 124,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
+              if (shouldStackTrailing) ...[
+                const SizedBox(height: AppSpacing.s),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
                         trailing,
                         style: const TextStyle(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
-                        textAlign: TextAlign.right,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      if (trailingAction != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        trailingAction!,
-                      ],
+                    ),
+                    if (trailingAction != null) ...[
+                      const SizedBox(width: AppSpacing.s),
+                      trailingAction!,
                     ],
-                  ),
+                  ],
                 ),
               ],
             ],
           ),
-          if (shouldStackTrailing) ...[
-            const SizedBox(height: AppSpacing.s),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    trailing,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                if (trailingAction != null) ...[
-                  const SizedBox(width: AppSpacing.s),
-                  trailingAction!,
-                ],
-              ],
-            ),
-          ],
-        ],
-      ),
+        );
+      },
     );
 
     return Container(

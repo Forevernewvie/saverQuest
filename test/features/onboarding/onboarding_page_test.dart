@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_saverquest_mvp/app/app.dart';
 import 'package:flutter_saverquest_mvp/app/app_dependencies.dart';
@@ -25,9 +27,13 @@ class _TestConsentController extends ConsentController {
     required super.analyticsService,
     required super.logger,
     required ConsentState state,
+    this.onRefreshConsent,
+    this.onGatherConsentIfRequired,
   }) : _state = state;
 
   final ConsentState _state;
+  final Future<void> Function()? onRefreshConsent;
+  final Future<void> Function()? onGatherConsentIfRequired;
   int refreshCalls = 0;
   int gatherCalls = 0;
 
@@ -37,22 +43,29 @@ class _TestConsentController extends ConsentController {
   @override
   Future<void> refreshConsent() async {
     refreshCalls += 1;
+    await onRefreshConsent?.call();
   }
 
   @override
   Future<void> gatherConsentIfRequired() async {
     gatherCalls += 1;
+    await onGatherConsentIfRequired?.call();
   }
 }
 
 class _TestAttTransparencyService extends AttTransparencyService {
-  _TestAttTransparencyService({required super.analyticsService});
+  _TestAttTransparencyService({
+    required super.analyticsService,
+    this.onRequestIfNeeded,
+  });
 
+  final Future<void> Function()? onRequestIfNeeded;
   int requestCalls = 0;
 
   @override
   Future<void> requestIfNeeded() async {
     requestCalls += 1;
+    await onRequestIfNeeded?.call();
   }
 }
 
@@ -76,6 +89,73 @@ _buildDependencies({ConsentState? consentState}) async {
     state: consentState ?? ConsentState.initial(),
   );
   final attService = _TestAttTransparencyService(analyticsService: analytics);
+
+  return (
+    dependencies: AppDependencies(
+      environment: AppEnvironment.dev,
+      adGuardrails: AdGuardrails(
+        interstitialInterval: 3,
+        interstitialCooldownSec: 45,
+        rewardedDailyCap: 2,
+      ),
+      adService: FakeAdService(),
+      analyticsService: analytics,
+      remoteConfigService: RemoteConfigService(logger: logger),
+      consentController: consentController,
+      attTransparencyService: attService,
+      localeController: localeController,
+      crashReporter: CrashReporter(logger: logger),
+      contentRepository: const StaticAppContentRepository(),
+      ledgerController: LedgerController(
+        repository: InMemoryLedgerRepository(
+          snapshot: const LedgerSnapshot(
+            entries: [],
+            monthlyBudgetAmount: 350000,
+          ),
+        ),
+        logger: logger,
+      ),
+      ledgerMonthController: LedgerMonthController(
+        initialMonth: DateTime.now(),
+      ),
+      ledgerPresentationService: const LedgerPresentationService(),
+      ledgerViewDataFactory: const LedgerViewDataFactory(),
+      logger: logger,
+    ),
+    consentController: consentController,
+    attService: attService,
+  );
+}
+
+Future<
+  ({
+    AppDependencies dependencies,
+    _TestConsentController consentController,
+    _TestAttTransparencyService attService,
+  })
+>
+_buildDependenciesWithHandlers({
+  ConsentState? consentState,
+  Future<void> Function()? onRefreshConsent,
+  Future<void> Function()? onGatherConsentIfRequired,
+  Future<void> Function()? onRequestIfNeeded,
+}) async {
+  final logger = FakeLogger();
+  final analytics = AnalyticsService(logger: logger);
+  final localeController = AppLocaleController(storage: FakeLocaleStorage());
+  await localeController.setLocale(const Locale('ko'));
+
+  final consentController = _TestConsentController(
+    analyticsService: analytics,
+    logger: logger,
+    state: consentState ?? ConsentState.initial(),
+    onRefreshConsent: onRefreshConsent,
+    onGatherConsentIfRequired: onGatherConsentIfRequired,
+  );
+  final attService = _TestAttTransparencyService(
+    analyticsService: analytics,
+    onRequestIfNeeded: onRequestIfNeeded,
+  );
 
   return (
     dependencies: AppDependencies(
@@ -145,5 +225,28 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('가계부 홈'), findsOneWidget);
+  });
+
+  testWidgets('restores onboarding actions when consent bootstrap throws', (
+    tester,
+  ) async {
+    final error = StateError('consent refresh failed');
+    final refreshCompleter = Completer<void>();
+    final context = await _buildDependenciesWithHandlers(
+      onRefreshConsent: () => refreshCompleter.future,
+    );
+
+    await tester.pumpWidget(SaverQuestApp(dependencies: context.dependencies));
+    await tester.pump();
+
+    expect(find.widgetWithText(FilledButton, '계속하기'), findsNothing);
+    expect(find.text('준비 중...'), findsOneWidget);
+
+    refreshCompleter.completeError(error);
+    await tester.pump();
+
+    expect(find.widgetWithText(FilledButton, '계속하기'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, '나중에 설정에서 변경'), findsOneWidget);
+    expect(find.text('준비 중...'), findsNothing);
   });
 }

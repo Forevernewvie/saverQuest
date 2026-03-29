@@ -55,6 +55,8 @@ class _FakeConsentPlatform implements ConsentPlatform {
       PrivacyOptionsRequirementStatus.notRequired;
   FormError? refreshFailure;
   FormError? gatherError;
+  bool hangRefresh = false;
+  bool hangGather = false;
 
   @override
   Future<bool> canRequestAds() async => canRequestAdsValue;
@@ -69,6 +71,9 @@ class _FakeConsentPlatform implements ConsentPlatform {
   void loadAndShowConsentFormIfRequired(
     void Function(FormError? error) onDone,
   ) {
+    if (hangGather) {
+      return;
+    }
     onDone(gatherError);
   }
 
@@ -77,6 +82,9 @@ class _FakeConsentPlatform implements ConsentPlatform {
     required void Function() onConsentInfoUpdateSuccess,
     required void Function(FormError error) onConsentInfoUpdateFailure,
   }) {
+    if (hangRefresh) {
+      return;
+    }
     if (refreshFailure != null) {
       onConsentInfoUpdateFailure(refreshFailure!);
       return;
@@ -161,4 +169,27 @@ void main() {
       expect(parameters['has_error'], isFalse);
     },
   );
+
+  test('refreshConsent recovers when the SDK callback never returns', () async {
+    final analytics = _FakeAnalyticsService();
+    final platform = _FakeConsentPlatform()
+      ..canRequestAdsValue = false
+      ..privacyStatus = PrivacyOptionsRequirementStatus.notRequired
+      ..hangRefresh = true;
+
+    final controller = ConsentController(
+      analyticsService: analytics,
+      logger: _SilentLogger(),
+      consentPlatform: platform,
+      sdkFlowTimeout: const Duration(milliseconds: 10),
+    );
+
+    await controller.refreshConsent();
+
+    expect(controller.state.initialized, isTrue);
+    expect(
+      controller.state.errorMessage,
+      contains('Consent operation timed out: refresh_consent'),
+    );
+  });
 }

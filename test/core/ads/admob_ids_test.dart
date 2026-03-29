@@ -19,8 +19,14 @@ void main() {
     expect(warnings, isEmpty);
   });
 
-  test('interstitial and rewarded are optional until ids are provided', () {
-    expect(AdMobIds.hasToolInterstitial, isFalse);
-    expect(AdMobIds.hasReportRewarded, isFalse);
+  test('non-production defaults use Google test ad unit ids', () {
+    expect(AdMobIds.homeBanner, startsWith('ca-app-pub-3940256099942544/'));
+    expect(AdMobIds.reportBanner, startsWith('ca-app-pub-3940256099942544/'));
+    expect(
+      AdMobIds.settingsBanner,
+      startsWith('ca-app-pub-3940256099942544/'),
+    );
+    expect(AdMobIds.hasToolInterstitial, isTrue);
+    expect(AdMobIds.hasReportRewarded, isTrue);
   });
 }

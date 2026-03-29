@@ -67,33 +67,47 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
 
   /// Requests a banner ad from the injected ad service.
   void _loadBanner() {
-    final ad = widget.adService.buildBannerAd(
-      adUnitId: widget.adUnitId,
-      placement: widget.placement,
-      routeName: widget.routeName,
-      canRequestAds: widget.canRequestAds,
-      nonPersonalizedAds: widget.nonPersonalizedAds,
-      onAdLoaded: (_) {
-        if (!mounted) {
-          return;
-        }
+    try {
+      final ad = widget.adService.buildBannerAd(
+        adUnitId: widget.adUnitId,
+        placement: widget.placement,
+        routeName: widget.routeName,
+        canRequestAds: widget.canRequestAds,
+        nonPersonalizedAds: widget.nonPersonalizedAds,
+        onAdLoaded: (_) {
+          if (!mounted) {
+            return;
+          }
+          _retryCount = 0;
+          setState(() {
+            _isLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (_) {
+          _handleBannerLoadFailure();
+        },
+      );
+
+      if (ad == null) {
         setState(() {
-          _isLoaded = true;
+          _isLoaded = false;
         });
-      },
-      onAdFailedToLoad: (_) {
-        _scheduleRetry();
-      },
-    );
+        return;
+      }
 
-    if (ad == null) {
-      setState(() {
-        _isLoaded = false;
-      });
-      return;
+      _bannerAd = ad;
+      _bannerAd!.load();
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'widgets/ad_banner_slot.dart',
+          context: ErrorDescription('while creating or loading a banner ad'),
+        ),
+      );
+      _handleBannerLoadFailure();
     }
-
-    _bannerAd = ad..load();
   }
 
   /// Schedules a bounded retry to avoid infinite banner load churn.
@@ -106,6 +120,17 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
     final delay = Duration(seconds: _retryCount * _retryDelayMultiplierSec);
     _retryTimer?.cancel();
     _retryTimer = Timer(delay, _loadBanner);
+  }
+
+  /// Clears the current banner and falls back to the placeholder before retrying.
+  void _handleBannerLoadFailure() {
+    _disposeBanner();
+    if (mounted) {
+      setState(() {
+        _isLoaded = false;
+      });
+    }
+    _scheduleRetry();
   }
 
   /// Disposes any previously allocated banner instance.

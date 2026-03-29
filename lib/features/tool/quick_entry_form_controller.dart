@@ -120,7 +120,7 @@ class QuickEntryFormController extends ChangeNotifier {
       id: _editingEntryId ?? DateTime.now().microsecondsSinceEpoch.toString(),
       type: _selectedType,
       category: _selectedCategory,
-      amount: int.parse(_amountController.text),
+      amount: _parseRequiredAmount(_amountController.text),
       note: _noteController.text.trim(),
       occurredOn: _selectedDate,
     );
@@ -128,7 +128,17 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Parses the monthly budget value from the current budget field.
   int parseBudgetAmount() {
-    return int.parse(_budgetController.text);
+    return _parseRequiredAmount(_budgetController.text);
+  }
+
+  /// Parses required numeric form fields after trimming incidental whitespace.
+  int _parseRequiredAmount(String rawValue) {
+    final normalizedValue = rawValue.trim();
+    final parsedValue = int.tryParse(normalizedValue);
+    if (parsedValue == null) {
+      throw const FormatException('Expected a whole-number amount.');
+    }
+    return parsedValue;
   }
 
   /// Disposes text editing controllers owned by the form controller.

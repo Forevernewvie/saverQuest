@@ -45,14 +45,35 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     setState(() => _updatingPrivacyOptions = true);
-    await widget.dependencies.consentController.showPrivacyOptionsForm();
+    try {
+      await widget.dependencies.consentController.showPrivacyOptionsForm();
+    } catch (error, stackTrace) {
+      await widget.dependencies.crashReporter.recordNonFatal(error, stackTrace);
+      await widget.dependencies.analyticsService.logEvent(
+        AnalyticsEvents.privacyOptionsFailed,
+        parameters: {'error': error.toString()},
+      );
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.l10n.settingsPrivacyOptionsFailed(error.toString()),
+          ),
+        ),
+      );
+      return;
+    } finally {
+      if (mounted) {
+        setState(() => _updatingPrivacyOptions = false);
+      }
+    }
     final latestState = widget.dependencies.consentController.state;
 
     if (!mounted) {
       return;
     }
-
-    setState(() => _updatingPrivacyOptions = false);
 
     if (latestState.errorMessage != null) {
       await widget.dependencies.analyticsService.logEvent(

@@ -79,4 +79,26 @@ void main() {
     expect(rebuilt.note, '생활용품');
     controller.dispose();
   });
+
+  test('buildEntry trims numeric input before parsing', () {
+    final controller = QuickEntryFormController(
+      initialMonthlyBudgetAmount: 420000,
+    );
+    controller.amountController.text = ' 18000 ';
+
+    final entry = controller.buildEntry();
+
+    expect(entry.amount, 18000);
+    controller.dispose();
+  });
+
+  test('parseBudgetAmount throws a format error for invalid text', () {
+    final controller = QuickEntryFormController(
+      initialMonthlyBudgetAmount: 420000,
+    );
+    controller.budgetController.text = 'budget';
+
+    expect(controller.parseBudgetAmount, throwsFormatException);
+    controller.dispose();
+  });
 }

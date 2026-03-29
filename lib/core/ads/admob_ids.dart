@@ -1,30 +1,55 @@
 class AdMobIds {
   static const String _googleTestPublisherId = 'ca-app-pub-3940256099942544';
+  static const String _environment = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'dev',
+  );
+  static const bool _useProdDefaults = _environment == 'prod';
+  static const String _testBannerUnitId =
+      'ca-app-pub-3940256099942544/6300978111';
+  static const String _testInterstitialUnitId =
+      'ca-app-pub-3940256099942544/1033173712';
+  static const String _testRewardedUnitId =
+      'ca-app-pub-3940256099942544/5224354917';
+  static const String _prodHomeBannerDefault =
+      'ca-app-pub-9780094598585299/3566508474';
+  static const String _prodReportBannerDefault =
+      'ca-app-pub-9780094598585299/3566508474';
+  static const String _prodSettingsBannerDefault =
+      'ca-app-pub-9780094598585299/3566508474';
+  static const String _prodToolInterstitialDefault = '';
+  static const String _prodReportRewardedDefault = '';
 
-  // Android production banner id (provided by owner).
-  static const String homeBanner = String.fromEnvironment(
+  // Returns test ad units by default in non-production builds.
+  static String get homeBanner => const String.fromEnvironment(
     'ADMOB_HOME_BANNER',
-    defaultValue: 'ca-app-pub-9780094598585299/3566508474',
+    defaultValue: _useProdDefaults ? _prodHomeBannerDefault : _testBannerUnitId,
   );
 
-  static const String reportBanner = String.fromEnvironment(
+  static String get reportBanner => const String.fromEnvironment(
     'ADMOB_REPORT_BANNER',
-    defaultValue: 'ca-app-pub-9780094598585299/3566508474',
+    defaultValue:
+        _useProdDefaults ? _prodReportBannerDefault : _testBannerUnitId,
   );
 
-  static const String settingsBanner = String.fromEnvironment(
+  static String get settingsBanner => const String.fromEnvironment(
     'ADMOB_SETTINGS_BANNER',
-    defaultValue: 'ca-app-pub-9780094598585299/3566508474',
+    defaultValue:
+        _useProdDefaults ? _prodSettingsBannerDefault : _testBannerUnitId,
   );
 
-  static const String toolInterstitial = String.fromEnvironment(
+  static String get toolInterstitial => const String.fromEnvironment(
     'ADMOB_TOOL_INTERSTITIAL',
-    defaultValue: '',
+    defaultValue:
+        _useProdDefaults
+            ? _prodToolInterstitialDefault
+            : _testInterstitialUnitId,
   );
 
-  static const String reportRewarded = String.fromEnvironment(
+  static String get reportRewarded => const String.fromEnvironment(
     'ADMOB_REPORT_REWARDED',
-    defaultValue: '',
+    defaultValue:
+        _useProdDefaults ? _prodReportRewardedDefault : _testRewardedUnitId,
   );
 
   static bool get hasToolInterstitial => toolInterstitial.trim().isNotEmpty;
@@ -41,6 +66,9 @@ class AdMobIds {
   }
 
   static List<String> productionReadinessWarnings() {
+    if (!_useProdDefaults) {
+      return const [];
+    }
     final warnings = <String>[];
     allUnitIds().forEach((defineKey, rawUnitId) {
       final unitId = rawUnitId.trim();

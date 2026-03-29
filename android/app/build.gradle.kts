@@ -8,6 +8,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val debugAdMobApplicationId = "ca-app-pub-3940256099942544~3347511713"
+val releaseAdMobApplicationId = "ca-app-pub-9780094598585299~8355654937"
+
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
@@ -38,6 +41,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["admobApplicationId"] = debugAdMobApplicationId
     }
 
     signingConfigs {
@@ -58,6 +62,7 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            manifestPlaceholders["admobApplicationId"] = releaseAdMobApplicationId
         }
     }
 }

@@ -15,13 +15,16 @@ class ConsentController extends ChangeNotifier {
     required AnalyticsService analyticsService,
     required AppLogger logger,
     ConsentPlatform consentPlatform = const GoogleMobileAdsConsentPlatform(),
+    Duration sdkFlowTimeout = const Duration(seconds: 5),
   }) : _analyticsService = analyticsService,
        _logger = logger,
-       _consentPlatform = consentPlatform;
+       _consentPlatform = consentPlatform,
+       _sdkFlowTimeout = sdkFlowTimeout;
 
   final AnalyticsService _analyticsService;
   final AppLogger _logger;
   final ConsentPlatform _consentPlatform;
+  final Duration _sdkFlowTimeout;
 
   ConsentState _state = ConsentState.initial();
   ConsentState get state => _state;
@@ -80,6 +83,7 @@ class ConsentController extends ChangeNotifier {
     execute,
   }) async {
     final completer = Completer<void>();
+    final timeoutMessage = 'Consent operation timed out: $operation';
 
     Future<void> complete([String? errorMessage]) async {
       await _syncStateFromSdk(errorMessage: errorMessage);
@@ -106,7 +110,20 @@ class ConsentController extends ChangeNotifier {
       await complete(error.toString());
     }
 
-    await completer.future;
+    await completer.future.timeout(
+      _sdkFlowTimeout,
+      onTimeout: () async {
+        _logger.warning(
+          'Consent SDK flow timed out.',
+          scope: 'consent',
+          metadata: {
+            'operation': operation,
+            'timeout_ms': _sdkFlowTimeout.inMilliseconds,
+          },
+        );
+        await complete(timeoutMessage);
+      },
+    );
   }
 
   /// Synchronizes consent flags from the SDK while preserving safe fallbacks.
