@@ -110,10 +110,10 @@ class AppLocalizations {
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
-      _t('이번 달 예산 추적을 시작할게요', 'Let’s start tracking this month');
+      _t('이번 달 예산을 시작해요', 'Start this month’s budget');
   String get onboardingIntroBody => _t(
-    '필요한 개인정보 또는 광고 선택이 있을 때만 잠깐 확인합니다.',
-    'We only pause for a moment if a privacy or ad choice is required.',
+    '예산을 보고 거래를 기록하는 앱입니다. 필요한 설정이 있을 때만 잠깐 확인합니다.',
+    'Plan this month’s spending and record transactions in one place. We only pause if a required setting needs attention.',
   );
   String get onboardingTrustSectionTitle => _t('먼저 알아두세요', 'What to expect');
   String get onboardingSettingsHint => _t(

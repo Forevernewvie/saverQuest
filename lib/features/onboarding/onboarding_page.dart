@@ -83,7 +83,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           eyebrow: l10n.appTitle,
           title: l10n.onboardingIntroTitle,
           body: l10n.onboardingIntroBody,
-          trailing: const AppHeroIcon(icon: Icons.verified_user_outlined),
           primaryLabel: l10n.onboardingAgreeStart,
           primarySemanticLabel: l10n.onboardingAgreeSemantic,
           onPrimary: _loading

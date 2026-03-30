@@ -205,7 +205,7 @@ void main() {
     expect(context.consentController.gatherCalls, 1);
     expect(context.attService.requestCalls, 1);
     expect(find.text('SaverQuest 시작하기'), findsNothing);
-    expect(find.text('이번 달 예산 추적을 시작할게요'), findsOneWidget);
+    expect(find.text('이번 달 예산을 시작해요'), findsOneWidget);
     expect(find.text('먼저 알아두세요'), findsNothing);
   });
 
