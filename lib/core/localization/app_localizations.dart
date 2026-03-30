@@ -160,7 +160,7 @@ class AppLocalizations {
     '지출이나 수입을 입력하고 필요하면 이번 달 예산도 바로 수정합니다.',
     'Add an expense or income here, then update this month’s budget when needed.',
   );
-  String get toolInputSectionTitle => _t('거래 입력', 'Entry form');
+  String get toolInputSectionTitle => _t('1. 거래 입력', '1. Add a record');
   String get toolInputSectionBody => _t(
     '금액, 카테고리, 날짜를 입력해 지출이나 수입을 남길 수 있습니다.',
     'Record an expense or income with amount, category, and date.',
@@ -208,7 +208,7 @@ class AppLocalizations {
   String get toolRecentRecordsTitle => _t('방금 기록한 항목', 'Latest entries');
   String get toolRecentRecordsBody =>
       _t('최근에 저장한 거래가 아래에 표시됩니다.', 'Recently saved entries are shown below.');
-  String get toolBudgetSectionTitle => _t('월 예산', 'Monthly budget');
+  String get toolBudgetSectionTitle => _t('2. 월 예산', '2. Monthly budget');
   String get toolBudgetSectionBody => _t(
     '이번 달 지출 목표를 설정하면 홈과 인사이트에서 바로 반영됩니다.',
     'Set the budget target for this month and the dashboard will reflect it right away.',
