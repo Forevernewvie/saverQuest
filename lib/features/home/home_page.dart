@@ -207,10 +207,8 @@ class _HomePageState extends State<HomePage> {
               title: l10n.homeHeroTitle,
               body: l10n.homeHeroBody,
               primaryLabel: l10n.homePrimaryAction,
-              secondaryLabel: l10n.homeSecondaryAction,
               primarySemanticLabel: l10n.homePrimaryActionSemantic,
               onPrimary: _openEntry,
-              onSecondary: () => Navigator.pushNamed(context, AppRoutes.report),
               pills: [
                 AppMetricPill(
                   label: l10n.homeStatRemainingLabel,

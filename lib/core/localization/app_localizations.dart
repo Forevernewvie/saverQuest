@@ -34,12 +34,12 @@ class AppLocalizations {
       _t('광고 비활성 (동의 필요)', 'Ads disabled (consent required)');
   String get adBannerSemanticLabel => _t('광고 배너', 'Ad banner');
 
-  String get homeTitle => _t('이번 달 예산', 'This month’s budget');
+  String get homeTitle => _t('이번 달', 'This month');
   String get homeHeroTitle =>
-      _t('남은 예산과 이번 달 지출을 먼저 보세요', 'See your remaining budget first');
+      _t('남은 예산을 먼저 확인하세요', 'Check your remaining budget first');
   String get homeHeroBody => _t(
-    '이 화면에서 이번 달 예산 상태를 보고, 바로 거래를 기록할 수 있습니다.',
-    'This screen shows this month’s budget first, then lets you record the next transaction.',
+    '지출이 생길 때마다 바로 기록하면 이번 달 흐름이 여기서 정리됩니다.',
+    'Add a transaction whenever you spend, and this screen will keep the month organized.',
   );
   String get homeStatSavingsLabel => _t('이번 달 지출', 'Spent this month');
   String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
@@ -110,10 +110,10 @@ class AppLocalizations {
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
-      _t('이번 달 예산부터 확인하세요', 'Open this month’s budget first');
+      _t('이번 달 예산부터 시작하세요', 'Start with this month’s budget');
   String get onboardingIntroBody => _t(
-    '예산 상태를 먼저 보고, 그다음 거래를 기록하면 됩니다. 필요한 설정이 있을 때만 잠깐 확인합니다.',
-    'Check this month’s budget first, then record transactions. We only pause if a required setting needs attention.',
+    '예산을 먼저 보고, 거래를 기록하면 됩니다. 필요한 설정이 있을 때만 잠깐 확인합니다.',
+    'See the budget first, then record transactions. We only pause if a required setting needs attention.',
   );
   String get onboardingTrustSectionTitle => _t('먼저 알아두세요', 'What to expect');
   String get onboardingSettingsHint => _t(
@@ -148,10 +148,10 @@ class AppLocalizations {
   String get onboardingAgreeSemantic => _t('계속하기 버튼', 'Continue button');
   String get onboardingAgreeProcessing =>
       _t('준비 중...', 'Getting things ready...');
-  String get onboardingAgreeStart => _t('이번 달 예산 보기', 'Open this month’s budget');
+  String get onboardingAgreeStart => _t('예산 보기', 'Open budget');
   String get onboardingLaterSemantic =>
       _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
-  String get onboardingLater => _t('나중에 설정에서 변경', 'Change later in Settings');
+  String get onboardingLater => _t('나중에 하기', 'Not now');
 
   String get toolTitle => _t('거래 기록', 'Record transaction');
   String get toolHeroTitle =>
