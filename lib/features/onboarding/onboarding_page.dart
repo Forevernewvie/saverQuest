@@ -77,6 +77,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return ScreenShell(
       title: l10n.onboardingTitle,
       showAppBar: false,
+      centerContent: true,
       children: [
         AppHeroCard(
           eyebrow: l10n.appTitle,
