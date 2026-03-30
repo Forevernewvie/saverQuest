@@ -76,7 +76,8 @@ class AppBootstrapper {
     );
     await _runStartupStep(
       step: 'analytics.set_environment',
-      action: () => analyticsService.setEnvironment(runtimeOptions.environment.name),
+      action: () =>
+          analyticsService.setEnvironment(runtimeOptions.environment.name),
     );
 
     final remoteConfigService = RemoteConfigService(
@@ -97,18 +98,21 @@ class AppBootstrapper {
       action: crashReporter.installGlobalHandlers,
     );
 
-    final sharedPreferences = await _runStartupStepWithFallback<SharedPreferences?>(
-      step: 'shared_preferences.get_instance',
-      action: sharedPreferencesFactory,
-      fallbackValue: null,
-    );
+    final sharedPreferences =
+        await _runStartupStepWithFallback<SharedPreferences?>(
+          step: 'shared_preferences.get_instance',
+          action: sharedPreferencesFactory,
+          fallbackValue: null,
+        );
 
     final effectiveLocaleStorage =
         localeStorage ??
         (sharedPreferences == null
             ? _InMemoryLocaleStorage()
             : _SharedPreferencesLocaleStorage(sharedPreferences));
-    final localeController = AppLocaleController(storage: effectiveLocaleStorage);
+    final localeController = AppLocaleController(
+      storage: effectiveLocaleStorage,
+    );
     await _runStartupStep(
       step: 'locale.initialize',
       action: localeController.initialize,

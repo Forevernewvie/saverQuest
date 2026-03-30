@@ -28,28 +28,30 @@ class AdMobIds {
 
   static String get reportBanner => const String.fromEnvironment(
     'ADMOB_REPORT_BANNER',
-    defaultValue:
-        _useProdDefaults ? _prodReportBannerDefault : _testBannerUnitId,
+    defaultValue: _useProdDefaults
+        ? _prodReportBannerDefault
+        : _testBannerUnitId,
   );
 
   static String get settingsBanner => const String.fromEnvironment(
     'ADMOB_SETTINGS_BANNER',
-    defaultValue:
-        _useProdDefaults ? _prodSettingsBannerDefault : _testBannerUnitId,
+    defaultValue: _useProdDefaults
+        ? _prodSettingsBannerDefault
+        : _testBannerUnitId,
   );
 
   static String get toolInterstitial => const String.fromEnvironment(
     'ADMOB_TOOL_INTERSTITIAL',
-    defaultValue:
-        _useProdDefaults
-            ? _prodToolInterstitialDefault
-            : _testInterstitialUnitId,
+    defaultValue: _useProdDefaults
+        ? _prodToolInterstitialDefault
+        : _testInterstitialUnitId,
   );
 
   static String get reportRewarded => const String.fromEnvironment(
     'ADMOB_REPORT_REWARDED',
-    defaultValue:
-        _useProdDefaults ? _prodReportRewardedDefault : _testRewardedUnitId,
+    defaultValue: _useProdDefaults
+        ? _prodReportRewardedDefault
+        : _testRewardedUnitId,
   );
 
   static bool get hasToolInterstitial => toolInterstitial.trim().isNotEmpty;

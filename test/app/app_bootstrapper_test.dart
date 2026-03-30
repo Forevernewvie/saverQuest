@@ -51,8 +51,9 @@ class _HangingConsentPlatform implements ConsentPlatform {
   Future<bool> canRequestAds() async => false;
 
   @override
-  Future<PrivacyOptionsRequirementStatus> getPrivacyOptionsRequirementStatus()
-    async => PrivacyOptionsRequirementStatus.notRequired;
+  Future<PrivacyOptionsRequirementStatus>
+  getPrivacyOptionsRequirementStatus() async =>
+      PrivacyOptionsRequirementStatus.notRequired;
 
   @override
   void loadAndShowConsentFormIfRequired(
@@ -66,8 +67,9 @@ class _HangingConsentPlatform implements ConsentPlatform {
   }) {}
 
   @override
-  Future<void> showPrivacyOptionsForm(void Function(FormError? error) onDone)
-    async {}
+  Future<void> showPrivacyOptionsForm(
+    void Function(FormError? error) onDone,
+  ) async {}
 }
 
 class _NoopAdService implements AdService {
@@ -128,12 +130,13 @@ void main() {
       runtimeOptions: runtimeOptions,
       logger: _SilentLogger(),
       consentPlatform: _HangingConsentPlatform(),
-      adServiceFactory: ({
-        required AnalyticsService analyticsService,
-        required AppLogger logger,
-        required AdGuardrails guardrails,
-        required List<String> testDeviceIds,
-      }) => _NoopAdService(),
+      adServiceFactory:
+          ({
+            required AnalyticsService analyticsService,
+            required AppLogger logger,
+            required AdGuardrails guardrails,
+            required List<String> testDeviceIds,
+          }) => _NoopAdService(),
       startupTimeout: const Duration(milliseconds: 10),
     );
 
@@ -152,12 +155,13 @@ void main() {
       logger: _SilentLogger(),
       sharedPreferencesFactory: () => Completer<SharedPreferences>().future,
       consentPlatform: _HangingConsentPlatform(),
-      adServiceFactory: ({
-        required AnalyticsService analyticsService,
-        required AppLogger logger,
-        required AdGuardrails guardrails,
-        required List<String> testDeviceIds,
-      }) => _NoopAdService(),
+      adServiceFactory:
+          ({
+            required AnalyticsService analyticsService,
+            required AppLogger logger,
+            required AdGuardrails guardrails,
+            required List<String> testDeviceIds,
+          }) => _NoopAdService(),
       startupTimeout: const Duration(milliseconds: 10),
     );
 

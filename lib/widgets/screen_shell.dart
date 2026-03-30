@@ -76,11 +76,7 @@ class ScreenShell extends StatelessWidget {
 
               return centerContent
                   ? Center(child: constrainedContent)
-                  : Center(
-                      child: ListView(
-                        children: [constrainedContent],
-                      ),
-                    );
+                  : Center(child: ListView(children: [constrainedContent]));
             },
           ),
         ),
