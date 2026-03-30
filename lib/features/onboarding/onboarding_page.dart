@@ -41,14 +41,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _bootstrappedConsent = true;
     setState(() => _loading = true);
 
-    await widget.dependencies.consentController.refreshConsent();
-    await widget.dependencies.consentController.gatherConsentIfRequired();
-    await widget.dependencies.attTransparencyService.requestIfNeeded();
-
-    if (!mounted) {
-      return;
+    try {
+      await widget.dependencies.consentController.refreshConsent();
+      await widget.dependencies.consentController.gatherConsentIfRequired();
+      await widget.dependencies.attTransparencyService.requestIfNeeded();
+    } catch (error, stackTrace) {
+      _bootstrappedConsent = false;
+      await widget.dependencies.crashReporter.recordNonFatal(error, stackTrace);
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
-    setState(() => _loading = false);
   }
 
   Future<void> _startWithConsent() async {
@@ -72,6 +76,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     return ScreenShell(
       title: l10n.onboardingTitle,
+      showAppBar: false,
+      centerContent: true,
       children: [
         AppHeroCard(
           eyebrow: l10n.appTitle,
@@ -90,37 +96,59 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ? null
               : () => Navigator.pushReplacementNamed(context, AppRoutes.home),
         ),
-        AppSectionHeader(
-          title: l10n.onboardingTrustSectionTitle,
-          subtitle: l10n.onboardingSettingsHint,
-        ),
-        AppFeatureCard(
-          icon: Icons.visibility_off_outlined,
-          title: l10n.onboardingNoAdTitle,
-          body: l10n.onboardingNoAdBody,
-        ),
-        AppFeatureCard(
-          icon: Icons.tune_outlined,
-          title: l10n.onboardingConsentTitle,
-          body: l10n.onboardingConsentBody,
-        ),
         if (consentState.errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.m),
-            child: Text(
-              l10n.errorMessage(consentState.errorMessage!),
-              style: const TextStyle(color: Colors.redAccent),
-            ),
+          _OnboardingStatusCard(
+            icon: Icons.error_outline,
+            color: AppColors.danger,
+            message: l10n.errorMessage(consentState.errorMessage!),
           ),
         if (_loading)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.m),
-            child: Text(
-              l10n.onboardingAgreeProcessing,
-              style: const TextStyle(color: AppColors.textSecondary),
-            ),
+          _OnboardingStatusCard(
+            icon: Icons.hourglass_bottom_outlined,
+            color: AppColors.textSecondary,
+            message: l10n.onboardingAgreeProcessing,
           ),
       ],
+    );
+  }
+}
+
+class _OnboardingStatusCard extends StatelessWidget {
+  const _OnboardingStatusCard({
+    required this.icon,
+    required this.color,
+    required this.message,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.m),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: AppSpacing.s,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: AppSpacing.s),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(color: color, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

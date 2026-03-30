@@ -4,14 +4,21 @@ on:
   push:
     branches:
       - main
-      - codex/develop
-      - codex/feature/**
-      - codex/release/**
-      - codex/hotfix/**
+      - codex/**
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     branches:
       - main
       - codex/develop
+  workflow_dispatch:
+
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   quality:

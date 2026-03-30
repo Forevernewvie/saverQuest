@@ -11,20 +11,26 @@ class ScreenShell extends StatelessWidget {
     required this.title,
     required this.children,
     this.actions,
+    this.showAppBar = true,
+    this.centerContent = false,
   });
 
   final String title;
   final List<Widget> children;
   final List<Widget>? actions;
+  final bool showAppBar;
+  final bool centerContent;
 
   /// Builds the standard page shell used by feature screens.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-        actions: actions,
-      ),
+      appBar: showAppBar
+          ? AppBar(
+              title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
+              actions: actions,
+            )
+          : null,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -34,21 +40,44 @@ class ScreenShell extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppUiTokens.maxContentWidth,
-              ),
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.l,
-                  AppSpacing.m,
-                  AppSpacing.l,
-                  AppSpacing.xl,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final constrainedContent = ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppUiTokens.maxContentWidth,
                 ),
-                children: children,
-              ),
-            ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.l,
+                    AppSpacing.m,
+                    AppSpacing.l,
+                    AppSpacing.xl,
+                  ),
+                  child: centerContent
+                      ? ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                constraints.maxHeight -
+                                AppSpacing.m -
+                                AppSpacing.xl,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: children,
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: children,
+                        ),
+                ),
+              );
+
+              return centerContent
+                  ? Center(child: constrainedContent)
+                  : Center(child: ListView(children: [constrainedContent]));
+            },
           ),
         ),
       ),

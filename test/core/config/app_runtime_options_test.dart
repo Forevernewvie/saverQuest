@@ -11,6 +11,7 @@ void main() {
 
     expect(options.environment, AppEnvironment.stage);
     expect(options.adTestDeviceIds, ['abc', 'def', 'ghi']);
+    expect(options.enableFirebase, isFalse);
   });
 
   test('strips test device ids in production', () {
@@ -21,5 +22,20 @@ void main() {
 
     expect(options.environment, AppEnvironment.prod);
     expect(options.adTestDeviceIds, isEmpty);
+    expect(options.enableFirebase, isTrue);
+  });
+
+  test('allows overriding firebase enablement explicitly', () {
+    final devEnabled = AppRuntimeOptions.fromEnvironment(
+      environmentRaw: 'dev',
+      enableFirebaseRaw: 'true',
+    );
+    final prodDisabled = AppRuntimeOptions.fromEnvironment(
+      environmentRaw: 'prod',
+      enableFirebaseRaw: 'false',
+    );
+
+    expect(devEnabled.enableFirebase, isTrue);
+    expect(prodDisabled.enableFirebase, isFalse);
   });
 }

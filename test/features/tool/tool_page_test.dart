@@ -29,11 +29,11 @@ void main() {
     await tester.tap(find.text('Coffee').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('Transaction details'), findsOneWidget);
     expect(
       find.text('Review this entry and edit or delete it if needed.'),
       findsOneWidget,
     );
+    expect(find.text('Edit'), findsOneWidget);
     expect(find.text('Coffee'), findsWidgets);
   });
 

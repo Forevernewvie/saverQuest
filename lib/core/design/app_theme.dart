@@ -10,10 +10,10 @@ ThemeData buildAppTheme() {
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.accent,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
     ),
     scaffoldBackgroundColor: AppColors.background,
-    brightness: Brightness.dark,
+    brightness: Brightness.light,
   );
 
   return base.copyWith(
@@ -58,7 +58,7 @@ ThemeData buildAppTheme() {
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(AppUiTokens.buttonHeight),
         backgroundColor: AppColors.accent,
-        foregroundColor: AppColors.background,
+        foregroundColor: AppColors.onAccent,
         textStyle: const TextStyle(fontWeight: FontWeight.w700),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),

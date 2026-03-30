@@ -110,10 +110,10 @@ class AppLocalizations {
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
-      _t('시작 전에 필요한 설정만 확인할게요', 'We will check just a few essentials first');
+      _t('필요한 설정만 확인하고 시작할게요', 'We will only confirm what you need');
   String get onboardingIntroBody => _t(
-    '필요한 개인정보 및 광고 설정이 있으면 안내 화면이 먼저 나타납니다. 설정은 언제든 앱 안에서 다시 바꿀 수 있어요.',
-    'If privacy or ad choices are required, you will see a prompt first. You can change them anytime inside the app.',
+    '개인정보 또는 광고 관련 선택이 필요한 경우에만 한 번 안내합니다.',
+    'We will only ask if a privacy or ad choice is required.',
   );
   String get onboardingTrustSectionTitle => _t('먼저 알아두세요', 'What to expect');
   String get onboardingSettingsHint => _t(
