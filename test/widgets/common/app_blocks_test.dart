@@ -6,6 +6,52 @@ import '../../helpers/widget_test_app.dart';
 
 void main() {
   testWidgets(
+    'AppBudgetOverviewCard stretches stacked metrics to the available width',
+    (tester) async {
+      await tester.pumpWidget(
+        const WidgetTestApp(
+          locale: Locale('en'),
+          mediaQueryData: MediaQueryData(size: Size(640, 800)),
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 280,
+                child: AppBudgetOverviewCard(
+                  title: 'Budget progress',
+                  body: 'Compare your monthly budget with current spend.',
+                  progressValue: 0.3,
+                  remainingLabel: 'Remaining budget',
+                  remainingValue: 'KRW 350,000',
+                  spentLabel: 'Spent',
+                  spentValue: 'KRW 0',
+                  limitLabel: 'Budget limit',
+                  limitValue: 'KRW 350,000',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final remainingRect = tester.getRect(
+        find.byKey(const ValueKey('budget-metric-remaining')),
+      );
+      final spentRect = tester.getRect(
+        find.byKey(const ValueKey('budget-metric-spent')),
+      );
+      final limitRect = tester.getRect(
+        find.byKey(const ValueKey('budget-metric-limit')),
+      );
+
+      expect(spentRect.width, closeTo(remainingRect.width, 1));
+      expect(limitRect.width, closeTo(remainingRect.width, 1));
+      expect(remainingRect.width, greaterThan(180));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'AppTransactionTile stacks trailing details when parent width is constrained',
     (tester) async {
       await tester.pumpWidget(
