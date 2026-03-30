@@ -20,7 +20,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('이번 달'), findsWidgets);
+    expect(find.text('이번 달 예산'), findsWidgets);
     expect(find.text('이번 달 예산 현황'), findsOneWidget);
     expect(find.text('거래 기록하기'), findsOneWidget);
     expect(find.text('남은 예산'), findsWidgets);
@@ -44,7 +44,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('This month'), findsWidgets);
+    expect(find.text('This month’s budget'), findsWidgets);
     await tester.scrollUntilVisible(
       find.text('Monthly budget overview'),
       200,
@@ -134,7 +134,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('This month'), findsWidgets);
+    expect(find.text('This month’s budget'), findsWidgets);
     await tester.scrollUntilVisible(
       find.text('What to do next'),
       300,

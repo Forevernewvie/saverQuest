@@ -24,7 +24,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('This month'), findsOneWidget);
+    expect(find.text('This month’s budget'), findsOneWidget);
     expect(find.text('Add transaction'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

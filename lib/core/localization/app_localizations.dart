@@ -34,12 +34,12 @@ class AppLocalizations {
       _t('광고 비활성 (동의 필요)', 'Ads disabled (consent required)');
   String get adBannerSemanticLabel => _t('광고 배너', 'Ad banner');
 
-  String get homeTitle => _t('이번 달', 'This month');
+  String get homeTitle => _t('이번 달 예산', 'This month’s budget');
   String get homeHeroTitle =>
-      _t('이번 달 예산을 보고 바로 기록하세요', 'Check this month, then add a transaction');
+      _t('남은 예산과 이번 달 지출을 먼저 보세요', 'See your remaining budget first');
   String get homeHeroBody => _t(
-    '남은 예산과 이번 달 지출을 먼저 보고, 필요하면 바로 거래를 기록합니다.',
-    'See the remaining budget and spending first, then record the next transaction right away.',
+    '이 화면에서 이번 달 예산 상태를 보고, 바로 거래를 기록할 수 있습니다.',
+    'This screen shows this month’s budget first, then lets you record the next transaction.',
   );
   String get homeStatSavingsLabel => _t('이번 달 지출', 'Spent this month');
   String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
@@ -110,10 +110,10 @@ class AppLocalizations {
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
-      _t('이번 달 예산을 시작해요', 'Start this month’s budget');
+      _t('이번 달 예산부터 확인하세요', 'Open this month’s budget first');
   String get onboardingIntroBody => _t(
-    '예산을 보고 거래를 기록하는 앱입니다. 필요한 설정이 있을 때만 잠깐 확인합니다.',
-    'Plan this month’s spending and record transactions in one place. We only pause if a required setting needs attention.',
+    '예산 상태를 먼저 보고, 그다음 거래를 기록하면 됩니다. 필요한 설정이 있을 때만 잠깐 확인합니다.',
+    'Check this month’s budget first, then record transactions. We only pause if a required setting needs attention.',
   );
   String get onboardingTrustSectionTitle => _t('먼저 알아두세요', 'What to expect');
   String get onboardingSettingsHint => _t(
@@ -148,7 +148,7 @@ class AppLocalizations {
   String get onboardingAgreeSemantic => _t('계속하기 버튼', 'Continue button');
   String get onboardingAgreeProcessing =>
       _t('준비 중...', 'Getting things ready...');
-  String get onboardingAgreeStart => _t('예산 추적 시작', 'Start budget tracking');
+  String get onboardingAgreeStart => _t('이번 달 예산 보기', 'Open this month’s budget');
   String get onboardingLaterSemantic =>
       _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
   String get onboardingLater => _t('나중에 설정에서 변경', 'Change later in Settings');

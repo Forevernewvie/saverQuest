@@ -206,9 +206,6 @@ class _HomePageState extends State<HomePage> {
               eyebrow: l10n.appTitle,
               title: l10n.homeHeroTitle,
               body: l10n.homeHeroBody,
-              trailing: const AppHeroIcon(
-                icon: Icons.account_balance_wallet_outlined,
-              ),
               primaryLabel: l10n.homePrimaryAction,
               secondaryLabel: l10n.homeSecondaryAction,
               primarySemanticLabel: l10n.homePrimaryActionSemantic,
