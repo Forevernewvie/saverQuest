@@ -11,20 +11,24 @@ class ScreenShell extends StatelessWidget {
     required this.title,
     required this.children,
     this.actions,
+    this.showAppBar = true,
   });
 
   final String title;
   final List<Widget> children;
   final List<Widget>? actions;
+  final bool showAppBar;
 
   /// Builds the standard page shell used by feature screens.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-        actions: actions,
-      ),
+      appBar: showAppBar
+          ? AppBar(
+              title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
+              actions: actions,
+            )
+          : null,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
