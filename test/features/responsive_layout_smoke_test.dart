@@ -24,7 +24,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Budget Home'), findsOneWidget);
+    expect(find.text('This month'), findsOneWidget);
     expect(find.text('Add transaction'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -43,15 +43,15 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text('Quick actions'),
+      find.text('What to do next'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Quick actions'), findsOneWidget);
-    expect(find.text('Entry'), findsOneWidget);
-    expect(find.text('Report'), findsOneWidget);
+    expect(find.text('What to do next'), findsOneWidget);
+    expect(find.text('Entry'), findsWidgets);
+    expect(find.text('Report'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
@@ -123,7 +123,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Transaction details'), findsOneWidget);
+    expect(find.text('Entry form'), findsOneWidget);
     expect(find.text('Monthly budget'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

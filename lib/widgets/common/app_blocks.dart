@@ -209,7 +209,7 @@ class AppMetricPill extends StatelessWidget {
         vertical: AppSpacing.s,
       ),
       decoration: _surfaceDecoration(
-        fillColor: const Color(0x1AFFFFFF),
+        fillColor: AppColors.surfaceMuted,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Column(

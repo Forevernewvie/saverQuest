@@ -34,12 +34,12 @@ class AppLocalizations {
       _t('광고 비활성 (동의 필요)', 'Ads disabled (consent required)');
   String get adBannerSemanticLabel => _t('광고 배너', 'Ad banner');
 
-  String get homeTitle => _t('가계부 홈', 'Budget Home');
+  String get homeTitle => _t('이번 달', 'This month');
   String get homeHeroTitle =>
-      _t('이번 달 지출과 예산을 한눈에 확인하세요', 'Track this month’s spending at a glance');
+      _t('이번 달 예산을 보고 바로 기록하세요', 'Check this month, then add a transaction');
   String get homeHeroBody => _t(
-    '월 예산, 최근 기록, 지출 인사이트를 한 화면에서 이어서 확인할 수 있도록 정리했습니다.',
-    'Monthly budget, recent records, and spending insights are organized into one clear ledger dashboard.',
+    '남은 예산과 이번 달 지출을 먼저 보고, 필요하면 바로 거래를 기록합니다.',
+    'See the remaining budget and spending first, then record the next transaction right away.',
   );
   String get homeStatSavingsLabel => _t('이번 달 지출', 'Spent this month');
   String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
@@ -72,26 +72,26 @@ class AppLocalizations {
     '첫 지출이나 수입을 기록하면 이번 달 흐름이 여기서 바로 보입니다.',
     'Once you record your first expense or income, this month’s flow will appear here.',
   );
-  String get homeQuickActionsTitle => _t('빠른 실행', 'Quick actions');
+  String get homeQuickActionsTitle => _t('다음으로 할 일', 'What to do next');
   String get homeQuickActionsSubtitle => _t(
-    '기록, 리포트, 인사이트로 바로 이동할 수 있습니다.',
-    'Jump straight into entry, reports, and insights.',
+    '보통은 기록 → 리포트 → 인사이트 순서로 확인하면 됩니다.',
+    'Most people go in this order: entry → report → insights.',
   );
   String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
-  String get homeQuickCalcTag => _t('빠른 입력', 'Quick entry');
+  String get homeQuickCalcTag => _t('1단계', 'Step 1');
   String get homeQuickCalcBody => _t(
-    '지출 또는 수입을 오늘 기준으로 빠르게 기록합니다.',
-    'Capture a new expense or income right away.',
+    '오늘 쓴 돈이나 들어온 돈을 먼저 기록합니다.',
+    'Start by recording the money you spent or received today.',
   );
-  String get homeQuickReportTag => _t('카테고리 합계', 'Category totals');
+  String get homeQuickReportTag => _t('2단계', 'Step 2');
   String get homeQuickReportBody => _t(
-    '이번 달 지출과 수입 흐름을 카테고리 기준으로 정리해서 봅니다.',
-    'Review this month’s income and expense flow by category.',
+    '이번 달 흐름을 숫자와 카테고리 기준으로 확인합니다.',
+    'Review this month in numbers and by category.',
   );
-  String get homeQuickInsightsTag => _t('패턴 점검', 'Pattern review');
+  String get homeQuickInsightsTag => _t('3단계', 'Step 3');
   String get homeQuickInsightsBody => _t(
-    '현재 기록을 바탕으로 어디를 먼저 조정할지 확인합니다.',
-    'See which category should be adjusted first.',
+    '기록을 바탕으로 어디를 먼저 조정할지 봅니다.',
+    'See what should be adjusted first based on your records.',
   );
   String get navTool => _t('기록', 'Entry');
   String get navReport => _t('월간 리포트', 'Report');
@@ -110,10 +110,10 @@ class AppLocalizations {
 
   String get onboardingTitle => _t('SaverQuest 시작하기', 'Start SaverQuest');
   String get onboardingIntroTitle =>
-      _t('필요한 설정만 확인하고 시작할게요', 'We will only confirm what you need');
+      _t('이번 달 예산 추적을 시작할게요', 'Let’s start tracking this month');
   String get onboardingIntroBody => _t(
-    '개인정보 또는 광고 관련 선택이 필요한 경우에만 한 번 안내합니다.',
-    'We will only ask if a privacy or ad choice is required.',
+    '필요한 개인정보 또는 광고 선택이 있을 때만 잠깐 확인합니다.',
+    'We only pause for a moment if a privacy or ad choice is required.',
   );
   String get onboardingTrustSectionTitle => _t('먼저 알아두세요', 'What to expect');
   String get onboardingSettingsHint => _t(
@@ -148,19 +148,19 @@ class AppLocalizations {
   String get onboardingAgreeSemantic => _t('계속하기 버튼', 'Continue button');
   String get onboardingAgreeProcessing =>
       _t('준비 중...', 'Getting things ready...');
-  String get onboardingAgreeStart => _t('계속하기', 'Continue');
+  String get onboardingAgreeStart => _t('예산 추적 시작', 'Start budget tracking');
   String get onboardingLaterSemantic =>
       _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
   String get onboardingLater => _t('나중에 설정에서 변경', 'Change later in Settings');
 
   String get toolTitle => _t('빠른 기록', 'Quick Entry');
   String get toolHeroTitle =>
-      _t('지출과 수입을 빠르게 기록하세요', 'Capture an expense or income in a few seconds');
+      _t('거래를 기록하고 예산을 함께 맞추세요', 'Record transactions and keep your budget aligned');
   String get toolHeroBody => _t(
-    '거래를 입력하고 월 예산을 조정하면 홈과 리포트가 바로 업데이트됩니다.',
-    'Add a transaction and adjust your monthly budget to update the dashboard right away.',
+    '지출·수입을 입력하고 필요하면 월 예산도 바로 수정하는 화면입니다.',
+    'Use this screen to add income or expenses and update the monthly budget when needed.',
   );
-  String get toolInputSectionTitle => _t('거래 입력', 'Transaction details');
+  String get toolInputSectionTitle => _t('거래 입력', 'Entry form');
   String get toolInputSectionBody => _t(
     '금액, 카테고리, 날짜를 입력해 지출이나 수입을 남길 수 있습니다.',
     'Record an expense or income with amount, category, and date.',
@@ -235,10 +235,10 @@ class AppLocalizations {
 
   String get reportTitle => _t('월간 리포트', 'Monthly Report');
   String get reportHeroTitle =>
-      _t('이번 달 지출과 수입 흐름을 정리했습니다', 'Your monthly income and spending summary');
+      _t('이번 달 기록을 숫자로 정리했습니다', 'This month in numbers');
   String get reportHeroBody => _t(
-    '월 예산 대비 사용 금액, 카테고리별 지출, 최근 거래를 한 번에 확인할 수 있습니다.',
-    'Review budget usage, category totals, and recent transactions in one place.',
+    '지출·수입 합계와 카테고리별 흐름을 확인하는 화면입니다.',
+    'Review totals and category breakdowns for the month on this screen.',
   );
   String get reportStatSavingsLabel => _t('지출 합계', 'Expenses');
   String get reportStatTopCategoryLabel => _t('수입 합계', 'Income');
@@ -395,8 +395,8 @@ class AppLocalizations {
   );
 
   String get insightsHeroBody => _t(
-    '기록된 거래를 바탕으로 예산 압박 구간과 다음 조정 포인트를 정리했습니다.',
-    'Here are the categories putting pressure on your budget and the next actions to take.',
+    '기록을 바탕으로 어디를 먼저 줄이거나 조정할지 보여줍니다.',
+    'This screen shows what to cut back on or adjust first based on your records.',
   );
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';
