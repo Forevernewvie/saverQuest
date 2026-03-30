@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/app_dependencies.dart';
-import '../../app/routes.dart';
 import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
@@ -435,8 +434,6 @@ class _ToolPageState extends State<ToolPage> {
                   ? l10n.toolUpdateSubmit
                   : l10n.toolSubmit,
               onPrimary: _saveEntry,
-              secondaryLabel: l10n.homeSecondaryAction,
-              onSecondary: () => Navigator.pushNamed(context, AppRoutes.report),
             ),
             AppMonthSwitcher(
               label: l10n.formatMonthYear(selectedMonth),

@@ -315,10 +315,13 @@ class AppMonthSwitcher extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.m),
-      padding: const EdgeInsets.all(AppSpacing.m),
+      margin: const EdgeInsets.only(bottom: AppSpacing.s),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: AppSpacing.s,
+      ),
       decoration: _surfaceDecoration(
-        fillColor: AppColors.surfaceAlt,
+        fillColor: AppColors.backgroundAlt,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Row(
@@ -336,6 +339,7 @@ class AppMonthSwitcher extends StatelessWidget {
                   style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
+                    fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
                 ),

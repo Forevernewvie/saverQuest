@@ -124,7 +124,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1. Add a record'), findsOneWidget);
-    expect(find.text('2. Monthly budget'), findsOneWidget);
+    expect(find.text('2. Adjust budget'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
