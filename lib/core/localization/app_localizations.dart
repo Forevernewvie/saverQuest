@@ -97,7 +97,7 @@ class AppLocalizations {
   String get navReport => _t('월간 리포트', 'Report');
   String get navInsights => _t('인사이트', 'Insights');
 
-  String get insightsTitle => _t('가계부 인사이트', 'Ledger Insights');
+  String get insightsTitle => _t('절약 인사이트', 'Spending insights');
   String get insightsNoAdTitle => _t('이번 달 해석', 'This month at a glance');
   String get insightsNoAdBody => _t(
     '이번 달 기록을 기반으로 지출 패턴과 다음 액션을 정리합니다.',
@@ -153,12 +153,12 @@ class AppLocalizations {
       _t('나중에 설정에서 변경 버튼', 'Change later in Settings button');
   String get onboardingLater => _t('나중에 설정에서 변경', 'Change later in Settings');
 
-  String get toolTitle => _t('빠른 기록', 'Quick Entry');
+  String get toolTitle => _t('거래 기록', 'Record transaction');
   String get toolHeroTitle =>
-      _t('거래를 기록하고 예산을 함께 맞추세요', 'Record transactions and keep your budget aligned');
+      _t('오늘의 거래를 기록하세요', 'Record today’s transaction');
   String get toolHeroBody => _t(
-    '지출·수입을 입력하고 필요하면 월 예산도 바로 수정하는 화면입니다.',
-    'Use this screen to add income or expenses and update the monthly budget when needed.',
+    '지출이나 수입을 입력하고 필요하면 이번 달 예산도 바로 수정합니다.',
+    'Add an expense or income here, then update this month’s budget when needed.',
   );
   String get toolInputSectionTitle => _t('거래 입력', 'Entry form');
   String get toolInputSectionBody => _t(
@@ -233,12 +233,12 @@ class AppLocalizations {
     'Save your first expense or income to see it here.',
   );
 
-  String get reportTitle => _t('월간 리포트', 'Monthly Report');
+  String get reportTitle => _t('이번 달 요약', 'This month summary');
   String get reportHeroTitle =>
-      _t('이번 달 기록을 숫자로 정리했습니다', 'This month in numbers');
+      _t('이번 달 기록을 숫자로 정리했어요', 'This month in numbers');
   String get reportHeroBody => _t(
-    '지출·수입 합계와 카테고리별 흐름을 확인하는 화면입니다.',
-    'Review totals and category breakdowns for the month on this screen.',
+    '지출·수입 합계와 카테고리별 흐름을 한 번에 확인합니다.',
+    'Review totals and category breakdowns for the month in one place.',
   );
   String get reportStatSavingsLabel => _t('지출 합계', 'Expenses');
   String get reportStatTopCategoryLabel => _t('수입 합계', 'Income');
@@ -396,7 +396,7 @@ class AppLocalizations {
 
   String get insightsHeroBody => _t(
     '기록을 바탕으로 어디를 먼저 줄이거나 조정할지 보여줍니다.',
-    'This screen shows what to cut back on or adjust first based on your records.',
+    'Use this screen to see what to cut back on or adjust first.',
   );
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';

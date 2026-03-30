@@ -87,7 +87,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Quick Entry'), findsAtLeastNWidgets(1));
+    expect(find.text('Record transaction'), findsAtLeastNWidgets(1));
     expect(tester.takeException(), isNull);
   });
 
@@ -105,7 +105,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Monthly Report'), findsAtLeastNWidgets(1));
+    expect(find.text('This month summary'), findsAtLeastNWidgets(1));
     expect(tester.takeException(), isNull);
   });
 

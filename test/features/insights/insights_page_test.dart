@@ -41,7 +41,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('가계부 인사이트'), findsWidgets);
+    expect(find.text('절약 인사이트'), findsWidgets);
     expect(find.byType(AppFeatureCard), findsNWidgets(3));
     expect(find.text('다음으로 볼 항목'), findsOneWidget);
   });
@@ -60,7 +60,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Ledger Insights'), findsWidgets);
+      expect(find.text('Spending insights'), findsWidgets);
       expect(find.byType(AppFeatureCard), findsNWidgets(3));
       expect(tester.takeException(), isNull);
     },
