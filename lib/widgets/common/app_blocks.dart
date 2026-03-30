@@ -658,9 +658,21 @@ class AppBudgetOverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final metricItems = [
-      _BudgetMetricColumn(label: remainingLabel, value: remainingValue),
-      _BudgetMetricColumn(label: spentLabel, value: spentValue),
-      _BudgetMetricColumn(label: limitLabel, value: limitValue),
+      _BudgetMetricColumn(
+        key: const ValueKey('budget-metric-remaining'),
+        label: remainingLabel,
+        value: remainingValue,
+      ),
+      _BudgetMetricColumn(
+        key: const ValueKey('budget-metric-spent'),
+        label: spentLabel,
+        value: spentValue,
+      ),
+      _BudgetMetricColumn(
+        key: const ValueKey('budget-metric-limit'),
+        label: limitLabel,
+        value: limitValue,
+      ),
     ];
 
     return Container(
@@ -715,7 +727,10 @@ class AppBudgetOverviewCard extends StatelessWidget {
                       .map(
                         (metric) => Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.s),
-                          child: metric,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: metric,
+                          ),
                         ),
                       )
                       .toList(),
@@ -1431,7 +1446,11 @@ BoxDecoration _surfaceDecoration({
 
 /// Renders a compact label-value stack inside budget overview cards.
 class _BudgetMetricColumn extends StatelessWidget {
-  const _BudgetMetricColumn({required this.label, required this.value});
+  const _BudgetMetricColumn({
+    super.key,
+    required this.label,
+    required this.value,
+  });
 
   final String label;
   final String value;
