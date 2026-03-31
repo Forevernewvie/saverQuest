@@ -84,4 +84,46 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'AppMonthSwitcher moves reset action below nav row on compact large-text layouts',
+    (tester) async {
+      await tester.pumpWidget(
+        const WidgetTestApp(
+          locale: Locale('en'),
+          mediaQueryData: MediaQueryData(
+            size: Size(320, 780),
+            textScaler: TextScaler.linear(1.6),
+          ),
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 260,
+                child: AppMonthSwitcher(
+                  label: 'March 2026',
+                  onPrevious: _noop,
+                  onNext: _noop,
+                  onReset: _noop,
+                  nextEnabled: true,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final leftRect = tester.getRect(find.byIcon(Icons.chevron_left));
+      final rightRect = tester.getRect(find.byIcon(Icons.chevron_right));
+      final resetRect = tester.getRect(
+        find.widgetWithText(TextButton, 'Current month'),
+      );
+
+      expect(resetRect.top, greaterThan(leftRect.bottom));
+      expect(resetRect.top, greaterThan(rightRect.bottom));
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
+
+void _noop() {}
