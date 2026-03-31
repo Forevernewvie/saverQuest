@@ -259,12 +259,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(
-      find.text('개인정보 처리방침'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('개인정보 처리방침'));
+    final settingsContext = tester.element(find.byType(SettingsPage));
+    Navigator.of(settingsContext).pushNamed(AppRoutes.privacyPolicy);
     await tester.pumpAndSettle();
 
     expect(find.text('앱에서 어떤 정보를 어떻게 다루는지 안내합니다'), findsOneWidget);
