@@ -79,20 +79,16 @@ class AppLocalizations {
   );
   String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
   String get homeQuickCalcTag => _t('1단계', 'Step 1');
-  String get homeQuickCalcBody => _t(
-    '오늘의 지출이나 수입을 기록합니다.',
-    'Record today’s spending or income.',
-  );
+  String get homeQuickCalcBody =>
+      _t('오늘의 지출이나 수입을 기록합니다.', 'Record today’s spending or income.');
   String get homeQuickReportTag => _t('2단계', 'Step 2');
   String get homeQuickReportBody => _t(
     '이번 달 숫자와 카테고리를 확인합니다.',
     'Review this month in numbers and by category.',
   );
   String get homeQuickInsightsTag => _t('3단계', 'Step 3');
-  String get homeQuickInsightsBody => _t(
-    '먼저 조정할 항목을 확인합니다.',
-    'See what to adjust first.',
-  );
+  String get homeQuickInsightsBody =>
+      _t('먼저 조정할 항목을 확인합니다.', 'See what to adjust first.');
   String get navTool => _t('기록', 'Entry');
   String get navReport => _t('월간 리포트', 'Report');
   String get navInsights => _t('인사이트', 'Insights');
