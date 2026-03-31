@@ -324,39 +324,79 @@ class AppMonthSwitcher extends StatelessWidget {
         fillColor: AppColors.backgroundAlt,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onPrevious,
-            tooltip: l10n.monthSwitcherPreviousSemantic,
-            icon: const Icon(Icons.chevron_left),
-          ),
-          Expanded(
-            child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useStackedLayout = AdaptiveLayout.useStackedLayout(
+            context,
+            constraints.maxWidth,
+          );
+
+          final monthLabel = Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          );
+
+          final resetAction = TextButton(
+            onPressed: onReset,
+            child: Text(l10n.monthSwitcherCurrentAction),
+          );
+
+          if (useStackedLayout) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: onPrevious,
+                      tooltip: l10n.monthSwitcherPreviousSemantic,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    Expanded(child: monthLabel),
+                    IconButton(
+                      onPressed: nextEnabled ? onNext : null,
+                      tooltip: l10n.monthSwitcherNextSemantic,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                TextButton(
-                  onPressed: onReset,
-                  child: Text(l10n.monthSwitcherCurrentAction),
-                ),
+                Align(alignment: Alignment.center, child: resetAction),
               ],
-            ),
-          ),
-          IconButton(
-            onPressed: nextEnabled ? onNext : null,
-            tooltip: l10n.monthSwitcherNextSemantic,
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
+            );
+          }
+
+          return Row(
+            children: [
+              IconButton(
+                onPressed: onPrevious,
+                tooltip: l10n.monthSwitcherPreviousSemantic,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    monthLabel,
+                    const SizedBox(height: AppSpacing.xs),
+                    resetAction,
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: nextEnabled ? onNext : null,
+                tooltip: l10n.monthSwitcherNextSemantic,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
