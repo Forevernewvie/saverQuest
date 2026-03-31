@@ -74,24 +74,24 @@ class AppLocalizations {
   );
   String get homeQuickActionsTitle => _t('다음으로 할 일', 'What to do next');
   String get homeQuickActionsSubtitle => _t(
-    '보통은 기록 → 리포트 → 인사이트 순서로 확인하면 됩니다.',
-    'Most people go in this order: entry → report → insights.',
+    '기록부터 시작하고, 그다음 리포트와 인사이트를 확인하세요.',
+    'Start with entry, then check the report and insights.',
   );
   String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
   String get homeQuickCalcTag => _t('1단계', 'Step 1');
   String get homeQuickCalcBody => _t(
-    '오늘 쓴 돈이나 들어온 돈을 먼저 기록합니다.',
-    'Start by recording the money you spent or received today.',
+    '오늘의 지출이나 수입을 기록합니다.',
+    'Record today’s spending or income.',
   );
   String get homeQuickReportTag => _t('2단계', 'Step 2');
   String get homeQuickReportBody => _t(
-    '이번 달 흐름을 숫자와 카테고리 기준으로 확인합니다.',
+    '이번 달 숫자와 카테고리를 확인합니다.',
     'Review this month in numbers and by category.',
   );
   String get homeQuickInsightsTag => _t('3단계', 'Step 3');
   String get homeQuickInsightsBody => _t(
-    '기록을 바탕으로 어디를 먼저 조정할지 봅니다.',
-    'See what should be adjusted first based on your records.',
+    '먼저 조정할 항목을 확인합니다.',
+    'See what to adjust first.',
   );
   String get navTool => _t('기록', 'Entry');
   String get navReport => _t('월간 리포트', 'Report');

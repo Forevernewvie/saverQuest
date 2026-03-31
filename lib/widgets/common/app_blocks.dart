@@ -892,15 +892,15 @@ class AppQuickActionCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: AppSpacing.m),
+                        const SizedBox(height: AppSpacing.s),
                         Text(
                           body,
                           style: const TextStyle(
                             color: AppColors.textSecondary,
-                            height: 1.5,
+                            height: 1.4,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.l),
+                        const SizedBox(height: AppSpacing.m),
                         Row(
                           children: [
                             Text(
