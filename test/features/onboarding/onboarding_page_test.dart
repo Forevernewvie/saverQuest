@@ -206,7 +206,9 @@ void main() {
     expect(context.attService.requestCalls, 1);
     expect(find.text('SaverQuest 시작하기'), findsNothing);
     expect(find.text('이번 달 예산부터 시작하세요'), findsOneWidget);
-    expect(find.text('먼저 알아두세요'), findsNothing);
+    expect(find.text('먼저 알아두세요'), findsOneWidget);
+    expect(find.text('집중 구간에서는 광고를 쉬어요'), findsOneWidget);
+    expect(find.text('필요한 설정만 분명하게 안내해요'), findsOneWidget);
   });
 
   testWidgets('navigates to home when continue is tapped', (tester) async {

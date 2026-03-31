@@ -141,10 +141,23 @@ class _ReportPageState extends State<ReportPage> {
   /// Builds recent transaction rows or an empty-state card when there is no data.
   Widget _buildRecentEntries(
     BuildContext context,
-    List<LedgerEntry> recentEntries,
-  ) {
+    List<LedgerEntry> recentEntries, {
+    required bool hasCategoryFilter,
+  }) {
     final l10n = context.l10n;
     if (recentEntries.isEmpty) {
+      if (hasCategoryFilter) {
+        return AppEmptyStateCard(
+          icon: Icons.filter_list_off_outlined,
+          title: l10n.reportFilteredEmptyTitle,
+          body: l10n.reportFilteredEmptyBody,
+          actionLabel: l10n.reportFilterAllLabel,
+          onAction: () {
+            setState(() => _selectedCategory = null);
+          },
+        );
+      }
+
       return AppEmptyStateCard(
         icon: Icons.receipt_long_outlined,
         title: l10n.reportEmptyTitle,
@@ -261,6 +274,7 @@ class _ReportPageState extends State<ReportPage> {
                   : summary.recentEntries
                         .where((entry) => entry.category == effectiveCategory)
                         .toList(),
+              hasCategoryFilter: effectiveCategory != null,
             ),
             AdBannerSlot(
               adService: widget.dependencies.adService,

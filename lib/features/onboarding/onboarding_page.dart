@@ -107,6 +107,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
             color: AppColors.textSecondary,
             message: l10n.onboardingAgreeProcessing,
           ),
+        AppSectionHeader(
+          title: l10n.onboardingTrustSectionTitle,
+          subtitle: l10n.onboardingSettingsHint,
+        ),
+        AppFeatureCard(
+          icon: Icons.visibility_off_outlined,
+          title: l10n.onboardingNoAdTitle,
+          body: l10n.onboardingNoAdBody,
+        ),
+        AppFeatureCard(
+          icon: Icons.verified_user_outlined,
+          title: l10n.onboardingConsentTitle,
+          body: l10n.onboardingConsentBody,
+          margin: EdgeInsets.zero,
+        ),
       ],
     );
   }

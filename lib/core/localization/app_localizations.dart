@@ -251,6 +251,12 @@ class AppLocalizations {
     'Narrow recent transactions by category when needed.',
   );
   String get reportFilterAllLabel => _t('전체', 'All');
+  String get reportFilteredEmptyTitle =>
+      _t('선택한 카테고리의 최근 거래가 없습니다', 'No recent transactions in this category');
+  String get reportFilteredEmptyBody => _t(
+    '전체 보기로 돌아가면 다른 최근 거래를 확인할 수 있습니다.',
+    'Return to All to review the other recent transactions.',
+  );
   String get reportRecentEntriesTitle => _t('최근 거래', 'Recent transactions');
   String get reportBudgetStatusTitle => _t('예산 상태', 'Budget status');
   String get reportEmptyTitle =>
