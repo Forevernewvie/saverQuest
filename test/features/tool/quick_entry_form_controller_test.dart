@@ -3,6 +3,8 @@ import 'package:flutter_saverquest_mvp/features/tool/quick_entry_form_controller
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  final fixedNow = DateTime(2026, 3, 20, 9);
+
   test('income type narrows categories and normalizes invalid selection', () {
     final controller = QuickEntryFormController(
       initialMonthlyBudgetAmount: 350000,
@@ -43,6 +45,7 @@ void main() {
     () {
       final controller = QuickEntryFormController(
         initialMonthlyBudgetAmount: 420000,
+        now: () => fixedNow,
       );
       controller.amountController.text = '12000';
       controller.noteController.text = '점심';
@@ -52,6 +55,7 @@ void main() {
 
       expect(controller.amountController.text, isEmpty);
       expect(controller.noteController.text, isEmpty);
+      expect(controller.selectedDate, fixedNow);
       expect(controller.budgetController.text, '420000');
       controller.dispose();
     },
@@ -83,12 +87,24 @@ void main() {
   test('buildEntry trims numeric input before parsing', () {
     final controller = QuickEntryFormController(
       initialMonthlyBudgetAmount: 420000,
+      entryIdFactory: () => 'generated-entry',
     );
     controller.amountController.text = ' 18000 ';
 
     final entry = controller.buildEntry();
 
+    expect(entry.id, 'generated-entry');
     expect(entry.amount, 18000);
+    controller.dispose();
+  });
+
+  test('starts with the injected current date for deterministic drafts', () {
+    final controller = QuickEntryFormController(
+      initialMonthlyBudgetAmount: 420000,
+      now: () => fixedNow,
+    );
+
+    expect(controller.selectedDate, fixedNow);
     controller.dispose();
   });
 

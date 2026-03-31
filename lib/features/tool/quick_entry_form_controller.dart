@@ -2,23 +2,56 @@ import 'package:flutter/material.dart';
 
 import '../../core/ledger/ledger_models.dart';
 
+typedef _NowProvider = DateTime Function();
+typedef _EntryIdFactory = String Function();
+
 /// Owns quick-entry form state so the screen can stay focused on layout.
 class QuickEntryFormController extends ChangeNotifier {
   /// Creates a form controller with an initial monthly budget amount.
-  QuickEntryFormController({required int initialMonthlyBudgetAmount})
-    : _budgetController = TextEditingController(
-        text: initialMonthlyBudgetAmount.toString(),
-      ),
-      _amountController = TextEditingController(),
-      _noteController = TextEditingController();
+  QuickEntryFormController({
+    required int initialMonthlyBudgetAmount,
+    DateTime Function()? now,
+    String Function()? entryIdFactory,
+  }) : _now = now ?? DateTime.now,
+       _entryIdFactory = entryIdFactory ?? _defaultEntryIdFactory,
+       _selectedDate = (now ?? DateTime.now)(),
+       _budgetController = TextEditingController(
+         text: initialMonthlyBudgetAmount.toString(),
+       ),
+       _amountController = TextEditingController(),
+       _noteController = TextEditingController();
 
+  static const List<LedgerCategory> _expenseCategories = [
+    LedgerCategory.groceries,
+    LedgerCategory.dining,
+    LedgerCategory.transport,
+    LedgerCategory.coffee,
+    LedgerCategory.shopping,
+    LedgerCategory.housing,
+    LedgerCategory.subscriptions,
+    LedgerCategory.health,
+    LedgerCategory.entertainment,
+  ];
+
+  static const List<LedgerCategory> _incomeCategories = [
+    LedgerCategory.salary,
+    LedgerCategory.freelance,
+    LedgerCategory.savings,
+  ];
+
+  static String _defaultEntryIdFactory() {
+    return DateTime.now().microsecondsSinceEpoch.toString();
+  }
+
+  final _NowProvider _now;
+  final _EntryIdFactory _entryIdFactory;
   final TextEditingController _amountController;
   final TextEditingController _noteController;
   final TextEditingController _budgetController;
 
   LedgerEntryType _selectedType = LedgerEntryType.expense;
   LedgerCategory _selectedCategory = LedgerCategory.groceries;
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate;
   String? _editingEntryId;
 
   /// Exposes the transaction amount text controller.
@@ -47,29 +80,19 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Returns the categories available for the currently selected type.
   List<LedgerCategory> categoriesForSelectedType() {
-    return _selectedType == LedgerEntryType.expense
-        ? const [
-            LedgerCategory.groceries,
-            LedgerCategory.dining,
-            LedgerCategory.transport,
-            LedgerCategory.coffee,
-            LedgerCategory.shopping,
-            LedgerCategory.housing,
-            LedgerCategory.subscriptions,
-            LedgerCategory.health,
-            LedgerCategory.entertainment,
-          ]
-        : const [
-            LedgerCategory.salary,
-            LedgerCategory.freelance,
-            LedgerCategory.savings,
-          ];
+    return _categoriesForType(_selectedType);
+  }
+
+  List<LedgerCategory> _categoriesForType(LedgerEntryType type) {
+    return type == LedgerEntryType.expense
+        ? _expenseCategories
+        : _incomeCategories;
   }
 
   /// Updates the selected transaction type and normalizes category state.
   void selectType(LedgerEntryType type) {
     _selectedType = type;
-    final categories = categoriesForSelectedType();
+    final categories = _categoriesForType(type);
     if (!categories.contains(_selectedCategory)) {
       _selectedCategory = categories.first;
     }
@@ -92,7 +115,7 @@ class QuickEntryFormController extends ChangeNotifier {
   void clearEntryDraft() {
     _amountController.clear();
     _noteController.clear();
-    _selectedDate = DateTime.now();
+    _selectedDate = _now();
     _editingEntryId = null;
     notifyListeners();
   }
@@ -117,7 +140,7 @@ class QuickEntryFormController extends ChangeNotifier {
   /// Builds a validated ledger entry from the current draft values.
   LedgerEntry buildEntry() {
     return LedgerEntry(
-      id: _editingEntryId ?? DateTime.now().microsecondsSinceEpoch.toString(),
+      id: _editingEntryId ?? _entryIdFactory(),
       type: _selectedType,
       category: _selectedCategory,
       amount: _parseRequiredAmount(_amountController.text),
