@@ -24,7 +24,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('월간 리포트'), findsOneWidget);
+    expect(find.text('이번 달 요약'), findsOneWidget);
     expect(find.text('예산 상태'), findsWidgets);
     await tester.scrollUntilVisible(
       find.text('지출 비중'),

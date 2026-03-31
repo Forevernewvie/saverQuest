@@ -77,13 +77,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return ScreenShell(
       title: l10n.onboardingTitle,
       showAppBar: false,
-      centerContent: true,
+      centerContent: false,
       children: [
         AppHeroCard(
           eyebrow: l10n.appTitle,
           title: l10n.onboardingIntroTitle,
           body: l10n.onboardingIntroBody,
-          trailing: const AppHeroIcon(icon: Icons.verified_user_outlined),
           primaryLabel: l10n.onboardingAgreeStart,
           primarySemanticLabel: l10n.onboardingAgreeSemantic,
           onPrimary: _loading

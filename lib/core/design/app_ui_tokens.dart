@@ -9,7 +9,7 @@ class AppUiTokens {
   static const double heroIconContainerSize = 56;
   static const double heroIconSize = 28;
   static const double featureIconContainerSize = 40;
-  static const double quickActionMinHeight = 154;
+  static const double quickActionMinHeight = 136;
   static const double quickActionMinWidth = 160;
   static const double quickActionMaxWidth = 240;
   static const double maxContentWidth = 720;

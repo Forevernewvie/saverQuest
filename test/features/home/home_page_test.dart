@@ -20,17 +20,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('가계부 홈'), findsOneWidget);
+    expect(find.text('이번 달'), findsWidgets);
     expect(find.text('이번 달 예산 현황'), findsOneWidget);
     expect(find.text('거래 기록하기'), findsOneWidget);
     expect(find.text('남은 예산'), findsWidgets);
     await tester.scrollUntilVisible(
-      find.text('빠른 실행'),
+      find.text('다음으로 할 일'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.text('빠른 실행'), findsOneWidget);
+    expect(find.text('다음으로 할 일'), findsOneWidget);
   });
 
   testWidgets('renders english budget dashboard copy', (tester) async {
@@ -44,7 +44,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Budget Home'), findsOneWidget);
+    expect(find.text('This month'), findsWidgets);
     await tester.scrollUntilVisible(
       find.text('Monthly budget overview'),
       200,
@@ -54,12 +54,12 @@ void main() {
     expect(find.text('Monthly budget overview'), findsOneWidget);
     expect(find.text('Remaining budget'), findsWidgets);
     await tester.scrollUntilVisible(
-      find.text('Quick actions'),
+      find.text('What to do next'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.text('Quick actions'), findsOneWidget);
+    expect(find.text('What to do next'), findsOneWidget);
   });
 
   testWidgets('shows actionable empty state when there are no entries', (
@@ -134,15 +134,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Budget Home'), findsOneWidget);
+    expect(find.text('This month'), findsWidgets);
     await tester.scrollUntilVisible(
-      find.text('Quick actions'),
+      find.text('What to do next'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Quick actions'), findsOneWidget);
+    expect(find.text('What to do next'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

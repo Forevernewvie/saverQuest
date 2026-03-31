@@ -206,26 +206,17 @@ class _HomePageState extends State<HomePage> {
               eyebrow: l10n.appTitle,
               title: l10n.homeHeroTitle,
               body: l10n.homeHeroBody,
-              trailing: const AppHeroIcon(
-                icon: Icons.account_balance_wallet_outlined,
-              ),
               primaryLabel: l10n.homePrimaryAction,
-              secondaryLabel: l10n.homeSecondaryAction,
               primarySemanticLabel: l10n.homePrimaryActionSemantic,
               onPrimary: _openEntry,
-              onSecondary: () => Navigator.pushNamed(context, AppRoutes.report),
               pills: [
-                AppMetricPill(
-                  label: l10n.homeStatSavingsLabel,
-                  value: viewData.monthlyExpenseValue,
-                ),
                 AppMetricPill(
                   label: l10n.homeStatRemainingLabel,
                   value: viewData.remainingBudgetValue,
                 ),
                 AppMetricPill(
-                  label: l10n.homeStatStreakLabel,
-                  value: viewData.monthlyIncomeValue,
+                  label: l10n.homeStatSavingsLabel,
+                  value: viewData.monthlyExpenseValue,
                 ),
               ],
             ),

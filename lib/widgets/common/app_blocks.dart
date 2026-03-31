@@ -209,7 +209,7 @@ class AppMetricPill extends StatelessWidget {
         vertical: AppSpacing.s,
       ),
       decoration: _surfaceDecoration(
-        fillColor: const Color(0x1AFFFFFF),
+        fillColor: AppColors.surfaceMuted,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Column(
@@ -315,10 +315,13 @@ class AppMonthSwitcher extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.m),
-      padding: const EdgeInsets.all(AppSpacing.m),
+      margin: const EdgeInsets.only(bottom: AppSpacing.s),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: AppSpacing.s,
+      ),
       decoration: _surfaceDecoration(
-        fillColor: AppColors.surfaceAlt,
+        fillColor: AppColors.backgroundAlt,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Row(
@@ -336,6 +339,7 @@ class AppMonthSwitcher extends StatelessWidget {
                   style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
+                    fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -888,15 +892,15 @@ class AppQuickActionCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: AppSpacing.m),
+                        const SizedBox(height: AppSpacing.s),
                         Text(
                           body,
                           style: const TextStyle(
                             color: AppColors.textSecondary,
-                            height: 1.5,
+                            height: 1.4,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.l),
+                        const SizedBox(height: AppSpacing.m),
                         Row(
                           children: [
                             Text(

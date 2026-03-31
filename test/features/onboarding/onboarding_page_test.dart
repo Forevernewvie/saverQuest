@@ -205,7 +205,7 @@ void main() {
     expect(context.consentController.gatherCalls, 1);
     expect(context.attService.requestCalls, 1);
     expect(find.text('SaverQuest 시작하기'), findsNothing);
-    expect(find.text('필요한 설정만 확인하고 시작할게요'), findsOneWidget);
+    expect(find.text('이번 달 예산부터 시작하세요'), findsOneWidget);
     expect(find.text('먼저 알아두세요'), findsNothing);
   });
 
@@ -222,10 +222,10 @@ void main() {
     await tester.pumpWidget(SaverQuestApp(dependencies: context.dependencies));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('계속하기'));
+    await tester.tap(find.text('예산 보기'));
     await tester.pumpAndSettle();
 
-    expect(find.text('가계부 홈'), findsOneWidget);
+    expect(find.text('이번 달'), findsWidgets);
   });
 
   testWidgets('restores onboarding actions when consent bootstrap throws', (
@@ -240,14 +240,14 @@ void main() {
     await tester.pumpWidget(SaverQuestApp(dependencies: context.dependencies));
     await tester.pump();
 
-    expect(find.widgetWithText(FilledButton, '계속하기'), findsNothing);
+    expect(find.widgetWithText(FilledButton, '예산 보기'), findsNothing);
     expect(find.text('준비 중...'), findsOneWidget);
 
     refreshCompleter.completeError(error);
     await tester.pump();
 
-    expect(find.widgetWithText(FilledButton, '계속하기'), findsOneWidget);
-    expect(find.widgetWithText(OutlinedButton, '나중에 설정에서 변경'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, '예산 보기'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, '나중에 하기'), findsOneWidget);
     expect(find.text('준비 중...'), findsNothing);
   });
 }
