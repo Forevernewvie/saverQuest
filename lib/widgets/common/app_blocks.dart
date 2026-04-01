@@ -53,6 +53,8 @@ class AppHeroCard extends StatelessWidget {
     this.eyebrow,
     required this.title,
     required this.body,
+    this.accentColor = AppColors.accent,
+    this.accentSoftColor = AppColors.accentSoft,
     this.trailing,
     this.pills = const [],
     this.primaryLabel,
@@ -65,6 +67,8 @@ class AppHeroCard extends StatelessWidget {
   final String? eyebrow;
   final String title;
   final String body;
+  final Color accentColor;
+  final Color accentSoftColor;
   final Widget? trailing;
   final List<Widget> pills;
   final String? primaryLabel;
@@ -82,8 +86,8 @@ class AppHeroCard extends StatelessWidget {
         if (eyebrow != null) ...[
           Text(
             eyebrow!,
-            style: const TextStyle(
-              color: AppColors.accent,
+            style: TextStyle(
+              color: accentColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -133,8 +137,17 @@ class AppHeroCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.l),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppUiTokens.heroCornerRadius),
-            color: AppColors.surface,
-            border: Border.all(color: AppColors.border),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.surface,
+                Color.lerp(AppColors.surface, accentSoftColor, 0.75)!,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(
+              color: Color.lerp(AppColors.border, accentSoftColor, 0.75)!,
+            ),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x14000000),
@@ -546,9 +559,16 @@ class AppCategoryBarChartCard extends StatelessWidget {
 
 /// Builds the accent icon chip used inside hero cards.
 class AppHeroIcon extends StatelessWidget {
-  const AppHeroIcon({super.key, required this.icon});
+  const AppHeroIcon({
+    super.key,
+    required this.icon,
+    this.color = AppColors.accent,
+    this.fillColor = AppColors.accentSoft,
+  });
 
   final IconData icon;
+  final Color color;
+  final Color fillColor;
 
   /// Builds the accent icon chip used inside hero cards.
   @override
@@ -557,12 +577,12 @@ class AppHeroIcon extends StatelessWidget {
       width: AppUiTokens.heroIconContainerSize,
       height: AppUiTokens.heroIconContainerSize,
       decoration: _surfaceDecoration(
-        fillColor: const Color(0x1AFFFFFF),
+        fillColor: fillColor,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
       child: Icon(
         icon,
-        color: AppColors.accent,
+        color: color,
         size: AppUiTokens.heroIconSize,
       ),
     );
@@ -796,175 +816,6 @@ class AppBudgetOverviewCard extends StatelessWidget {
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-/// Renders a compact action card for frequently used navigation targets.
-class AppQuickActionCard extends StatelessWidget {
-  const AppQuickActionCard({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.body,
-    required this.onTap,
-    this.categoryLabel,
-    this.trailingValue,
-    this.expandToWidth = true,
-  });
-
-  final IconData icon;
-  final String label;
-  final String body;
-  final VoidCallback onTap;
-  final String? categoryLabel;
-  final String? trailingValue;
-  final bool expandToWidth;
-
-  /// Builds the quick action surface with consistent sizing constraints.
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: expandToWidth ? 0 : AppUiTokens.quickActionMinWidth,
-        maxWidth: expandToWidth
-            ? double.infinity
-            : AppUiTokens.quickActionMaxWidth,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppUiTokens.surfaceCornerRadius),
-          child: Semantics(
-            button: true,
-            label: label,
-            child: Ink(
-              padding: const EdgeInsets.all(AppSpacing.m),
-              decoration: _surfaceDecoration(
-                fillColor: AppColors.surfaceAlt,
-                borderRadius: AppUiTokens.surfaceCornerRadius,
-              ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: AppUiTokens.quickActionMinHeight,
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final useStackedTrailing =
-                        trailingValue != null &&
-                        AdaptiveLayout.useStackedLayout(
-                          context,
-                          constraints.maxWidth,
-                        );
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: AppUiTokens.heroIconContainerSize,
-                              height: AppUiTokens.heroIconContainerSize,
-                              decoration: _surfaceDecoration(
-                                fillColor: AppColors.accentSoft,
-                                borderRadius: AppUiTokens.cardCornerRadius,
-                                showBorder: false,
-                              ),
-                              child: Icon(icon, color: AppColors.accent),
-                            ),
-                            const SizedBox(width: AppSpacing.m),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    label,
-                                    style: const TextStyle(
-                                      color: AppColors.textPrimary,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  if (categoryLabel != null) ...[
-                                    const SizedBox(height: AppSpacing.xs),
-                                    Text(
-                                      categoryLabel!,
-                                      style: const TextStyle(
-                                        color: AppColors.textSecondary,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            if (trailingValue != null &&
-                                !useStackedTrailing) ...[
-                              const SizedBox(width: AppSpacing.s),
-                              Flexible(
-                                child: Text(
-                                  trailingValue!,
-                                  style: const TextStyle(
-                                    color: AppColors.accent,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        if (trailingValue != null && useStackedTrailing) ...[
-                          const SizedBox(height: AppSpacing.s),
-                          Text(
-                            trailingValue!,
-                            style: const TextStyle(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: AppSpacing.s),
-                        Text(
-                          body,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            height: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.m),
-                        Row(
-                          children: [
-                            Text(
-                              l10n.homeQuickActionOpenLabel,
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const Spacer(),
-                            const Icon(
-                              Icons.arrow_forward_rounded,
-                              color: AppColors.textSecondary,
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

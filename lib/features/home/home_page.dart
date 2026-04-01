@@ -59,47 +59,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// Builds the quick-action descriptors shown near the bottom of the home page.
-  List<HomeQuickActionItem> _buildQuickActions(
-    BuildContext context,
-    LedgerDashboardSummary dashboard,
-  ) {
-    final l10n = context.l10n;
-
-    return [
-      HomeQuickActionItem(
-        icon: Icons.add_card_outlined,
-        label: l10n.navTool,
-        categoryLabel: l10n.homeQuickCalcTag,
-        trailingValue: l10n.formatCurrency(
-          dashboard.recentEntries.isNotEmpty
-              ? dashboard.recentEntries.first.amount
-              : 0,
-        ),
-        body: l10n.homeQuickCalcBody,
-        onTap: _openEntry,
-      ),
-      HomeQuickActionItem(
-        icon: Icons.pie_chart_outline,
-        label: l10n.navReport,
-        categoryLabel: l10n.homeQuickReportTag,
-        trailingValue: l10n.formatCurrency(dashboard.monthlyExpenseAmount),
-        body: l10n.homeQuickReportBody,
-        onTap: () => Navigator.pushNamed(context, AppRoutes.report),
-      ),
-      HomeQuickActionItem(
-        icon: Icons.lightbulb_outline,
-        label: l10n.navInsights,
-        categoryLabel: l10n.homeQuickInsightsTag,
-        trailingValue: dashboard.topExpenseCategory == null
-            ? l10n.noData
-            : l10n.ledgerCategoryLabel(dashboard.topExpenseCategory!),
-        body: l10n.homeQuickInsightsBody,
-        onTap: () => Navigator.pushNamed(context, AppRoutes.insights),
-      ),
-    ];
-  }
-
   /// Builds the recent transaction list or a first-run empty state.
   Widget _buildRecentEntries(
     BuildContext context,
@@ -195,6 +154,7 @@ class _HomePageState extends State<HomePage> {
 
         return ScreenShell(
           title: l10n.homeTitle,
+          primaryNavigationRoute: AppRoutes.home,
           actions: [
             IconButton(
               onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
@@ -234,12 +194,6 @@ class _HomePageState extends State<HomePage> {
               subtitle: l10n.homeRecentEntriesSubtitle,
             ),
             _buildRecentEntries(context, dashboard.recentEntries),
-            const SizedBox(height: AppSpacing.m),
-            HomeQuickActionsSection(
-              title: l10n.homeQuickActionsTitle,
-              subtitle: l10n.homeQuickActionsSubtitle,
-              actions: _buildQuickActions(context, dashboard),
-            ),
             const SizedBox(height: AppSpacing.m),
             AdBannerSlot(
               adService: widget.dependencies.adService,

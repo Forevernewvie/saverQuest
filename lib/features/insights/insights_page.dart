@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_dependencies.dart';
 import '../../app/routes.dart';
+import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/ledger/ledger_view_data.dart';
@@ -77,12 +78,20 @@ class _InsightsPageState extends State<InsightsPage> {
 
         return ScreenShell(
           title: l10n.insightsTitle,
+          primaryNavigationRoute: AppRoutes.insights,
+          showAppBar: false,
           children: [
             AppHeroCard(
-              eyebrow: l10n.appTitle,
+              eyebrow: l10n.navInsights,
               title: l10n.insightsTitle,
               body: l10n.insightsHeroBody,
-              trailing: const AppHeroIcon(icon: Icons.insights_outlined),
+              accentColor: AppColors.insightsAccent,
+              accentSoftColor: AppColors.insightsAccentSoft,
+              trailing: const AppHeroIcon(
+                icon: Icons.insights_outlined,
+                color: AppColors.insightsAccent,
+                fillColor: AppColors.insightsAccentSoft,
+              ),
             ),
             AppMonthSwitcher(
               label: l10n.formatMonthYear(selectedMonth),

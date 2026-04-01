@@ -11,6 +11,10 @@ class AppColors {
   static const Color textSecondary = Color(0xFF6A7E95);
   static const Color accent = Color(0xFF5A7FFF);
   static const Color accentSoft = Color(0xFFDCE6FF);
+  static const Color reportAccent = Color(0xFF6E6CF6);
+  static const Color reportAccentSoft = Color(0xFFE5E4FF);
+  static const Color insightsAccent = Color(0xFF2F9C71);
+  static const Color insightsAccentSoft = Color(0xFFDDF4E9);
   static const Color onAccent = Color(0xFFFFFFFF);
   static const Color danger = Color(0xFFD95F5F);
   static const Color success = Color(0xFF2FA36B);

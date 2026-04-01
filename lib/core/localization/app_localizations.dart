@@ -38,8 +38,8 @@ class AppLocalizations {
   String get homeHeroTitle =>
       _t('남은 예산을 먼저 확인하세요', 'Check your remaining budget first');
   String get homeHeroBody => _t(
-    '지출이 생길 때마다 바로 기록하면 이번 달 흐름이 여기서 정리됩니다.',
-    'Add a transaction whenever you spend, and this screen will keep the month organized.',
+    '지출이 생기면 기록하고, 남은 예산을 여기서 확인하세요.',
+    'Record spending, then check the remaining budget here.',
   );
   String get homeStatSavingsLabel => _t('이번 달 지출', 'Spent this month');
   String get homeStatRemainingLabel => _t('남은 예산', 'Remaining budget');
@@ -48,8 +48,8 @@ class AppLocalizations {
       _t('이번 달 예산 현황', 'Monthly budget overview');
   String get homeBudgetOverviewTitle => _t('예산 진행률', 'Budget progress');
   String get homeBudgetOverviewBody => _t(
-    '한 달 예산과 현재 사용 금액을 비교해 남은 여유를 확인하세요.',
-    'Compare your monthly budget with current spend to see how much room you have left.',
+    '예산과 현재 사용 금액을 바로 비교해 보세요.',
+    'Compare the budget with current spend at a glance.',
   );
   String get homeBudgetSpentLabel => _t('사용 금액', 'Spent');
   String get homeBudgetLimitLabel => _t('예산 한도', 'Budget limit');
@@ -57,47 +57,28 @@ class AppLocalizations {
   String get homePrimaryAction => _t('거래 기록하기', 'Add transaction');
   String get homePrimaryActionSemantic =>
       _t('거래 기록하기 버튼', 'Add transaction button');
-  String get homeSecondaryAction => _t('월간 리포트 보기', 'Open monthly report');
   String get monthSwitcherPreviousSemantic =>
       _t('이전 달 보기', 'Show previous month');
   String get monthSwitcherNextSemantic => _t('다음 달 보기', 'Show next month');
   String get monthSwitcherCurrentAction => _t('이번 달', 'Current month');
   String get homeRecentEntriesTitle => _t('최근 기록', 'Recent activity');
-  String get homeRecentEntriesSubtitle => _t(
-    '가장 최근에 입력한 거래를 확인할 수 있습니다.',
-    'Review the latest transactions you recorded.',
-  );
+  String get homeRecentEntriesSubtitle =>
+      _t('최근 기록한 거래를 빠르게 확인합니다.', 'Review the latest transactions quickly.');
   String get homeEmptyRecordsTitle => _t('아직 기록이 없습니다', 'No records yet');
   String get homeEmptyRecordsBody => _t(
     '첫 지출이나 수입을 기록하면 이번 달 흐름이 여기서 바로 보입니다.',
     'Once you record your first expense or income, this month’s flow will appear here.',
   );
-  String get homeQuickActionsTitle => _t('다음으로 할 일', 'What to do next');
-  String get homeQuickActionsSubtitle => _t(
-    '기록부터 시작하고, 그다음 리포트와 인사이트를 확인하세요.',
-    'Start with entry, then check the report and insights.',
-  );
-  String get homeQuickActionOpenLabel => _t('바로 열기', 'Open now');
-  String get homeQuickCalcTag => _t('1단계', 'Step 1');
-  String get homeQuickCalcBody =>
-      _t('오늘의 지출이나 수입을 기록합니다.', 'Record today’s spending or income.');
-  String get homeQuickReportTag => _t('2단계', 'Step 2');
-  String get homeQuickReportBody => _t(
-    '이번 달 숫자와 카테고리를 확인합니다.',
-    'Review this month in numbers and by category.',
-  );
-  String get homeQuickInsightsTag => _t('3단계', 'Step 3');
-  String get homeQuickInsightsBody =>
-      _t('먼저 조정할 항목을 확인합니다.', 'See what to adjust first.');
+  String get navHome => _t('홈', 'Home');
   String get navTool => _t('기록', 'Entry');
-  String get navReport => _t('월간 리포트', 'Report');
+  String get navReport => _t('리포트', 'Report');
   String get navInsights => _t('인사이트', 'Insights');
 
   String get insightsTitle => _t('절약 인사이트', 'Spending insights');
   String get insightsNoAdTitle => _t('이번 달 해석', 'This month at a glance');
   String get insightsNoAdBody => _t(
-    '이번 달 기록을 기반으로 지출 패턴과 다음 액션을 정리합니다.',
-    'Review the spending pattern and next actions based on this month’s records.',
+    '이번 달 기록을 바탕으로 패턴과 다음 행동을 정리합니다.',
+    'Review the pattern and next action from this month’s records.',
   );
   String get insightsSegmentATitle => _t('가장 큰 지출 축', 'Largest expense driver');
   String get insightsSegmentBTitle =>
@@ -153,13 +134,13 @@ class AppLocalizations {
   String get toolHeroTitle =>
       _t('오늘 쓴 돈을 먼저 기록하세요', 'Record today’s spending first');
   String get toolHeroBody => _t(
-    '지출이나 수입을 먼저 입력하고, 예산을 바꿔야 할 때만 아래에서 수정합니다.',
-    'Start with the transaction. Change this month’s budget below only when needed.',
+    '거래를 먼저 입력하고 예산은 필요할 때만 아래에서 바꾸세요.',
+    'Start with the entry. Change the budget below only when needed.',
   );
   String get toolInputSectionTitle => _t('1. 거래 입력', '1. Add a record');
   String get toolInputSectionBody => _t(
-    '금액, 카테고리, 날짜를 입력해 지출이나 수입을 남길 수 있습니다.',
-    'Record an expense or income with amount, category, and date.',
+    '금액, 카테고리, 날짜만 입력하면 바로 저장할 수 있습니다.',
+    'Enter amount, category, and date to save right away.',
   );
   String get toolEntryTypeLabel => _t('거래 유형', 'Entry type');
   String get toolExpenseType => _t('지출', 'Expense');
@@ -203,11 +184,11 @@ class AppLocalizations {
   String get toolEditingCancel => _t('수정 취소', 'Cancel edit');
   String get toolRecentRecordsTitle => _t('방금 기록한 항목', 'Latest entries');
   String get toolRecentRecordsBody =>
-      _t('최근에 저장한 거래가 아래에 표시됩니다.', 'Recently saved entries are shown below.');
+      _t('방금 저장한 거래를 아래에서 확인하세요.', 'See the most recent saved entries below.');
   String get toolBudgetSectionTitle => _t('2. 예산 조정', '2. Adjust budget');
   String get toolBudgetSectionBody => _t(
-    '이번 달 예산을 바꿔야 할 때만 수정하면 홈과 인사이트에 바로 반영됩니다.',
-    'Only change this when this month’s budget needs updating. Home and insights update right away.',
+    '예산을 바꿔야 할 때만 수정하면 홈과 인사이트에 바로 반영됩니다.',
+    'Only change this when the monthly budget needs updating.',
   );
   String get toolBudgetAmountLabel => _t('월 예산 금액', 'Monthly budget amount');
   String get toolBudgetAmountHint => _t('예: 450000', 'Example: 450000');
@@ -233,8 +214,8 @@ class AppLocalizations {
   String get reportHeroTitle =>
       _t('이번 달 기록을 숫자로 정리했어요', 'This month in numbers');
   String get reportHeroBody => _t(
-    '지출·수입 합계와 카테고리별 흐름을 한 번에 확인합니다.',
-    'Review totals and category breakdowns for the month in one place.',
+    '지출·수입과 카테고리 흐름을 한 번에 봅니다.',
+    'See totals and category flow in one place.',
   );
   String get reportStatSavingsLabel => _t('지출 합계', 'Expenses');
   String get reportStatTopCategoryLabel => _t('수입 합계', 'Income');
@@ -247,7 +228,7 @@ class AppLocalizations {
   );
   String get reportFilterTitle => _t('카테고리 필터', 'Category filter');
   String get reportFilterSubtitle => _t(
-    '최근 거래를 원하는 카테고리 기준으로 좁혀볼 수 있습니다.',
+    '원하는 카테고리만 골라 최근 거래를 좁혀보세요.',
     'Narrow recent transactions by category when needed.',
   );
   String get reportFilterAllLabel => _t('전체', 'All');
@@ -397,8 +378,8 @@ class AppLocalizations {
   );
 
   String get insightsHeroBody => _t(
-    '기록을 바탕으로 어디를 먼저 줄이거나 조정할지 보여줍니다.',
-    'Use this screen to see what to cut back on or adjust first.',
+    '먼저 줄이거나 조정할 항목을 바로 보여줍니다.',
+    'See what to cut back on or adjust first.',
   );
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';

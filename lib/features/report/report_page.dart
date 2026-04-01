@@ -214,12 +214,20 @@ class _ReportPageState extends State<ReportPage> {
 
         return ScreenShell(
           title: l10n.reportTitle,
+          primaryNavigationRoute: AppRoutes.report,
+          showAppBar: false,
           children: [
             AppHeroCard(
-              eyebrow: l10n.appTitle,
+              eyebrow: l10n.navReport,
               title: l10n.reportHeroTitle,
               body: l10n.reportHeroBody,
-              trailing: const AppHeroIcon(icon: Icons.pie_chart_outline),
+              accentColor: AppColors.reportAccent,
+              accentSoftColor: AppColors.reportAccentSoft,
+              trailing: const AppHeroIcon(
+                icon: Icons.pie_chart_outline,
+                color: AppColors.reportAccent,
+                fillColor: AppColors.reportAccentSoft,
+              ),
               pills: [
                 AppMetricPill(
                   label: l10n.reportStatSavingsLabel,

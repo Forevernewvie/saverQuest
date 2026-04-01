@@ -29,7 +29,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('home quick actions remain stable on narrow large-text screens', (
+  testWidgets('home navigation remains stable on narrow large-text screens', (
     tester,
   ) async {
     final dependencies = buildFakeDependencies();
@@ -42,14 +42,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('What to do next'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
 
-    expect(find.text('What to do next'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
     expect(find.text('Entry'), findsWidgets);
     expect(find.text('Report'), findsWidgets);
     expect(tester.takeException(), isNull);
@@ -87,7 +81,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Record transaction'), findsAtLeastNWidgets(1));
+    expect(find.text('Record today’s spending first'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -105,7 +99,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('This month summary'), findsAtLeastNWidgets(1));
+    expect(find.text('This month in numbers'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

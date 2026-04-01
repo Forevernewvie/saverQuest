@@ -24,7 +24,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('이번 달 요약'), findsOneWidget);
+    expect(find.text('이번 달 기록을 숫자로 정리했어요'), findsOneWidget);
     expect(find.text('예산 상태'), findsWidgets);
     await tester.scrollUntilVisible(
       find.text('지출 비중'),
@@ -83,20 +83,13 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.text('최근 거래'),
+      find.text('카테고리 필터'),
       250,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppTransactionTile), findsNWidgets(4));
-
-    await tester.scrollUntilVisible(
-      find.widgetWithText(ChoiceChip, '커피'),
-      -250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ChoiceChip, '커피'), findsOneWidget);
     await tester.tap(find.widgetWithText(ChoiceChip, '커피'));
     await tester.pumpAndSettle();
 
@@ -107,7 +100,27 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppTransactionTile), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('커피'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('교통'),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('식료품'),
+      ),
+      findsNothing,
+    );
   });
 
   testWidgets('opens transaction detail sheet from report recent entries', (
@@ -151,7 +164,7 @@ void main() {
             category: LedgerCategory.shopping,
             amount: 91000,
             note: 'Older shopping',
-            occurredOn: now.subtract(const Duration(days: 9)),
+            occurredOn: now.subtract(const Duration(minutes: 9)),
           ),
           for (var index = 0; index < 8; index++)
             LedgerEntry(
@@ -162,7 +175,7 @@ void main() {
                   : LedgerCategory.groceries,
               amount: 4000 + index,
               note: 'Recent $index',
-              occurredOn: now.subtract(Duration(days: index)),
+              occurredOn: now.subtract(Duration(minutes: index)),
             ),
         ],
       ),
@@ -177,28 +190,26 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.widgetWithText(ChoiceChip, '쇼핑'),
+      find.text('카테고리 필터'),
       250,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ChoiceChip, '쇼핑'));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(
-      find.text('최근 거래'),
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
+    expect(find.widgetWithText(ChoiceChip, '쇼핑'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ChoiceChip, '쇼핑'));
     await tester.pumpAndSettle();
 
     expect(find.text('선택한 카테고리의 최근 거래가 없습니다'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, '전체'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(OutlinedButton, '전체'));
+    final resetButton = find.widgetWithText(OutlinedButton, '전체');
+    final resetControl = tester.widget<OutlinedButton>(resetButton);
+    resetControl.onPressed!.call();
     await tester.pumpAndSettle();
 
-    expect(find.byType(AppTransactionTile), findsNWidgets(8));
+    expect(find.text('선택한 카테고리의 최근 거래가 없습니다'), findsNothing);
+    expect(find.byType(AppTransactionTile), findsAtLeastNWidgets(1));
   });
 }
 

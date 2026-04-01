@@ -6,6 +6,22 @@ import '../../helpers/fakes.dart';
 import '../../helpers/widget_test_app.dart';
 
 void main() {
+  testWidgets('keeps a single primary save action on the entry screen', (
+    tester,
+  ) async {
+    final dependencies = buildFakeDependencies();
+
+    await tester.pumpWidget(
+      WidgetTestApp(
+        locale: const Locale('en'),
+        home: ToolPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(FilledButton, 'Save entry'), findsOneWidget);
+  });
+
   testWidgets('opens transaction detail sheet from recent entries', (
     tester,
   ) async {

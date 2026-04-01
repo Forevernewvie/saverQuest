@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/app_dependencies.dart';
+import '../../app/routes.dart';
 import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
@@ -261,7 +262,13 @@ class _ToolPageState extends State<ToolPage> {
       child: Form(
         key: _entryFormKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            AppSectionHeader(
+              title: l10n.toolInputSectionTitle,
+              subtitle: l10n.toolInputSectionBody,
+            ),
+            const SizedBox(height: AppSpacing.xs),
             DropdownButtonFormField<LedgerEntryType>(
               initialValue: _formController.selectedType,
               decoration: InputDecoration(labelText: l10n.toolEntryTypeLabel),
@@ -299,7 +306,7 @@ class _ToolPageState extends State<ToolPage> {
                 _formController.selectCategory(value);
               },
             ),
-            const SizedBox(height: AppSpacing.s),
+            const SizedBox(height: AppSpacing.m),
             TextFormField(
               controller: _formController.amountController,
               keyboardType: TextInputType.number,
@@ -326,7 +333,7 @@ class _ToolPageState extends State<ToolPage> {
                 hintText: l10n.toolNoteHint,
               ),
             ),
-            const SizedBox(height: AppSpacing.s),
+            const SizedBox(height: AppSpacing.m),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -376,6 +383,11 @@ class _ToolPageState extends State<ToolPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            AppSectionHeader(
+              title: l10n.toolBudgetSectionTitle,
+              subtitle: l10n.toolBudgetSectionBody,
+            ),
+            const SizedBox(height: AppSpacing.xs),
             TextFormField(
               controller: _formController.budgetController,
               keyboardType: TextInputType.number,
@@ -424,23 +436,14 @@ class _ToolPageState extends State<ToolPage> {
 
         return ScreenShell(
           title: l10n.toolTitle,
+          primaryNavigationRoute: AppRoutes.tool,
+          showAppBar: false,
           children: [
             AppHeroCard(
               eyebrow: l10n.navTool,
               title: l10n.toolHeroTitle,
               body: l10n.toolHeroBody,
               trailing: const AppHeroIcon(icon: Icons.edit_note_outlined),
-              primaryLabel: _formController.isEditing
-                  ? l10n.toolUpdateSubmit
-                  : l10n.toolSubmit,
-              onPrimary: _saveEntry,
-            ),
-            AppMonthSwitcher(
-              label: l10n.formatMonthYear(selectedMonth),
-              onPrevious: monthController.showPreviousMonth,
-              onNext: monthController.showNextMonth,
-              onReset: monthController.resetToCurrentMonth,
-              nextEnabled: !monthController.isCurrentMonth,
             ),
             if (_formController.isEditing)
               AppFeatureCard(
@@ -452,14 +455,6 @@ class _ToolPageState extends State<ToolPage> {
                   child: Text(l10n.toolEditingCancel),
                 ),
               ),
-            AppSectionHeader(
-              title: l10n.toolInputSectionTitle,
-              subtitle: l10n.toolInputSectionBody,
-            ),
-            AppSectionHeader(
-              title: l10n.toolBudgetSectionTitle,
-              subtitle: l10n.toolBudgetSectionBody,
-            ),
             LayoutBuilder(
               builder: (context, constraints) {
                 final useTwoPane = AdaptiveLayout.useTwoPaneLayout(
@@ -495,6 +490,13 @@ class _ToolPageState extends State<ToolPage> {
                   ),
                 );
               },
+            ),
+            AppMonthSwitcher(
+              label: l10n.formatMonthYear(selectedMonth),
+              onPrevious: monthController.showPreviousMonth,
+              onNext: monthController.showNextMonth,
+              onReset: monthController.resetToCurrentMonth,
+              nextEnabled: !monthController.isCurrentMonth,
             ),
             AppSectionHeader(
               title: l10n.toolRecentRecordsTitle,
