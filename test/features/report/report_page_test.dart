@@ -244,6 +244,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Mar 18'), findsAtLeastNWidgets(1));
+    expect(find.text('Daily spend'), findsOneWidget);
+    expect(find.text('KRW 12,500'), findsAtLeastNWidgets(1));
+    expect(find.text('Entries'), findsOneWidget);
+    expect(find.text('1'), findsAtLeastNWidgets(1));
+    expect(find.text('Top category'), findsOneWidget);
+    expect(find.text('Groceries'), findsAtLeastNWidgets(1));
     expect(
       find.descendant(
         of: find.byType(AppTransactionTile),

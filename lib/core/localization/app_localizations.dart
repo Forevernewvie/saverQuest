@@ -271,6 +271,11 @@ class AppLocalizations {
     '다른 날짜를 누르거나 월 전체 흐름으로 돌아가세요.',
     'Tap another date or return to the full monthly view.',
   );
+  String get reportSelectedDaySpentLabel => _t('하루 총지출', 'Daily spend');
+  String get reportSelectedDayCountLabel => _t('거래 수', 'Entries');
+  String get reportSelectedDayTopCategoryLabel =>
+      _t('대표 카테고리', 'Top category');
+  String reportSelectedDayCountValue(int count) => _t('$count건', '$count');
   String get reportRecentEntriesTitle => _t('최근 거래', 'Recent transactions');
   String reportSelectedDaySubtitle(DateTime date) => _t(
     '${formatShortDate(date)} 거래만 보고 있습니다.',

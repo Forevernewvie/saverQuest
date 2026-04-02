@@ -57,12 +57,36 @@ class _ReportPageState extends State<ReportPage> {
     List<LedgerEntry> entries,
   ) async {
     final l10n = context.l10n;
+    final currency = widget.dependencies.ledgerController.currency;
+    final expenseEntries = entries
+        .where((entry) => entry.type == LedgerEntryType.expense)
+        .toList();
+    final expenseTotal = expenseEntries.fold<int>(
+      0,
+      (sum, entry) => sum + entry.amount,
+    );
+    final categoryTotals = <LedgerCategory, int>{};
+    for (final entry in expenseEntries) {
+      categoryTotals.update(
+        entry.category,
+        (amount) => amount + entry.amount,
+        ifAbsent: () => entry.amount,
+      );
+    }
+    LedgerCategory? topCategory;
+    int topCategoryAmount = 0;
+    categoryTotals.forEach((category, amount) {
+      if (amount > topCategoryAmount) {
+        topCategory = category;
+        topCategoryAmount = amount;
+      }
+    });
     final rows = entries
         .map(
           (entry) => widget.dependencies.ledgerViewDataFactory.buildTransactionRow(
             l10n: l10n,
             entry: entry,
-            currency: widget.dependencies.ledgerController.currency,
+            currency: currency,
           ),
         )
         .toList();
@@ -87,6 +111,30 @@ class _ReportPageState extends State<ReportPage> {
                   title: l10n.formatShortDate(date),
                   subtitle: l10n.reportSelectedDaySubtitle(date),
                 ),
+                Wrap(
+                  spacing: AppSpacing.s,
+                  runSpacing: AppSpacing.s,
+                  children: [
+                    AppMetricPill(
+                      label: l10n.reportSelectedDaySpentLabel,
+                      value: l10n.formatCurrency(
+                        expenseTotal,
+                        currency: currency,
+                      ),
+                    ),
+                    AppMetricPill(
+                      label: l10n.reportSelectedDayCountLabel,
+                      value: l10n.reportSelectedDayCountValue(entries.length),
+                    ),
+                    AppMetricPill(
+                      label: l10n.reportSelectedDayTopCategoryLabel,
+                      value: topCategory == null
+                          ? l10n.noData
+                          : l10n.ledgerCategoryLabel(topCategory!),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.m),
                 if (rows.isEmpty)
                   AppEmptyStateCard(
                     icon: Icons.calendar_month_outlined,
