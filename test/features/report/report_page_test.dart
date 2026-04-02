@@ -27,6 +27,7 @@ void main() {
     expect(find.text('이번 달 기록을 숫자로 정리했어요'), findsOneWidget);
     expect(find.text('예산 상태'), findsWidgets);
     expect(find.text('지출 달력'), findsOneWidget);
+    expect(find.text('이번 달 패턴'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('지출 비중'),
       250,
@@ -257,6 +258,55 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('shows monthly calendar pattern stats', (tester) async {
+    final month = DateTime(2026, 3, 1);
+    final dependencies = buildFakeDependenciesWithSnapshot(
+      LedgerSnapshot(
+        monthlyBudgetAmount: 400000,
+        entries: [
+          LedgerEntry(
+            id: 'day-4',
+            type: LedgerEntryType.expense,
+            category: LedgerCategory.coffee,
+            amount: 4500,
+            note: 'Coffee',
+            occurredOn: DateTime(2026, 3, 4, 9),
+          ),
+          LedgerEntry(
+            id: 'day-18',
+            type: LedgerEntryType.expense,
+            category: LedgerCategory.groceries,
+            amount: 12500,
+            note: 'Market',
+            occurredOn: DateTime(2026, 3, 18, 18),
+          ),
+        ],
+      ),
+    );
+    dependencies.ledgerMonthController.setMonth(month);
+
+    await tester.pumpWidget(
+      _LocalizedTestApp(
+        locale: const Locale('en'),
+        home: ReportPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('This month patterns'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Highest spend day'), findsOneWidget);
+    expect(find.text('USD 125.00'), findsNothing);
+    expect(find.text('KRW 12,500'), findsAtLeastNWidgets(1));
+    expect(find.text('Spend days'), findsOneWidget);
+    expect(find.text('No-spend days'), findsOneWidget);
   });
 
   testWidgets('opens transaction detail sheet from report recent entries', (

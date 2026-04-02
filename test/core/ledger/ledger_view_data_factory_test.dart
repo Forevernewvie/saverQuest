@@ -165,6 +165,9 @@ void main() {
       expect(viewData.selectedDaySubtitle, contains('Mar 18'));
       expect(viewData.recentEntries.length, 1);
       expect(viewData.recentEntries.single.trailing, '-USD 312.50');
+      expect(viewData.calendarStats.length, 3);
+      expect(viewData.calendarStats.first.title, 'Highest spend day');
+      expect(viewData.calendarStats.first.trailing, 'USD 312.50');
     },
   );
 }

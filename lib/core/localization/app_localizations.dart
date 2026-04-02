@@ -253,6 +253,25 @@ class AppLocalizations {
     '날짜별 지출 총액을 달력에서 바로 확인하고, 원하는 날짜를 눌러 상세를 좁혀보세요.',
     'Scan daily spending in the month calendar and tap a date to narrow the details.',
   );
+  String get reportCalendarLegendSpent => _t('지출 있음', 'Spent');
+  String get reportCalendarLegendSelected => _t('선택일', 'Selected');
+  String get reportCalendarLegendToday => _t('오늘', 'Today');
+  String get reportCalendarStatsTitle => _t('이번 달 패턴', 'This month patterns');
+  String get reportCalendarTopSpendTitle => _t('최고 지출일', 'Highest spend day');
+  String reportCalendarTopSpendBody(DateTime date) => _t(
+    '${formatShortDate(date)}에 지출이 가장 컸습니다.',
+    '${formatShortDate(date)} had the highest spend.',
+  );
+  String get reportCalendarSpendDaysTitle => _t('지출한 날', 'Spend days');
+  String reportCalendarSpendDaysBody(int count, int totalDays) => _t(
+    '$totalDays일 중 $count일에 지출이 있었습니다.',
+    'Spent on $count of $totalDays days.',
+  );
+  String get reportCalendarNoSpendDaysTitle => _t('무지출일', 'No-spend days');
+  String reportCalendarNoSpendDaysBody(int count, int totalDays) => _t(
+    '$totalDays일 중 $count일은 지출이 없었습니다.',
+    '$count of $totalDays days had no spending.',
+  );
   String get reportFilterTitle => _t('카테고리 필터', 'Category filter');
   String get reportFilterSubtitle => _t(
     '원하는 카테고리만 골라 최근 거래를 좁혀보세요.',

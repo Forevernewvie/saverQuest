@@ -224,6 +224,33 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
+  Widget _buildCalendarLegend(BuildContext context, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.m),
+      child: Wrap(
+        spacing: AppSpacing.s,
+        runSpacing: AppSpacing.s,
+        children: [
+          _CalendarLegendChip(
+            color: AppColors.reportAccentSoft,
+            borderColor: AppColors.border,
+            label: l10n.reportCalendarLegendSpent,
+          ),
+          _CalendarLegendChip(
+            color: AppColors.surface,
+            borderColor: AppColors.reportAccent,
+            label: l10n.reportCalendarLegendSelected,
+          ),
+          _CalendarLegendChip(
+            color: AppColors.surface,
+            borderColor: AppColors.accent,
+            label: l10n.reportCalendarLegendToday,
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Logs the initial report screen impression for analytics.
   @override
   void initState() {
@@ -450,6 +477,22 @@ class _ReportPageState extends State<ReportPage> {
                 }
               },
             ),
+            _buildCalendarLegend(context, l10n),
+            AppSectionHeader(title: l10n.reportCalendarStatsTitle),
+            ...viewData.calendarStats.map(
+              (stat) => AppFeatureCard(
+                icon: stat.icon,
+                title: stat.title,
+                body: stat.body,
+                trailing: Text(
+                  stat.trailing,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
             _buildAnalyticsOverview(context, l10n, viewData),
             AppSectionHeader(
               title: l10n.reportFilterTitle,
@@ -495,6 +538,56 @@ class _ReportPageState extends State<ReportPage> {
           ],
         );
       },
+    );
+  }
+}
+
+class _CalendarLegendChip extends StatelessWidget {
+  const _CalendarLegendChip({
+    required this.color,
+    required this.borderColor,
+    required this.label,
+  });
+
+  final Color color;
+  final Color borderColor;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: borderColor),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../localization/app_localizations.dart';
 import 'ledger_models.dart';
 import 'ledger_presentation_service.dart';
@@ -65,6 +67,11 @@ class LedgerViewDataFactory {
   }) {
     final remainingBudgetAmount =
         summary.monthlyBudgetAmount - summary.monthlyExpenseAmount;
+    final lastDayOfMonth = DateTime(
+      selectedMonth.year,
+      selectedMonth.month + 1,
+      0,
+    );
     final maxExpenseAmount = summary.expenseTotals.isEmpty
         ? 0
         : summary.expenseTotals.first.amount;
@@ -156,6 +163,11 @@ class LedgerViewDataFactory {
         selectedMonth: selectedMonth,
         selectedDay: selectedDay,
       ),
+      calendarStats: _buildCalendarStats(
+        l10n: l10n,
+        summary: summary,
+        daysInMonth: lastDayOfMonth.day,
+      ),
       selectedDaySubtitle: selectedDay == null
           ? null
           : l10n.reportSelectedDaySubtitle(selectedDay),
@@ -169,6 +181,48 @@ class LedgerViewDataFactory {
           )
           .toList(),
     );
+  }
+
+  List<ReportCalendarStatViewData> _buildCalendarStats({
+    required AppLocalizations l10n,
+    required LedgerReportSummary summary,
+    required int daysInMonth,
+  }) {
+    final spendDays = summary.dailySpendTotals.length;
+    final noSpendDays = daysInMonth - spendDays;
+    final topSpendDay = summary.dailySpendTotals.isEmpty
+        ? null
+        : summary.dailySpendTotals.reduce(
+            (left, right) => left.amount >= right.amount ? left : right,
+          );
+
+    return [
+      ReportCalendarStatViewData(
+        icon: Icons.local_fire_department_outlined,
+        title: l10n.reportCalendarTopSpendTitle,
+        body: topSpendDay == null
+            ? l10n.noData
+            : l10n.reportCalendarTopSpendBody(topSpendDay.date),
+        trailing: topSpendDay == null
+            ? l10n.noData
+            : l10n.formatCurrency(
+                topSpendDay.amount,
+                currency: summary.currency,
+              ),
+      ),
+      ReportCalendarStatViewData(
+        icon: Icons.event_available_outlined,
+        title: l10n.reportCalendarSpendDaysTitle,
+        body: l10n.reportCalendarSpendDaysBody(spendDays, daysInMonth),
+        trailing: '$spendDays',
+      ),
+      ReportCalendarStatViewData(
+        icon: Icons.event_busy_outlined,
+        title: l10n.reportCalendarNoSpendDaysTitle,
+        body: l10n.reportCalendarNoSpendDaysBody(noSpendDays, daysInMonth),
+        trailing: '$noSpendDays',
+      ),
+    ];
   }
 
   List<ReportCalendarDayViewData> _buildCalendarDays({

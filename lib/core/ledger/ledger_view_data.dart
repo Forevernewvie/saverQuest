@@ -110,6 +110,22 @@ class ReportCalendarDayViewData {
   final double intensity;
 }
 
+/// Carries one compact monthly pattern stat shown near the spending calendar.
+class ReportCalendarStatViewData {
+  /// Creates an immutable calendar-stat view model.
+  const ReportCalendarStatViewData({
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.trailing,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+  final String trailing;
+}
+
 /// Carries the presentation data for the monthly report screen.
 class LedgerReportViewData {
   /// Creates an immutable report-screen view model.
@@ -122,6 +138,7 @@ class LedgerReportViewData {
     required this.chartRows,
     required this.categoryTotals,
     required this.calendarDays,
+    required this.calendarStats,
     required this.selectedDaySubtitle,
     required this.recentEntries,
   });
@@ -134,6 +151,7 @@ class LedgerReportViewData {
   final List<ReportCategoryChartRowViewData> chartRows;
   final List<ReportCategoryCardViewData> categoryTotals;
   final List<ReportCalendarDayViewData> calendarDays;
+  final List<ReportCalendarStatViewData> calendarStats;
   final String? selectedDaySubtitle;
   final List<LedgerTransactionRowViewData> recentEntries;
 }
