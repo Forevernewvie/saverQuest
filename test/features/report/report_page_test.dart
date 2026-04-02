@@ -125,6 +125,83 @@ void main() {
     );
   });
 
+  testWidgets('filters recent transactions by search query', (tester) async {
+    final dependencies = buildFakeDependencies();
+
+    await tester.pumpWidget(
+      _LocalizedTestApp(
+        locale: const Locale('en'),
+        home: ReportPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Search transactions'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'coffee');
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Recent transactions'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('Coffee'),
+      ),
+      findsAtLeastNWidgets(1),
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('Transit'),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('shows an empty state when search finds no transactions', (
+    tester,
+  ) async {
+    final dependencies = buildFakeDependencies();
+
+    await tester.pumpWidget(
+      _LocalizedTestApp(
+        locale: const Locale('en'),
+        home: ReportPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Search transactions'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'zzzz-not-found');
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('No transactions match your search'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('No transactions match your search'), findsOneWidget);
+  });
+
   testWidgets('filters recent transactions by tapping a calendar day', (
     tester,
   ) async {

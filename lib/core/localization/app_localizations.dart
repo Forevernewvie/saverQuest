@@ -277,12 +277,24 @@ class AppLocalizations {
     '원하는 카테고리만 골라 최근 거래를 좁혀보세요.',
     'Narrow recent transactions by category when needed.',
   );
+  String get reportSearchTitle => _t('거래 검색', 'Search transactions');
+  String get reportSearchSubtitle => _t(
+    '메모, 카테고리, 유형으로 최근 거래를 빠르게 찾으세요.',
+    'Find recent transactions by note, category, or type.',
+  );
+  String get reportSearchHint => _t('예: 커피, 교통, 월급', 'Example: coffee, transport, salary');
   String get reportFilterAllLabel => _t('전체', 'All');
   String get reportFilteredEmptyTitle =>
       _t('선택한 카테고리의 최근 거래가 없습니다', 'No recent transactions in this category');
   String get reportFilteredEmptyBody => _t(
     '전체 보기로 돌아가면 다른 최근 거래를 확인할 수 있습니다.',
     'Return to All to review the other recent transactions.',
+  );
+  String get reportSearchEmptyTitle =>
+      _t('검색 결과가 없습니다', 'No transactions match your search');
+  String get reportSearchEmptyBody => _t(
+    '다른 검색어를 입력하거나 카테고리 필터를 해제해 보세요.',
+    'Try a different query or clear other filters.',
   );
   String get reportSelectedDayEmptyTitle =>
       _t('선택한 날짜의 지출 기록이 없습니다', 'No spending records on this date');

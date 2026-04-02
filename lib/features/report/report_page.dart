@@ -26,6 +26,13 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   LedgerCategory? _selectedCategory;
   DateTime? _selectedDate;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   bool _isSameDay(DateTime left, DateTime right) {
     return left.year == right.year &&
@@ -300,9 +307,17 @@ class _ReportPageState extends State<ReportPage> {
     List<LedgerEntry> recentEntries, {
     required bool hasCategoryFilter,
     required bool hasDateFilter,
+    required bool hasSearchFilter,
   }) {
     final l10n = context.l10n;
     if (recentEntries.isEmpty) {
+      if (hasSearchFilter) {
+        return AppEmptyStateCard(
+          icon: Icons.search_off_outlined,
+          title: l10n.reportSearchEmptyTitle,
+          body: l10n.reportSearchEmptyBody,
+        );
+      }
       if (hasDateFilter) {
         return AppEmptyStateCard(
           icon: Icons.calendar_month_outlined,
@@ -354,6 +369,23 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
+  bool _matchesSearch(
+    AppLocalizations l10n,
+    LedgerEntry entry,
+    String query,
+  ) {
+    if (query.isEmpty) {
+      return true;
+    }
+    final normalizedQuery = query.toLowerCase();
+    final note = entry.note.trim().toLowerCase();
+    final category = l10n.ledgerCategoryLabel(entry.category).toLowerCase();
+    final type = l10n.ledgerEntryTypeLabel(entry.type).toLowerCase();
+    return note.contains(normalizedQuery) ||
+        category.contains(normalizedQuery) ||
+        type.contains(normalizedQuery);
+  }
+
   /// Builds the report screen from the live ledger state.
   @override
   Widget build(BuildContext context) {
@@ -366,6 +398,7 @@ class _ReportPageState extends State<ReportPage> {
       builder: (context, _) {
         final l10n = context.l10n;
         final selectedMonth = monthController.selectedMonth;
+        final searchQuery = _searchController.text.trim();
         final summary = ledgerController.reportSummary(now: selectedMonth);
         final effectiveCategory =
             summary.expenseTotals.any(
@@ -396,7 +429,8 @@ class _ReportPageState extends State<ReportPage> {
           final matchesDay =
               effectiveSelectedDate == null ||
               _isSameDay(entry.occurredOn, effectiveSelectedDate);
-          return matchesCategory && matchesDay;
+          final matchesSearch = _matchesSearch(l10n, entry, searchQuery);
+          return matchesCategory && matchesDay && matchesSearch;
         }).toList();
         final monthEntries = summary.currentMonthEntries;
 
@@ -515,6 +549,27 @@ class _ReportPageState extends State<ReportPage> {
               },
             ),
             const SizedBox(height: AppSpacing.s),
+            AppSectionHeader(
+              title: l10n.reportSearchTitle,
+              subtitle: l10n.reportSearchSubtitle,
+            ),
+            TextField(
+              controller: _searchController,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: l10n.reportSearchHint,
+                suffixIcon: searchQuery.isEmpty
+                    ? const Icon(Icons.search_outlined)
+                    : IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.m),
             AppSectionHeader(title: l10n.reportSummaryTitle),
             ..._buildCategoryTotals(context, viewData.categoryTotals),
             AppSectionHeader(
@@ -526,6 +581,7 @@ class _ReportPageState extends State<ReportPage> {
               visibleRecentEntries,
               hasCategoryFilter: effectiveCategory != null,
               hasDateFilter: effectiveSelectedDate != null,
+              hasSearchFilter: searchQuery.isNotEmpty,
             ),
             AdBannerSlot(
               adService: widget.dependencies.adService,
