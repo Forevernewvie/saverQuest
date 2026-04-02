@@ -51,6 +51,76 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
+  Future<void> _showSelectedDaySheet(
+    BuildContext context,
+    DateTime date,
+    List<LedgerEntry> entries,
+  ) async {
+    final l10n = context.l10n;
+    final rows = entries
+        .map(
+          (entry) => widget.dependencies.ledgerViewDataFactory.buildTransactionRow(
+            l10n: l10n,
+            entry: entry,
+            currency: widget.dependencies.ledgerController.currency,
+          ),
+        )
+        .toList();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.l,
+              AppSpacing.s,
+              AppSpacing.l,
+              AppSpacing.xl,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppSectionHeader(
+                  title: l10n.formatShortDate(date),
+                  subtitle: l10n.reportSelectedDaySubtitle(date),
+                ),
+                if (rows.isEmpty)
+                  AppEmptyStateCard(
+                    icon: Icons.calendar_month_outlined,
+                    title: l10n.reportSelectedDayEmptyTitle,
+                    body: l10n.reportSelectedDayEmptyBody,
+                  )
+                else
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: AppTransactionList(
+                        itemCount: rows.length,
+                        itemBuilder: (context, index) {
+                          final row = rows[index];
+                          final entry = entries[index];
+                          return AppTransactionTile(
+                            key: ValueKey('selected-day-${entry.id}'),
+                            icon: row.icon,
+                            title: row.title,
+                            subtitle: row.subtitle,
+                            trailing: row.trailing,
+                            onTap: () => _showEntryDetails(entry),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Builds the top analytics block using one or two columns based on width.
   Widget _buildAnalyticsOverview(
     BuildContext context,
@@ -253,6 +323,7 @@ class _ReportPageState extends State<ReportPage> {
               _isSameDay(entry.occurredOn, effectiveSelectedDate);
           return matchesCategory && matchesDay;
         }).toList();
+        final monthEntries = summary.currentMonthEntries;
 
         return ScreenShell(
           title: l10n.reportTitle,
@@ -311,13 +382,24 @@ class _ReportPageState extends State<ReportPage> {
                   l10n.weekdayLabel(index),
               ],
               days: viewData.calendarDays,
-              onSelectDate: (date) {
+              onSelectDate: (date) async {
+                if (date.year != selectedMonth.year || date.month != selectedMonth.month) {
+                  return;
+                }
+                final dayEntries = monthEntries
+                    .where((entry) => _isSameDay(entry.occurredOn, date))
+                    .toList()
+                  ..sort((left, right) => right.occurredOn.compareTo(left.occurredOn));
                 setState(() {
                   final sameDay =
                       effectiveSelectedDate != null &&
                       _isSameDay(effectiveSelectedDate, date);
                   _selectedDate = sameDay ? null : date;
                 });
+
+                if (dayEntries.isNotEmpty) {
+                  await _showSelectedDaySheet(context, date, dayEntries);
+                }
               },
             ),
             _buildAnalyticsOverview(context, l10n, viewData),

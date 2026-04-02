@@ -182,14 +182,14 @@ void main() {
 
     expect(
       find.text('Showing only the transactions on Mar 15.'),
-      findsOneWidget,
+      findsAtLeastNWidgets(1),
     );
     expect(
       find.descendant(
         of: find.byType(AppTransactionTile),
         matching: find.text('Coffee'),
       ),
-      findsOneWidget,
+      findsAtLeastNWidgets(1),
     );
     expect(
       find.descendant(
@@ -197,6 +197,59 @@ void main() {
         matching: find.text('Transport'),
       ),
       findsNothing,
+    );
+  });
+
+  testWidgets('opens a selected-day bottom sheet from the calendar', (
+    tester,
+  ) async {
+    final month = DateTime(2026, 3, 1);
+    final dependencies = buildFakeDependenciesWithSnapshot(
+      LedgerSnapshot(
+        monthlyBudgetAmount: 400000,
+        entries: [
+          LedgerEntry(
+            id: 'day-18-a',
+            type: LedgerEntryType.expense,
+            category: LedgerCategory.groceries,
+            amount: 12500,
+            note: 'Market',
+            occurredOn: DateTime(2026, 3, 18, 18),
+          ),
+        ],
+      ),
+    );
+    dependencies.ledgerMonthController.setMonth(month);
+
+    await tester.pumpWidget(
+      _LocalizedTestApp(
+        locale: const Locale('en'),
+        home: ReportPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Spending calendar'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    final dayCell = find.byKey(const ValueKey('calendar-day-2026-3-18'));
+    final dayInkWell = tester.widget<InkWell>(
+      find.descendant(of: dayCell, matching: find.byType(InkWell)),
+    );
+    dayInkWell.onTap!.call();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mar 18'), findsAtLeastNWidgets(1));
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.byKey(const ValueKey('selected-day-day-18-a')),
+      ),
+      findsOneWidget,
     );
   });
 
