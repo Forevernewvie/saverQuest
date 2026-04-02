@@ -37,6 +37,9 @@ class LedgerController extends ChangeNotifier {
   /// Returns the configured monthly budget amount.
   int get monthlyBudgetAmount => _snapshot.monthlyBudgetAmount;
 
+  /// Returns the single currency currently used by the ledger.
+  LedgerCurrency get currency => _snapshot.currency;
+
   /// Loads the persisted ledger snapshot into memory.
   Future<void> initialize() async {
     if (_initialized) {
@@ -94,6 +97,11 @@ class LedgerController extends ChangeNotifier {
     await _persistSnapshot(_snapshot.copyWith(monthlyBudgetAmount: amount));
   }
 
+  /// Persists a changed app-wide currency without converting existing values.
+  Future<void> updateCurrency(LedgerCurrency currency) async {
+    await _persistSnapshot(_snapshot.copyWith(currency: currency));
+  }
+
   /// Returns a home-dashboard summary for the current month.
   LedgerDashboardSummary dashboardSummary({DateTime? now}) {
     return _summaryService.buildDashboard(
@@ -131,6 +139,7 @@ class LedgerController extends ChangeNotifier {
         metadata: {
           'entry_count': nextSnapshot.entries.length,
           'monthly_budget_amount': nextSnapshot.monthlyBudgetAmount,
+          'currency': nextSnapshot.currency.name,
         },
       );
     } catch (error, stackTrace) {

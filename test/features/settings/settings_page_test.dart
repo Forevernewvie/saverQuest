@@ -174,6 +174,13 @@ _buildDependenciesWithHandler({
 }
 
 void main() {
+  Finder currencyDropdown() {
+    return find.byWidgetPredicate(
+      (widget) => widget is DropdownButton<LedgerCurrency>,
+      description: 'currency dropdown',
+    );
+  }
+
   testWidgets('renders privacy-ready copy when ad consent is active', (
     tester,
   ) async {
@@ -195,6 +202,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('개인정보 설정'), findsOneWidget);
+    expect(find.text('기본 통화'), findsOneWidget);
+    expect(find.text('원화 (KRW)'), findsOneWidget);
     expect(find.text('동의 철회/재설정을 즉시 반영합니다.'), findsOneWidget);
     expect(
       find.text('현재 개인정보 설정이 적용되어 있습니다. 필요하면 아래에서 언제든 변경할 수 있어요.'),
@@ -202,7 +211,74 @@ void main() {
     );
   });
 
-  testWidgets('shows snackbar when privacy options are not required', (
+  testWidgets('shows a warning dialog before changing the base currency', (
+    tester,
+  ) async {
+    final context = await _buildDependencies(
+      consentState: const ConsentState(
+        initialized: true,
+        canRequestAds: true,
+        serveNonPersonalizedAds: false,
+        privacyOptionsRequired: true,
+      ),
+    );
+
+    await tester.pumpWidget(
+      WidgetTestApp(
+        locale: const Locale('ko'),
+        home: SettingsPage(dependencies: context.dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final currencyDropdownWidget = tester
+        .widget<DropdownButton<LedgerCurrency>>(currencyDropdown());
+    currencyDropdownWidget.onChanged!.call(LedgerCurrency.usd);
+    await tester.pumpAndSettle();
+
+    expect(find.text('기본 통화를 변경할까요?'), findsOneWidget);
+    expect(find.textContaining('기존 금액은 자동 환산되지 않으며'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, '변경하기'));
+    await tester.pumpAndSettle();
+
+    expect(context.dependencies.ledgerController.currency, LedgerCurrency.usd);
+    expect(find.textContaining('달러 (USD)로 변경했습니다'), findsOneWidget);
+  });
+
+  testWidgets('keeps the current currency when the dialog is cancelled', (
+    tester,
+  ) async {
+    final context = await _buildDependencies(
+      consentState: const ConsentState(
+        initialized: true,
+        canRequestAds: true,
+        serveNonPersonalizedAds: false,
+        privacyOptionsRequired: true,
+      ),
+    );
+
+    await tester.pumpWidget(
+      WidgetTestApp(
+        locale: const Locale('ko'),
+        home: SettingsPage(dependencies: context.dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final currencyDropdownWidget = tester
+        .widget<DropdownButton<LedgerCurrency>>(currencyDropdown());
+    currencyDropdownWidget.onChanged!.call(LedgerCurrency.jpy);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(TextButton, '취소'));
+    await tester.pumpAndSettle();
+
+    expect(context.dependencies.ledgerController.currency, LedgerCurrency.krw);
+    expect(find.text('기본 통화를 변경할까요?'), findsNothing);
+  });
+
+  testWidgets('hides the privacy options card when it is not required', (
     tester,
   ) async {
     final context = await _buildDependencies(
@@ -222,11 +298,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('개인정보 설정 변경'));
-    await tester.pumpAndSettle();
-
     expect(context.consentController.showPrivacyOptionsCalls, 0);
-    expect(find.text('현재는 추가로 바꿀 개인정보 옵션이 없습니다.'), findsOneWidget);
+    expect(find.text('개인정보 설정 변경'), findsNothing);
   });
 
   testWidgets('navigates to the privacy policy page from settings', (
@@ -259,14 +332,20 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final privacyPolicyCard = find.ancestor(
+      of: find.text('개인정보 처리방침'),
+      matching: find.byType(InkWell),
+    );
     await tester.scrollUntilVisible(
-      find.text('개인정보 처리방침'),
+      privacyPolicyCard,
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('개인정보 처리방침'));
+    final privacyPolicyInkWell = tester.widget<InkWell>(privacyPolicyCard);
+    privacyPolicyInkWell.onTap!.call();
     await tester.pumpAndSettle();
 
+    expect(find.text('How the app handles information'), findsNothing);
     expect(find.text('앱에서 어떤 정보를 어떻게 다루는지 안내합니다'), findsOneWidget);
     expect(find.text('주요 정책 항목'), findsOneWidget);
     await tester.scrollUntilVisible(
@@ -307,7 +386,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('개인정보 설정 변경'));
+    final privacyOptionsCard = find.ancestor(
+      of: find.text('개인정보 설정 변경'),
+      matching: find.byType(InkWell),
+    );
+    await tester.scrollUntilVisible(
+      privacyOptionsCard,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    final privacyOptionsInkWell = tester.widget<InkWell>(privacyOptionsCard);
+    privacyOptionsInkWell.onTap!.call();
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);

@@ -1,6 +1,21 @@
 /// Defines the supported transaction directions in the personal ledger.
 enum LedgerEntryType { expense, income }
 
+/// Defines the single app-wide currency used for all ledger calculations.
+enum LedgerCurrency {
+  krw,
+  jpy,
+  cny,
+  usd;
+
+  bool get usesMinorUnits =>
+      this == LedgerCurrency.cny || this == LedgerCurrency.usd;
+
+  int get fractionDigits => usesMinorUnits ? 2 : 0;
+
+  String get code => name.toUpperCase();
+}
+
 /// Defines the supported categories used for transaction tagging and insights.
 enum LedgerCategory {
   groceries,
@@ -86,19 +101,23 @@ class LedgerSnapshot {
   const LedgerSnapshot({
     required this.entries,
     required this.monthlyBudgetAmount,
+    this.currency = LedgerCurrency.krw,
   });
 
   final List<LedgerEntry> entries;
   final int monthlyBudgetAmount;
+  final LedgerCurrency currency;
 
   /// Returns a copy of this snapshot with updated fields.
   LedgerSnapshot copyWith({
     List<LedgerEntry>? entries,
     int? monthlyBudgetAmount,
+    LedgerCurrency? currency,
   }) {
     return LedgerSnapshot(
       entries: entries ?? this.entries,
       monthlyBudgetAmount: monthlyBudgetAmount ?? this.monthlyBudgetAmount,
+      currency: currency ?? this.currency,
     );
   }
 
@@ -107,6 +126,7 @@ class LedgerSnapshot {
     return {
       'entries': entries.map((entry) => entry.toJson()).toList(),
       'monthlyBudgetAmount': monthlyBudgetAmount,
+      'currency': currency.name,
     };
   }
 
@@ -124,6 +144,9 @@ class LedgerSnapshot {
           )
           .toList(),
       monthlyBudgetAmount: json['monthlyBudgetAmount']! as int,
+      currency: json['currency'] == null
+          ? LedgerCurrency.krw
+          : LedgerCurrency.values.byName(json['currency']! as String),
     );
   }
 }
@@ -139,6 +162,7 @@ class LedgerDashboardSummary {
     required this.currentMonthEntries,
     required this.recentEntries,
     required this.topExpenseCategory,
+    required this.currency,
   });
 
   final int monthlyBudgetAmount;
@@ -148,6 +172,7 @@ class LedgerDashboardSummary {
   final List<LedgerEntry> currentMonthEntries;
   final List<LedgerEntry> recentEntries;
   final LedgerCategory? topExpenseCategory;
+  final LedgerCurrency currency;
 
   /// Returns the budget consumption ratio clamped to a user-facing range.
   double get budgetProgress {
@@ -172,6 +197,20 @@ class LedgerCategoryTotal {
   final int entryCount;
 }
 
+/// Stores one day-level spending total for the calendar report view.
+class LedgerDailySpendTotal {
+  /// Creates an immutable day aggregate.
+  const LedgerDailySpendTotal({
+    required this.date,
+    required this.amount,
+    required this.entryCount,
+  });
+
+  final DateTime date;
+  final int amount;
+  final int entryCount;
+}
+
 /// Captures report-ready aggregations for the current month.
 class LedgerReportSummary {
   /// Creates a report summary for the report screen.
@@ -180,16 +219,22 @@ class LedgerReportSummary {
     required this.monthlyExpenseAmount,
     required this.monthlyIncomeAmount,
     required this.balanceAmount,
+    this.currentMonthEntries = const [],
     required this.recentEntries,
     required this.expenseTotals,
+    this.dailySpendTotals = const [],
+    required this.currency,
   });
 
   final int monthlyBudgetAmount;
   final int monthlyExpenseAmount;
   final int monthlyIncomeAmount;
   final int balanceAmount;
+  final List<LedgerEntry> currentMonthEntries;
   final List<LedgerEntry> recentEntries;
   final List<LedgerCategoryTotal> expenseTotals;
+  final List<LedgerDailySpendTotal> dailySpendTotals;
+  final LedgerCurrency currency;
 }
 
 /// Captures narrative insight inputs derived from the current month ledger.
@@ -202,6 +247,7 @@ class LedgerInsightSummary {
     required this.topExpenseCategory,
     required this.secondaryExpenseCategory,
     required this.recentExpenseCount,
+    required this.currency,
   });
 
   final int monthlyExpenseAmount;
@@ -210,4 +256,5 @@ class LedgerInsightSummary {
   final LedgerCategory? topExpenseCategory;
   final LedgerCategory? secondaryExpenseCategory;
   final int recentExpenseCount;
+  final LedgerCurrency currency;
 }

@@ -25,12 +25,23 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   LedgerCategory? _selectedCategory;
+  DateTime? _selectedDate;
+
+  bool _isSameDay(DateTime left, DateTime right) {
+    return left.year == right.year &&
+        left.month == right.month &&
+        left.day == right.day;
+  }
 
   /// Opens the shared transaction detail sheet from the report recent-activity list.
   Future<void> _showEntryDetails(LedgerEntry entry) async {
     final l10n = context.l10n;
     final rowViewData = widget.dependencies.ledgerViewDataFactory
-        .buildTransactionRow(l10n: l10n, entry: entry);
+        .buildTransactionRow(
+          l10n: l10n,
+          entry: entry,
+          currency: widget.dependencies.ledgerController.currency,
+        );
 
     await showLedgerEntryDetailSheet(
       context: context,
@@ -143,9 +154,17 @@ class _ReportPageState extends State<ReportPage> {
     BuildContext context,
     List<LedgerEntry> recentEntries, {
     required bool hasCategoryFilter,
+    required bool hasDateFilter,
   }) {
     final l10n = context.l10n;
     if (recentEntries.isEmpty) {
+      if (hasDateFilter) {
+        return AppEmptyStateCard(
+          icon: Icons.calendar_month_outlined,
+          title: l10n.reportSelectedDayEmptyTitle,
+          body: l10n.reportSelectedDayEmptyBody,
+        );
+      }
       if (hasCategoryFilter) {
         return AppEmptyStateCard(
           icon: Icons.filter_list_off_outlined,
@@ -172,7 +191,11 @@ class _ReportPageState extends State<ReportPage> {
       itemBuilder: (context, index) {
         final entry = recentEntries[index];
         final row = widget.dependencies.ledgerViewDataFactory
-            .buildTransactionRow(l10n: l10n, entry: entry);
+            .buildTransactionRow(
+              l10n: l10n,
+              entry: entry,
+              currency: widget.dependencies.ledgerController.currency,
+            );
 
         return AppTransactionTile(
           key: ValueKey(entry.id),
@@ -205,12 +228,31 @@ class _ReportPageState extends State<ReportPage> {
             )
             ? _selectedCategory
             : null;
+        final effectiveSelectedDate =
+            _selectedDate != null &&
+                _selectedDate!.year == selectedMonth.year &&
+                _selectedDate!.month == selectedMonth.month
+            ? _selectedDate
+            : null;
         final viewData = widget.dependencies.ledgerViewDataFactory
             .buildReportViewData(
               l10n: l10n,
               summary: summary,
+              selectedMonth: selectedMonth,
+              selectedDate: effectiveSelectedDate,
               selectedCategory: effectiveCategory,
             );
+        final recentEntrySource = effectiveSelectedDate == null
+            ? summary.recentEntries
+            : summary.currentMonthEntries;
+        final visibleRecentEntries = recentEntrySource.where((entry) {
+          final matchesCategory =
+              effectiveCategory == null || entry.category == effectiveCategory;
+          final matchesDay =
+              effectiveSelectedDate == null ||
+              _isSameDay(entry.occurredOn, effectiveSelectedDate);
+          return matchesCategory && matchesDay;
+        }).toList();
 
         return ScreenShell(
           title: l10n.reportTitle,
@@ -245,10 +287,38 @@ class _ReportPageState extends State<ReportPage> {
             ),
             AppMonthSwitcher(
               label: l10n.formatMonthYear(selectedMonth),
-              onPrevious: monthController.showPreviousMonth,
-              onNext: monthController.showNextMonth,
-              onReset: monthController.resetToCurrentMonth,
+              onPrevious: () {
+                setState(() => _selectedDate = null);
+                monthController.showPreviousMonth();
+              },
+              onNext: () {
+                setState(() => _selectedDate = null);
+                monthController.showNextMonth();
+              },
+              onReset: () {
+                monthController.resetToCurrentMonth();
+                setState(() => _selectedDate = null);
+              },
               nextEnabled: !monthController.isCurrentMonth,
+            ),
+            AppSectionHeader(
+              title: l10n.reportCalendarTitle,
+              subtitle: l10n.reportCalendarSubtitle,
+            ),
+            AppMonthlySpendCalendarCard(
+              weekdayLabels: [
+                for (var index = 0; index < 7; index++)
+                  l10n.weekdayLabel(index),
+              ],
+              days: viewData.calendarDays,
+              onSelectDate: (date) {
+                setState(() {
+                  final sameDay =
+                      effectiveSelectedDate != null &&
+                      _isSameDay(effectiveSelectedDate, date);
+                  _selectedDate = sameDay ? null : date;
+                });
+              },
             ),
             _buildAnalyticsOverview(context, l10n, viewData),
             AppSectionHeader(
@@ -274,15 +344,15 @@ class _ReportPageState extends State<ReportPage> {
             const SizedBox(height: AppSpacing.s),
             AppSectionHeader(title: l10n.reportSummaryTitle),
             ..._buildCategoryTotals(context, viewData.categoryTotals),
-            AppSectionHeader(title: l10n.reportRecentEntriesTitle),
+            AppSectionHeader(
+              title: l10n.reportRecentEntriesTitle,
+              subtitle: viewData.selectedDaySubtitle,
+            ),
             _buildRecentEntries(
               context,
-              effectiveCategory == null
-                  ? summary.recentEntries
-                  : summary.recentEntries
-                        .where((entry) => entry.category == effectiveCategory)
-                        .toList(),
+              visibleRecentEntries,
               hasCategoryFilter: effectiveCategory != null,
+              hasDateFilter: effectiveSelectedDate != null,
             ),
             AdBannerSlot(
               adService: widget.dependencies.adService,

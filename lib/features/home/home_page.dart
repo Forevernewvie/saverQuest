@@ -49,7 +49,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showEntryDetails(LedgerEntry entry) async {
     final l10n = context.l10n;
     final rowViewData = widget.dependencies.ledgerViewDataFactory
-        .buildTransactionRow(l10n: l10n, entry: entry);
+        .buildTransactionRow(
+          l10n: l10n,
+          entry: entry,
+          currency: widget.dependencies.ledgerController.currency,
+        );
 
     await showLedgerEntryDetailSheet(
       context: context,
@@ -81,7 +85,11 @@ class _HomePageState extends State<HomePage> {
       itemBuilder: (context, index) {
         final entry = recentEntries[index];
         final row = widget.dependencies.ledgerViewDataFactory
-            .buildTransactionRow(l10n: l10n, entry: entry);
+            .buildTransactionRow(
+              l10n: l10n,
+              entry: entry,
+              currency: widget.dependencies.ledgerController.currency,
+            );
 
         return AppTransactionTile(
           key: ValueKey(entry.id),
@@ -106,6 +114,7 @@ class _HomePageState extends State<HomePage> {
       monthlyBudgetAmount: dashboard.monthlyBudgetAmount,
       monthlyExpenseAmount: dashboard.monthlyExpenseAmount,
       remainingBudgetAmount: dashboard.remainingBudgetAmount,
+      currency: dashboard.currency,
       l10n: l10n,
     );
     final focusCard = AppFeatureCard(

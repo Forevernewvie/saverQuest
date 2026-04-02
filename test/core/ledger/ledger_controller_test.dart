@@ -63,6 +63,23 @@ void main() {
     },
   );
 
+  test('updateCurrency changes the stored app-wide currency', () async {
+    final controller = LedgerController(
+      repository: InMemoryLedgerRepository(
+        snapshot: const LedgerSnapshot(
+          entries: [],
+          monthlyBudgetAmount: 300000,
+        ),
+      ),
+      logger: FakeLogger(),
+    );
+
+    await controller.updateCurrency(LedgerCurrency.usd);
+
+    expect(controller.currency, LedgerCurrency.usd);
+    expect(controller.dashboardSummary().currency, LedgerCurrency.usd);
+  });
+
   test('updateEntry replaces an existing transaction by id', () async {
     final logger = FakeLogger();
     final repository = InMemoryLedgerRepository(

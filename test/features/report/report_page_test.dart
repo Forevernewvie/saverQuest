@@ -26,6 +26,7 @@ void main() {
 
     expect(find.text('이번 달 기록을 숫자로 정리했어요'), findsOneWidget);
     expect(find.text('예산 상태'), findsWidgets);
+    expect(find.text('지출 달력'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('지출 비중'),
       250,
@@ -118,6 +119,82 @@ void main() {
       find.descendant(
         of: find.byType(AppTransactionTile),
         matching: find.text('식료품'),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('filters recent transactions by tapping a calendar day', (
+    tester,
+  ) async {
+    final month = DateTime(2026, 3, 1);
+    final dependencies = buildFakeDependenciesWithSnapshot(
+      LedgerSnapshot(
+        monthlyBudgetAmount: 400000,
+        entries: [
+          LedgerEntry(
+            id: 'day-15-a',
+            type: LedgerEntryType.expense,
+            category: LedgerCategory.coffee,
+            amount: 4500,
+            note: 'Coffee',
+            occurredOn: DateTime(2026, 3, 15, 9),
+          ),
+          LedgerEntry(
+            id: 'day-16-a',
+            type: LedgerEntryType.expense,
+            category: LedgerCategory.transport,
+            amount: 12000,
+            note: 'Bus',
+            occurredOn: DateTime(2026, 3, 16, 9),
+          ),
+        ],
+      ),
+    );
+    dependencies.ledgerMonthController.setMonth(month);
+
+    await tester.pumpWidget(
+      _LocalizedTestApp(
+        locale: const Locale('en'),
+        home: ReportPage(dependencies: dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Spending calendar'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    final dayCell = find.byKey(const ValueKey('calendar-day-2026-3-15'));
+    final dayInkWell = tester.widget<InkWell>(
+      find.descendant(of: dayCell, matching: find.byType(InkWell)),
+    );
+    dayInkWell.onTap!.call();
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Recent transactions'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Showing only the transactions on Mar 15.'),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('Coffee'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(AppTransactionTile),
+        matching: find.text('Transport'),
       ),
       findsNothing,
     );

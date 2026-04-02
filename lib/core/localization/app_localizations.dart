@@ -146,8 +146,12 @@ class AppLocalizations {
   String get toolExpenseType => _t('지출', 'Expense');
   String get toolIncomeType => _t('수입', 'Income');
   String get toolCategoryLabel => _t('카테고리', 'Category');
-  String get toolAmountLabel => _t('금액(원)', 'Amount (KRW)');
-  String get toolAmountHint => _t('예: 12500', 'Example: 12500');
+  String toolAmountLabel(LedgerCurrency currency) =>
+      _t('금액(${currencyInputLabel(currency)})', 'Amount (${currency.code})');
+  String toolAmountHint(LedgerCurrency currency) => _t(
+    '예: ${currencyInputExample(currency)}',
+    'Example: ${currencyInputExample(currency)}',
+  );
   String get toolNoteLabel => _t('메모', 'Note');
   String get toolNoteHint => _t('예: 퇴근길 장보기', 'Example: after-work groceries');
   String get toolDateLabel => _t('날짜', 'Date');
@@ -190,18 +194,36 @@ class AppLocalizations {
     '예산을 바꿔야 할 때만 수정하면 홈과 인사이트에 바로 반영됩니다.',
     'Only change this when the monthly budget needs updating.',
   );
-  String get toolBudgetAmountLabel => _t('월 예산 금액', 'Monthly budget amount');
-  String get toolBudgetAmountHint => _t('예: 450000', 'Example: 450000');
+  String toolBudgetAmountLabel(LedgerCurrency currency) => _t(
+    '월 예산 금액(${currencyInputLabel(currency)})',
+    'Monthly budget (${currency.code})',
+  );
+  String toolBudgetAmountHint(LedgerCurrency currency) => _t(
+    '예: ${currencyBudgetExample(currency)}',
+    'Example: ${currencyBudgetExample(currency)}',
+  );
   String get toolBudgetSave => _t('예산 저장', 'Save budget');
   String get toolBudgetSaved => _t('월 예산을 저장했습니다.', 'Monthly budget saved.');
-  String get toolAmountValidation => _t(
-    '금액은 1원 이상 숫자로 입력해야 합니다.',
-    'Enter a numeric amount greater than zero.',
-  );
-  String get toolBudgetValidation => _t(
-    '예산은 1원 이상 숫자로 입력해야 합니다.',
-    'Enter a numeric budget greater than zero.',
-  );
+  String toolAmountValidation(LedgerCurrency currency) =>
+      currency.usesMinorUnits
+      ? _t(
+          '금액은 0보다 큰 숫자이며 소수 둘째 자리까지 입력할 수 있습니다.',
+          'Enter an amount greater than zero with up to 2 decimal places.',
+        )
+      : _t(
+          '금액은 1 이상 정수로 입력해야 합니다.',
+          'Enter a whole-number amount greater than zero.',
+        );
+  String toolBudgetValidation(LedgerCurrency currency) =>
+      currency.usesMinorUnits
+      ? _t(
+          '예산은 0보다 큰 숫자이며 소수 둘째 자리까지 입력할 수 있습니다.',
+          'Enter a budget greater than zero with up to 2 decimal places.',
+        )
+      : _t(
+          '예산은 1 이상 정수로 입력해야 합니다.',
+          'Enter a whole-number budget greater than zero.',
+        );
   String get toolDateToday => _t('오늘', 'Today');
   String get toolEmptyRecentTitle =>
       _t('아직 저장한 거래가 없습니다', 'No recent entries yet');
@@ -226,6 +248,11 @@ class AppLocalizations {
     '이번 달 지출 카테고리를 비중 순서로 살펴보세요.',
     'Review this month’s expense categories in descending order.',
   );
+  String get reportCalendarTitle => _t('지출 달력', 'Spending calendar');
+  String get reportCalendarSubtitle => _t(
+    '날짜별 지출 총액을 달력에서 바로 확인하고, 원하는 날짜를 눌러 상세를 좁혀보세요.',
+    'Scan daily spending in the month calendar and tap a date to narrow the details.',
+  );
   String get reportFilterTitle => _t('카테고리 필터', 'Category filter');
   String get reportFilterSubtitle => _t(
     '원하는 카테고리만 골라 최근 거래를 좁혀보세요.',
@@ -238,7 +265,17 @@ class AppLocalizations {
     '전체 보기로 돌아가면 다른 최근 거래를 확인할 수 있습니다.',
     'Return to All to review the other recent transactions.',
   );
+  String get reportSelectedDayEmptyTitle =>
+      _t('선택한 날짜의 지출 기록이 없습니다', 'No spending records on this date');
+  String get reportSelectedDayEmptyBody => _t(
+    '다른 날짜를 누르거나 월 전체 흐름으로 돌아가세요.',
+    'Tap another date or return to the full monthly view.',
+  );
   String get reportRecentEntriesTitle => _t('최근 거래', 'Recent transactions');
+  String reportSelectedDaySubtitle(DateTime date) => _t(
+    '${formatShortDate(date)} 거래만 보고 있습니다.',
+    'Showing only the transactions on ${formatShortDate(date)}.',
+  );
   String get reportBudgetStatusTitle => _t('예산 상태', 'Budget status');
   String get reportEmptyTitle =>
       _t('이번 달 기록이 없습니다', 'No transactions this month');
@@ -316,6 +353,26 @@ class AppLocalizations {
   String get settingsLanguageTitle => _t('앱 언어', 'App Language');
   String get settingsLanguageSubtitle =>
       _t('한국어와 영어 중 하나를 선택합니다.', 'Choose Korean or English.');
+  String get settingsCurrencyTitle => _t('기본 통화', 'Base currency');
+  String get settingsCurrencySubtitle => _t(
+    '앱 전체 금액 입력과 표시 기준입니다. 기존 금액은 자동 환산되지 않습니다.',
+    'Used for all amount input and display. Existing values are not auto-converted.',
+  );
+  String get settingsCurrencyChangeTitle =>
+      _t('기본 통화를 변경할까요?', 'Change the base currency?');
+  String settingsCurrencyChangeBody({
+    required LedgerCurrency currentCurrency,
+    required LedgerCurrency nextCurrency,
+  }) => _t(
+    '현재 ${currencyOptionLabel(currentCurrency)}에서 ${currencyOptionLabel(nextCurrency)}로 바뀝니다. 기존 금액은 자동 환산되지 않으며 숫자는 그대로 유지됩니다.',
+    'This changes the app from ${currencyOptionLabel(currentCurrency)} to ${currencyOptionLabel(nextCurrency)}. Existing amounts are not converted automatically and their numeric values stay the same.',
+  );
+  String get settingsCurrencyChangeConfirm => _t('변경하기', 'Change');
+  String get settingsCurrencyChangeCancel => _t('취소', 'Cancel');
+  String settingsCurrencyUpdated(LedgerCurrency currency) => _t(
+    '기본 통화를 ${currencyOptionLabel(currency)}로 변경했습니다.',
+    'Base currency updated to ${currencyOptionLabel(currency)}.',
+  );
 
   String get privacyPolicyPageTitle => _t('개인정보 처리방침', 'Privacy Policy');
   String get privacyPolicyHeroTitle =>
@@ -384,10 +441,40 @@ class AppLocalizations {
   String get languageKorean => '한국어';
   String get languageEnglish => 'English';
 
+  String weekdayLabel(int index) {
+    const korean = ['일', '월', '화', '수', '목', '금', '토'];
+    const english = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return _isKorean ? korean[index] : english[index];
+  }
+
   /// Formats a currency value for the active locale.
-  String formatCurrency(int amount) {
-    final formatted = _formatNumber(amount);
-    return _isKorean ? '$formatted원' : 'KRW $formatted';
+  String formatCurrency(
+    int amount, {
+    LedgerCurrency currency = LedgerCurrency.krw,
+  }) {
+    final sign = amount < 0 ? '-' : '';
+    if (!currency.usesMinorUnits) {
+      final formatted = _formatNumber(amount.abs());
+      return switch (currency) {
+        LedgerCurrency.krw =>
+          _isKorean ? '$sign$formatted원' : '$sign${currency.code} $formatted',
+        LedgerCurrency.jpy =>
+          _isKorean ? '$sign$formatted엔' : '$sign${currency.code} $formatted',
+        LedgerCurrency.cny ||
+        LedgerCurrency.usd => '$sign${currency.code} $formatted',
+      };
+    }
+
+    final formatted = _formatMinorUnits(
+      amount.abs(),
+      fractionDigits: currency.fractionDigits,
+    );
+    return switch (currency) {
+      LedgerCurrency.cny => '$sign${_isKorean ? 'CN¥' : 'CNY '}$formatted',
+      LedgerCurrency.usd => '$sign${_isKorean ? 'US\$' : 'USD '}$formatted',
+      LedgerCurrency.krw ||
+      LedgerCurrency.jpy => '$sign${currency.code} $formatted',
+    };
   }
 
   /// Formats a streak duration for the active locale.
@@ -442,9 +529,10 @@ class AppLocalizations {
   String formatSignedCurrency({
     required LedgerEntryType type,
     required int amount,
+    LedgerCurrency currency = LedgerCurrency.krw,
   }) {
     final prefix = type == LedgerEntryType.expense ? '-' : '+';
-    return '$prefix${formatCurrency(amount)}';
+    return '$prefix${formatCurrency(amount, currency: currency)}';
   }
 
   /// Returns the localized label for a supported spending category.
@@ -463,10 +551,16 @@ class AppLocalizations {
   }
 
   /// Returns the home hero savings value from the supplied amount.
-  String homeStatSavingsValue(int amount) => formatCurrency(amount);
+  String homeStatSavingsValue(
+    int amount, {
+    LedgerCurrency currency = LedgerCurrency.krw,
+  }) => formatCurrency(amount, currency: currency);
 
   /// Returns the remaining-budget value from the supplied amount.
-  String homeStatRemainingValue(int amount) => formatCurrency(amount);
+  String homeStatRemainingValue(
+    int amount, {
+    LedgerCurrency currency = LedgerCurrency.krw,
+  }) => formatCurrency(amount, currency: currency);
 
   /// Returns the home hero streak value from the supplied day count.
   String homeStatStreakValue(int days) => formatDays(days);
@@ -478,6 +572,7 @@ class AppLocalizations {
   String homeTopCategoryBody({
     required LedgerCategory? category,
     required int amount,
+    LedgerCurrency currency = LedgerCurrency.krw,
   }) {
     if (category == null) {
       return _t(
@@ -487,8 +582,8 @@ class AppLocalizations {
     }
 
     return _t(
-      '${ledgerCategoryLabel(category)} 항목이 ${formatCurrency(amount)}으로 가장 큰 비중을 차지하고 있어요.',
-      '${ledgerCategoryLabel(category)} is the largest expense so far at ${formatCurrency(amount)}.',
+      '${ledgerCategoryLabel(category)} 항목이 ${formatCurrency(amount, currency: currency)}으로 가장 큰 비중을 차지하고 있어요.',
+      '${ledgerCategoryLabel(category)} is the largest expense so far at ${formatCurrency(amount, currency: currency)}.',
     );
   }
 
@@ -496,9 +591,16 @@ class AppLocalizations {
   String reportBudgetStatusBody({
     required int remainingBudgetAmount,
     required int balanceAmount,
+    LedgerCurrency currency = LedgerCurrency.krw,
   }) {
-    final remainingLabel = formatCurrency(remainingBudgetAmount.abs());
-    final balanceLabel = formatCurrency(balanceAmount.abs());
+    final remainingLabel = formatCurrency(
+      remainingBudgetAmount.abs(),
+      currency: currency,
+    );
+    final balanceLabel = formatCurrency(
+      balanceAmount.abs(),
+      currency: currency,
+    );
 
     if (remainingBudgetAmount >= 0) {
       return _t(
@@ -517,6 +619,7 @@ class AppLocalizations {
   String insightsPrimaryBodyFor({
     required LedgerCategory? topExpenseCategory,
     required int monthlyExpenseAmount,
+    LedgerCurrency currency = LedgerCurrency.krw,
   }) {
     if (topExpenseCategory == null) {
       return _t(
@@ -526,8 +629,8 @@ class AppLocalizations {
     }
 
     return _t(
-      '${ledgerCategoryLabel(topExpenseCategory)} 항목이 이번 달 ${formatCurrency(monthlyExpenseAmount)} 지출 흐름에서 가장 큰 영향을 주고 있어요.',
-      '${ledgerCategoryLabel(topExpenseCategory)} is currently the biggest driver in your ${formatCurrency(monthlyExpenseAmount)} monthly spending.',
+      '${ledgerCategoryLabel(topExpenseCategory)} 항목이 이번 달 ${formatCurrency(monthlyExpenseAmount, currency: currency)} 지출 흐름에서 가장 큰 영향을 주고 있어요.',
+      '${ledgerCategoryLabel(topExpenseCategory)} is currently the biggest driver in your ${formatCurrency(monthlyExpenseAmount, currency: currency)} monthly spending.',
     );
   }
 
@@ -550,18 +653,57 @@ class AppLocalizations {
   }
 
   /// Builds the budget insight narrative from the remaining budget state.
-  String insightsBudgetBodyFor(int remainingBudgetAmount) {
+  String insightsBudgetBodyFor(
+    int remainingBudgetAmount, {
+    LedgerCurrency currency = LedgerCurrency.krw,
+  }) {
     if (remainingBudgetAmount >= 0) {
       return _t(
-        '이번 달 예산에서 ${formatCurrency(remainingBudgetAmount)}이 남아 있습니다. 지금 속도를 유지하면 월말까지 안정적으로 관리할 수 있어요.',
-        '${formatCurrency(remainingBudgetAmount)} remains in this month’s budget. If you keep this pace, the month should stay stable.',
+        '이번 달 예산에서 ${formatCurrency(remainingBudgetAmount, currency: currency)}이 남아 있습니다. 지금 속도를 유지하면 월말까지 안정적으로 관리할 수 있어요.',
+        '${formatCurrency(remainingBudgetAmount, currency: currency)} remains in this month’s budget. If you keep this pace, the month should stay stable.',
       );
     }
 
     return _t(
-      '이번 달 예산을 ${formatCurrency(remainingBudgetAmount.abs())} 초과했습니다. 큰 지출 카테고리부터 먼저 조정하는 편이 좋습니다.',
-      'You are ${formatCurrency(remainingBudgetAmount.abs())} over budget this month. Start by adjusting the largest expense category first.',
+      '이번 달 예산을 ${formatCurrency(remainingBudgetAmount.abs(), currency: currency)} 초과했습니다. 큰 지출 카테고리부터 먼저 조정하는 편이 좋습니다.',
+      'You are ${formatCurrency(remainingBudgetAmount.abs(), currency: currency)} over budget this month. Start by adjusting the largest expense category first.',
     );
+  }
+
+  String currencyOptionLabel(LedgerCurrency currency) {
+    return switch (currency) {
+      LedgerCurrency.krw => _t('원화 (KRW)', 'Korean won (KRW)'),
+      LedgerCurrency.jpy => _t('엔화 (JPY)', 'Japanese yen (JPY)'),
+      LedgerCurrency.cny => _t('위안화 (CNY)', 'Chinese yuan (CNY)'),
+      LedgerCurrency.usd => _t('달러 (USD)', 'US dollar (USD)'),
+    };
+  }
+
+  String currencyInputLabel(LedgerCurrency currency) {
+    return switch (currency) {
+      LedgerCurrency.krw => 'KRW',
+      LedgerCurrency.jpy => 'JPY',
+      LedgerCurrency.cny => 'CNY',
+      LedgerCurrency.usd => 'USD',
+    };
+  }
+
+  String currencyInputExample(LedgerCurrency currency) {
+    return switch (currency) {
+      LedgerCurrency.krw => '12500',
+      LedgerCurrency.jpy => '1200',
+      LedgerCurrency.cny => '125.50',
+      LedgerCurrency.usd => '12.50',
+    };
+  }
+
+  String currencyBudgetExample(LedgerCurrency currency) {
+    return switch (currency) {
+      LedgerCurrency.krw => '450000',
+      LedgerCurrency.jpy => '45000',
+      LedgerCurrency.cny => '2500.00',
+      LedgerCurrency.usd => '500.00',
+    };
   }
 
   /// Builds the home mission body from a category and savings amount.
@@ -696,6 +838,21 @@ class AppLocalizations {
       }
     }
     return value < 0 ? '-$buffer' : buffer.toString();
+  }
+
+  String _formatMinorUnits(int value, {required int fractionDigits}) {
+    final scale = switch (fractionDigits) {
+      0 => 1,
+      1 => 10,
+      _ => 100,
+    };
+    final whole = value ~/ scale;
+    final remainder = value % scale;
+    final wholeFormatted = _formatNumber(whole);
+    if (fractionDigits == 0) {
+      return wholeFormatted;
+    }
+    return '$wholeFormatted.${remainder.toString().padLeft(fractionDigits, '0')}';
   }
 }
 

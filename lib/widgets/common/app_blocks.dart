@@ -4,6 +4,7 @@ import '../../core/design/adaptive_layout.dart';
 import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/design/app_ui_tokens.dart';
+import '../../core/ledger/ledger_view_data.dart';
 import '../../core/localization/app_localizations.dart';
 
 /// Renders a section title with an optional supporting subtitle.
@@ -86,10 +87,7 @@ class AppHeroCard extends StatelessWidget {
         if (eyebrow != null) ...[
           Text(
             eyebrow!,
-            style: TextStyle(
-              color: accentColor,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(color: accentColor, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.s),
         ],
@@ -463,6 +461,155 @@ class AppCategoryBarChartRowData {
   final bool highlighted;
 }
 
+/// Renders a month grid for daily spending totals.
+class AppMonthlySpendCalendarCard extends StatelessWidget {
+  const AppMonthlySpendCalendarCard({
+    super.key,
+    required this.weekdayLabels,
+    required this.days,
+    required this.onSelectDate,
+  });
+
+  final List<String> weekdayLabels;
+  final List<ReportCalendarDayViewData> days;
+  final ValueChanged<DateTime> onSelectDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.m),
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: _surfaceDecoration(
+        borderRadius: AppUiTokens.surfaceCornerRadius,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: weekdayLabels
+                .map(
+                  (label) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.s),
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          for (var rowStart = 0; rowStart < days.length; rowStart += 7)
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: rowStart + 7 < days.length ? AppSpacing.s : 0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var index = rowStart; index < rowStart + 7; index++)
+                    Expanded(child: _buildDayCell(context, days[index])),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayCell(BuildContext context, ReportCalendarDayViewData day) {
+    final compactCell =
+        MediaQuery.textScalerOf(context).scale(1) > 1.1 ||
+        MediaQuery.sizeOf(context).width < 360;
+
+    final fillColor = day.isSelected
+        ? Color.lerp(AppColors.surface, AppColors.reportAccentSoft, 0.9)!
+        : day.hasSpend
+        ? Color.lerp(
+            day.isCurrentMonth ? AppColors.surfaceAlt : AppColors.backgroundAlt,
+            AppColors.reportAccentSoft,
+            0.25 + (day.intensity * 0.55),
+          )!
+        : (day.isCurrentMonth ? Colors.transparent : AppColors.backgroundAlt);
+    final borderColor = day.isSelected
+        ? AppColors.reportAccent
+        : day.isToday
+        ? AppColors.accent
+        : AppColors.border;
+    final titleColor = day.isCurrentMonth
+        ? AppColors.textPrimary
+        : AppColors.textSecondary;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Material(
+        key: ValueKey(
+          'calendar-day-${day.date.year}-${day.date.month}-${day.date.day}',
+        ),
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onSelectDate(day.date),
+          borderRadius: BorderRadius.circular(AppUiTokens.cardCornerRadius),
+          child: Ink(
+            height: compactCell ? 64 : 72,
+            padding: const EdgeInsets.all(AppSpacing.s),
+            decoration: BoxDecoration(
+              color: fillColor,
+              borderRadius: BorderRadius.circular(AppUiTokens.cardCornerRadius),
+              border: Border.all(color: borderColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  day.dayLabel,
+                  textScaler: const TextScaler.linear(1),
+                  style: TextStyle(
+                    color: titleColor,
+                    fontWeight: day.isSelected
+                        ? FontWeight.w800
+                        : FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                if (day.totalLabel != null && !compactCell)
+                  Text(
+                    day.totalLabel!,
+                    textScaler: const TextScaler.linear(1),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: day.isCurrentMonth
+                          ? AppColors.textSecondary
+                          : AppColors.textSecondary.withValues(alpha: 0.85),
+                      fontSize: 11,
+                      height: 1.2,
+                    ),
+                  ),
+                if (day.totalLabel != null && compactCell)
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: AppColors.reportAccent,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Renders a compact horizontal category chart for finance reports.
 class AppCategoryBarChartCard extends StatelessWidget {
   const AppCategoryBarChartCard({super.key, required this.rows});
@@ -580,11 +727,7 @@ class AppHeroIcon extends StatelessWidget {
         fillColor: fillColor,
         borderRadius: AppUiTokens.surfaceCornerRadius,
       ),
-      child: Icon(
-        icon,
-        color: color,
-        size: AppUiTokens.heroIconSize,
-      ),
+      child: Icon(icon, color: color, size: AppUiTokens.heroIconSize),
     );
   }
 }

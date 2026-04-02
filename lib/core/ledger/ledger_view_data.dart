@@ -86,6 +86,30 @@ class ReportCategoryChartRowViewData {
   final bool isHighlighted;
 }
 
+/// Carries one day cell for the monthly spending calendar.
+class ReportCalendarDayViewData {
+  /// Creates an immutable calendar-day view model.
+  const ReportCalendarDayViewData({
+    required this.date,
+    required this.dayLabel,
+    required this.totalLabel,
+    required this.hasSpend,
+    required this.isCurrentMonth,
+    required this.isToday,
+    required this.isSelected,
+    required this.intensity,
+  });
+
+  final DateTime date;
+  final String dayLabel;
+  final String? totalLabel;
+  final bool hasSpend;
+  final bool isCurrentMonth;
+  final bool isToday;
+  final bool isSelected;
+  final double intensity;
+}
+
 /// Carries the presentation data for the monthly report screen.
 class LedgerReportViewData {
   /// Creates an immutable report-screen view model.
@@ -97,6 +121,8 @@ class LedgerReportViewData {
     required this.categoryFilters,
     required this.chartRows,
     required this.categoryTotals,
+    required this.calendarDays,
+    required this.selectedDaySubtitle,
     required this.recentEntries,
   });
 
@@ -107,6 +133,8 @@ class LedgerReportViewData {
   final List<ReportCategoryFilterViewData> categoryFilters;
   final List<ReportCategoryChartRowViewData> chartRows;
   final List<ReportCategoryCardViewData> categoryTotals;
+  final List<ReportCalendarDayViewData> calendarDays;
+  final String? selectedDaySubtitle;
   final List<LedgerTransactionRowViewData> recentEntries;
 }
 

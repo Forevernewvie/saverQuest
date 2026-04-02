@@ -98,6 +98,20 @@ void main() {
     controller.dispose();
   });
 
+  test('buildEntry parses decimal minor-unit currencies safely', () {
+    final controller = QuickEntryFormController(
+      initialMonthlyBudgetAmount: 50000,
+      initialCurrency: LedgerCurrency.usd,
+    );
+    controller.amountController.text = '12.50';
+
+    final entry = controller.buildEntry();
+
+    expect(entry.amount, 1250);
+    expect(controller.budgetController.text, '500.00');
+    controller.dispose();
+  });
+
   test('starts with the injected current date for deterministic drafts', () {
     final controller = QuickEntryFormController(
       initialMonthlyBudgetAmount: 420000,

@@ -32,6 +32,7 @@ class SharedPreferencesLedgerRepository implements LedgerRepository {
       return const LedgerSnapshot(
         entries: [],
         monthlyBudgetAmount: _defaultMonthlyBudgetAmount,
+        currency: LedgerCurrency.krw,
       );
     }
 

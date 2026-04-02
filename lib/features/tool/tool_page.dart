@@ -36,6 +36,7 @@ class _ToolPageState extends State<ToolPage> {
     _formController = QuickEntryFormController(
       initialMonthlyBudgetAmount:
           widget.dependencies.ledgerController.monthlyBudgetAmount,
+      initialCurrency: widget.dependencies.ledgerController.currency,
     );
     widget.dependencies.analyticsService.logScreen('tool');
   }
@@ -134,7 +135,11 @@ class _ToolPageState extends State<ToolPage> {
   Future<void> _showEntryDetails(LedgerEntry entry) async {
     final l10n = context.l10n;
     final rowViewData = widget.dependencies.ledgerViewDataFactory
-        .buildTransactionRow(l10n: l10n, entry: entry);
+        .buildTransactionRow(
+          l10n: l10n,
+          entry: entry,
+          currency: widget.dependencies.ledgerController.currency,
+        );
 
     await showLedgerEntryDetailSheet(
       context: context,
@@ -213,6 +218,7 @@ class _ToolPageState extends State<ToolPage> {
         final viewData = viewFactory.buildTransactionRow(
           l10n: l10n,
           entry: entry,
+          currency: widget.dependencies.ledgerController.currency,
         );
         return AppTransactionTile(
           key: ValueKey(entry.id),
@@ -251,7 +257,9 @@ class _ToolPageState extends State<ToolPage> {
   Widget _buildEntryFormCard(
     AppLocalizations l10n,
     List<LedgerCategory> categories,
+    LedgerCurrency currency,
   ) {
+    final allowsDecimals = currency.usesMinorUnits;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.m),
       decoration: BoxDecoration(
@@ -309,17 +317,22 @@ class _ToolPageState extends State<ToolPage> {
             const SizedBox(height: AppSpacing.m),
             TextFormField(
               controller: _formController.amountController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: allowsDecimals,
+              ),
               textInputAction: TextInputAction.next,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: allowsDecimals
+                  ? [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))]
+                  : [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
-                labelText: l10n.toolAmountLabel,
-                hintText: l10n.toolAmountHint,
+                labelText: l10n.toolAmountLabel(currency),
+                hintText: l10n.toolAmountHint(currency),
               ),
               validator: (value) {
-                final amount = int.tryParse(value ?? '');
-                if (amount == null || amount <= 0) {
-                  return l10n.toolAmountValidation;
+                try {
+                  _formController.buildEntry();
+                } on FormatException {
+                  return l10n.toolAmountValidation(currency);
                 }
                 return null;
               },
@@ -370,7 +383,8 @@ class _ToolPageState extends State<ToolPage> {
   }
 
   /// Builds the monthly budget form card shown alongside the entry form.
-  Widget _buildBudgetFormCard(AppLocalizations l10n) {
+  Widget _buildBudgetFormCard(AppLocalizations l10n, LedgerCurrency currency) {
+    final allowsDecimals = currency.usesMinorUnits;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.m),
       decoration: BoxDecoration(
@@ -390,17 +404,22 @@ class _ToolPageState extends State<ToolPage> {
             const SizedBox(height: AppSpacing.xs),
             TextFormField(
               controller: _formController.budgetController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: allowsDecimals,
+              ),
               textInputAction: TextInputAction.done,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: allowsDecimals
+                  ? [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))]
+                  : [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
-                labelText: l10n.toolBudgetAmountLabel,
-                hintText: l10n.toolBudgetAmountHint,
+                labelText: l10n.toolBudgetAmountLabel(currency),
+                hintText: l10n.toolBudgetAmountHint(currency),
               ),
               validator: (value) {
-                final amount = int.tryParse(value ?? '');
-                if (amount == null || amount <= 0) {
-                  return l10n.toolBudgetValidation;
+                try {
+                  _formController.parseBudgetAmount();
+                } on FormatException {
+                  return l10n.toolBudgetValidation(currency);
                 }
                 return null;
               },
@@ -433,6 +452,8 @@ class _ToolPageState extends State<ToolPage> {
         final l10n = context.l10n;
         final categories = _formController.categoriesForSelectedType();
         final selectedMonth = monthController.selectedMonth;
+        final currency = ledgerController.currency;
+        _formController.setCurrency(currency);
 
         return ScreenShell(
           title: l10n.toolTitle,
@@ -470,10 +491,17 @@ class _ToolPageState extends State<ToolPage> {
                       children: [
                         Expanded(
                           flex: 3,
-                          child: _buildEntryFormCard(l10n, categories),
+                          child: _buildEntryFormCard(
+                            l10n,
+                            categories,
+                            currency,
+                          ),
                         ),
                         const SizedBox(width: AppSpacing.m),
-                        Expanded(flex: 2, child: _buildBudgetFormCard(l10n)),
+                        Expanded(
+                          flex: 2,
+                          child: _buildBudgetFormCard(l10n, currency),
+                        ),
                       ],
                     ),
                   );
@@ -483,9 +511,9 @@ class _ToolPageState extends State<ToolPage> {
                   padding: const EdgeInsets.only(bottom: AppSpacing.m),
                   child: Column(
                     children: [
-                      _buildEntryFormCard(l10n, categories),
+                      _buildEntryFormCard(l10n, categories, currency),
                       const SizedBox(height: AppSpacing.m),
-                      _buildBudgetFormCard(l10n),
+                      _buildBudgetFormCard(l10n, currency),
                     ],
                   ),
                 );

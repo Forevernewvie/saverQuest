@@ -25,23 +25,31 @@ class LedgerViewDataFactory {
     return HomeDashboardViewData(
       monthlyExpenseValue: l10n.homeStatSavingsValue(
         dashboard.monthlyExpenseAmount,
+        currency: dashboard.currency,
       ),
       remainingBudgetValue: l10n.homeStatRemainingValue(
         dashboard.remainingBudgetAmount,
+        currency: dashboard.currency,
       ),
       monthlyIncomeValue: l10n.homeStatSavingsValue(
         dashboard.monthlyIncomeAmount,
+        currency: dashboard.currency,
       ),
       topCategoryValue: dashboard.topExpenseCategory == null
           ? l10n.noData
-          : l10n.formatCurrency(topCategoryTotal),
+          : l10n.formatCurrency(topCategoryTotal, currency: dashboard.currency),
       topCategoryBody: l10n.homeTopCategoryBody(
         category: dashboard.topExpenseCategory,
         amount: topCategoryTotal,
+        currency: dashboard.currency,
       ),
       recentEntries: dashboard.recentEntries
           .map(
-            (entry) => _buildTransactionRowViewData(l10n: l10n, entry: entry),
+            (entry) => _buildTransactionRowViewData(
+              l10n: l10n,
+              entry: entry,
+              currency: dashboard.currency,
+            ),
           )
           .toList(),
     );
@@ -51,6 +59,8 @@ class LedgerViewDataFactory {
   LedgerReportViewData buildReportViewData({
     required AppLocalizations l10n,
     required LedgerReportSummary summary,
+    required DateTime selectedMonth,
+    DateTime? selectedDate,
     LedgerCategory? selectedCategory,
   }) {
     final remainingBudgetAmount =
@@ -63,14 +73,37 @@ class LedgerViewDataFactory {
         : summary.recentEntries
               .where((entry) => entry.category == selectedCategory)
               .toList();
+    final selectedDay = selectedDate == null
+        ? null
+        : DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    final dayFilteredEntries = selectedDay == null
+        ? filteredEntries
+        : summary.currentMonthEntries
+              .where(
+                (entry) =>
+                    entry.occurredOn.year == selectedDay.year &&
+                    entry.occurredOn.month == selectedDay.month &&
+                    entry.occurredOn.day == selectedDay.day,
+              )
+              .toList();
 
     return LedgerReportViewData(
-      monthlyExpenseValue: l10n.formatCurrency(summary.monthlyExpenseAmount),
-      monthlyIncomeValue: l10n.formatCurrency(summary.monthlyIncomeAmount),
-      balanceValue: l10n.formatCurrency(summary.balanceAmount),
+      monthlyExpenseValue: l10n.formatCurrency(
+        summary.monthlyExpenseAmount,
+        currency: summary.currency,
+      ),
+      monthlyIncomeValue: l10n.formatCurrency(
+        summary.monthlyIncomeAmount,
+        currency: summary.currency,
+      ),
+      balanceValue: l10n.formatCurrency(
+        summary.balanceAmount,
+        currency: summary.currency,
+      ),
       budgetStatusBody: l10n.reportBudgetStatusBody(
         remainingBudgetAmount: remainingBudgetAmount,
         balanceAmount: summary.balanceAmount,
+        currency: summary.currency,
       ),
       categoryFilters: [
         ReportCategoryFilterViewData(
@@ -91,7 +124,10 @@ class LedgerViewDataFactory {
             (total) => ReportCategoryChartRowViewData(
               icon: _presentationService.iconForCategory(total.category),
               label: l10n.ledgerCategoryLabel(total.category),
-              amountLabel: l10n.formatCurrency(total.amount),
+              amountLabel: l10n.formatCurrency(
+                total.amount,
+                currency: summary.currency,
+              ),
               progress: maxExpenseAmount <= 0
                   ? 0
                   : total.amount / maxExpenseAmount,
@@ -107,16 +143,111 @@ class LedgerViewDataFactory {
               icon: _presentationService.iconForCategory(total.category),
               title: l10n.ledgerCategoryLabel(total.category),
               body: l10n.reportEntryCountLabel(total.entryCount),
-              trailing: l10n.formatCurrency(total.amount),
+              trailing: l10n.formatCurrency(
+                total.amount,
+                currency: summary.currency,
+              ),
             ),
           )
           .toList(),
-      recentEntries: filteredEntries
+      calendarDays: _buildCalendarDays(
+        l10n: l10n,
+        summary: summary,
+        selectedMonth: selectedMonth,
+        selectedDay: selectedDay,
+      ),
+      selectedDaySubtitle: selectedDay == null
+          ? null
+          : l10n.reportSelectedDaySubtitle(selectedDay),
+      recentEntries: dayFilteredEntries
           .map(
-            (entry) => _buildTransactionRowViewData(l10n: l10n, entry: entry),
+            (entry) => _buildTransactionRowViewData(
+              l10n: l10n,
+              entry: entry,
+              currency: summary.currency,
+            ),
           )
           .toList(),
     );
+  }
+
+  List<ReportCalendarDayViewData> _buildCalendarDays({
+    required AppLocalizations l10n,
+    required LedgerReportSummary summary,
+    required DateTime selectedMonth,
+    required DateTime? selectedDay,
+  }) {
+    final firstDay = DateTime(selectedMonth.year, selectedMonth.month, 1);
+    final lastDay = DateTime(selectedMonth.year, selectedMonth.month + 1, 0);
+    final leadingEmptyCells = firstDay.weekday % 7;
+    final trailingEmptyCells =
+        (7 - ((leadingEmptyCells + lastDay.day) % 7)) % 7;
+    final today = DateTime.now();
+    final totalsByDay = {
+      for (final total in summary.dailySpendTotals)
+        DateTime(total.date.year, total.date.month, total.date.day): total,
+    };
+    final maxDailyAmount = summary.dailySpendTotals.isEmpty
+        ? 0
+        : summary.dailySpendTotals
+              .map((total) => total.amount)
+              .reduce((left, right) => left > right ? left : right);
+
+    ReportCalendarDayViewData buildDay(
+      DateTime date, {
+      required bool isCurrentMonth,
+    }) {
+      final normalizedDate = DateTime(date.year, date.month, date.day);
+      final total = totalsByDay[normalizedDate];
+      final amount = total?.amount ?? 0;
+      return ReportCalendarDayViewData(
+        date: normalizedDate,
+        dayLabel: '${normalizedDate.day}',
+        totalLabel: amount <= 0
+            ? null
+            : l10n.formatCurrency(amount, currency: summary.currency),
+        hasSpend: amount > 0,
+        isCurrentMonth: isCurrentMonth,
+        isToday:
+            today.year == normalizedDate.year &&
+            today.month == normalizedDate.month &&
+            today.day == normalizedDate.day,
+        isSelected:
+            selectedDay != null &&
+            selectedDay.year == normalizedDate.year &&
+            selectedDay.month == normalizedDate.month &&
+            selectedDay.day == normalizedDate.day,
+        intensity: maxDailyAmount <= 0 ? 0 : amount / maxDailyAmount,
+      );
+    }
+
+    final previousMonthLastDay = DateTime(
+      selectedMonth.year,
+      selectedMonth.month,
+      0,
+    ).day;
+
+    return [
+      for (var index = leadingEmptyCells - 1; index >= 0; index--)
+        buildDay(
+          DateTime(
+            selectedMonth.year,
+            selectedMonth.month - 1,
+            previousMonthLastDay - index,
+          ),
+          isCurrentMonth: false,
+        ),
+      for (var day = 1; day <= lastDay.day; day++)
+        buildDay(
+          DateTime(selectedMonth.year, selectedMonth.month, day),
+          isCurrentMonth: true,
+        ),
+      for (var day = 1; day <= trailingEmptyCells; day++)
+        buildDay(
+          DateTime(selectedMonth.year, selectedMonth.month + 1, day),
+          isCurrentMonth: false,
+        ),
+    ];
   }
 
   /// Builds the localized insights-screen view model from insight data.
@@ -134,12 +265,16 @@ class LedgerViewDataFactory {
       primaryBody: l10n.insightsPrimaryBodyFor(
         topExpenseCategory: summary.topExpenseCategory,
         monthlyExpenseAmount: summary.monthlyExpenseAmount,
+        currency: summary.currency,
       ),
       secondaryBody: l10n.insightsSecondaryBodyFor(
         secondaryExpenseCategory: summary.secondaryExpenseCategory,
         recentExpenseCount: summary.recentExpenseCount,
       ),
-      budgetBody: l10n.insightsBudgetBodyFor(summary.remainingBudgetAmount),
+      budgetBody: l10n.insightsBudgetBodyFor(
+        summary.remainingBudgetAmount,
+        currency: summary.currency,
+      ),
     );
   }
 
@@ -147,14 +282,20 @@ class LedgerViewDataFactory {
   LedgerTransactionRowViewData buildTransactionRow({
     required AppLocalizations l10n,
     required LedgerEntry entry,
+    LedgerCurrency currency = LedgerCurrency.krw,
   }) {
-    return _buildTransactionRowViewData(l10n: l10n, entry: entry);
+    return _buildTransactionRowViewData(
+      l10n: l10n,
+      entry: entry,
+      currency: currency,
+    );
   }
 
   /// Creates the shared transaction row representation for list surfaces.
   LedgerTransactionRowViewData _buildTransactionRowViewData({
     required AppLocalizations l10n,
     required LedgerEntry entry,
+    required LedgerCurrency currency,
   }) {
     return LedgerTransactionRowViewData(
       icon: _presentationService.iconForCategory(entry.category),
@@ -163,6 +304,7 @@ class LedgerViewDataFactory {
       trailing: l10n.formatSignedCurrency(
         type: entry.type,
         amount: entry.amount,
+        currency: currency,
       ),
     );
   }

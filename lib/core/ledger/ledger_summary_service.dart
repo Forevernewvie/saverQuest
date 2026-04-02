@@ -27,6 +27,7 @@ class LedgerSummaryService {
       currentMonthEntries: currentMonthEntries,
       recentEntries: _sortNewestFirst(currentMonthEntries).take(4).toList(),
       topExpenseCategory: _topExpenseCategory(expenseEntries),
+      currency: snapshot.currency,
     );
   }
 
@@ -43,14 +44,18 @@ class LedgerSummaryService {
         .where((entry) => entry.type == LedgerEntryType.income)
         .toList();
     final expenseTotals = _expenseTotals(expenseEntries);
+    final dailySpendTotals = _dailySpendTotals(expenseEntries);
 
     return LedgerReportSummary(
       monthlyBudgetAmount: snapshot.monthlyBudgetAmount,
       monthlyExpenseAmount: _sumAmounts(expenseEntries),
       monthlyIncomeAmount: _sumAmounts(incomeEntries),
       balanceAmount: _sumAmounts(incomeEntries) - _sumAmounts(expenseEntries),
+      currentMonthEntries: currentMonthEntries,
       recentEntries: _sortNewestFirst(currentMonthEntries).take(8).toList(),
       expenseTotals: expenseTotals,
+      dailySpendTotals: dailySpendTotals,
+      currency: snapshot.currency,
     );
   }
 
@@ -81,6 +86,7 @@ class LedgerSummaryService {
           ? expenseTotals[1].category
           : null,
       recentExpenseCount: expenseEntries.length,
+      currency: snapshot.currency,
     );
   }
 
@@ -138,5 +144,40 @@ class LedgerSummaryService {
 
     categoryTotals.sort((left, right) => right.amount.compareTo(left.amount));
     return categoryTotals;
+  }
+
+  /// Aggregates expense entries by calendar day for month-view reporting.
+  List<LedgerDailySpendTotal> _dailySpendTotals(
+    List<LedgerEntry> expenseEntries,
+  ) {
+    final Map<DateTime, int> totals = {};
+    final Map<DateTime, int> counts = {};
+
+    for (final entry in expenseEntries) {
+      final dayKey = DateTime(
+        entry.occurredOn.year,
+        entry.occurredOn.month,
+        entry.occurredOn.day,
+      );
+      totals.update(
+        dayKey,
+        (amount) => amount + entry.amount,
+        ifAbsent: () => entry.amount,
+      );
+      counts.update(dayKey, (count) => count + 1, ifAbsent: () => 1);
+    }
+
+    final dayTotals = totals.entries
+        .map(
+          (entry) => LedgerDailySpendTotal(
+            date: entry.key,
+            amount: entry.value,
+            entryCount: counts[entry.key] ?? 0,
+          ),
+        )
+        .toList();
+
+    dayTotals.sort((left, right) => left.date.compareTo(right.date));
+    return dayTotals;
   }
 }

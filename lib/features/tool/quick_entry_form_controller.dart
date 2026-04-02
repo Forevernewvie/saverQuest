@@ -10,13 +10,18 @@ class QuickEntryFormController extends ChangeNotifier {
   /// Creates a form controller with an initial monthly budget amount.
   QuickEntryFormController({
     required int initialMonthlyBudgetAmount,
+    LedgerCurrency initialCurrency = LedgerCurrency.krw,
     DateTime Function()? now,
     String Function()? entryIdFactory,
   }) : _now = now ?? DateTime.now,
        _entryIdFactory = entryIdFactory ?? _defaultEntryIdFactory,
        _selectedDate = (now ?? DateTime.now)(),
+       _currency = initialCurrency,
        _budgetController = TextEditingController(
-         text: initialMonthlyBudgetAmount.toString(),
+         text: _formatAmountForInput(
+           initialMonthlyBudgetAmount,
+           currency: initialCurrency,
+         ),
        ),
        _amountController = TextEditingController(),
        _noteController = TextEditingController();
@@ -48,6 +53,7 @@ class QuickEntryFormController extends ChangeNotifier {
   final TextEditingController _amountController;
   final TextEditingController _noteController;
   final TextEditingController _budgetController;
+  LedgerCurrency _currency;
 
   LedgerEntryType _selectedType = LedgerEntryType.expense;
   LedgerCategory _selectedCategory = LedgerCategory.groceries;
@@ -71,6 +77,9 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Returns the currently selected transaction date.
   DateTime get selectedDate => _selectedDate;
+
+  /// Returns the single app-wide currency used for form parsing.
+  LedgerCurrency get currency => _currency;
 
   /// Returns the id of the transaction being edited, if any.
   String? get editingEntryId => _editingEntryId;
@@ -122,7 +131,40 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Updates the visible monthly budget field from persisted ledger state.
   void setBudgetAmount(int amount) {
-    _budgetController.text = amount.toString();
+    _budgetController.text = _formatAmountForInput(amount, currency: _currency);
+    notifyListeners();
+  }
+
+  /// Updates the current parsing/display currency without converting stored values.
+  void setCurrency(LedgerCurrency currency) {
+    if (_currency == currency) {
+      return;
+    }
+    _currency = currency;
+    if (_amountController.text.isNotEmpty) {
+      final parsedAmount = _tryParseAmount(
+        _amountController.text,
+        currency: currency,
+      );
+      if (parsedAmount != null) {
+        _amountController.text = _formatAmountForInput(
+          parsedAmount,
+          currency: currency,
+        );
+      }
+    }
+    if (_budgetController.text.isNotEmpty) {
+      final parsedBudget = _tryParseAmount(
+        _budgetController.text,
+        currency: currency,
+      );
+      if (parsedBudget != null) {
+        _budgetController.text = _formatAmountForInput(
+          parsedBudget,
+          currency: currency,
+        );
+      }
+    }
     notifyListeners();
   }
 
@@ -132,7 +174,10 @@ class QuickEntryFormController extends ChangeNotifier {
     _selectedType = entry.type;
     _selectedCategory = entry.category;
     _selectedDate = entry.occurredOn;
-    _amountController.text = entry.amount.toString();
+    _amountController.text = _formatAmountForInput(
+      entry.amount,
+      currency: _currency,
+    );
     _noteController.text = entry.note;
     notifyListeners();
   }
@@ -143,7 +188,7 @@ class QuickEntryFormController extends ChangeNotifier {
       id: _editingEntryId ?? _entryIdFactory(),
       type: _selectedType,
       category: _selectedCategory,
-      amount: _parseRequiredAmount(_amountController.text),
+      amount: _parseRequiredAmount(_amountController.text, currency: _currency),
       note: _noteController.text.trim(),
       occurredOn: _selectedDate,
     );
@@ -151,17 +196,55 @@ class QuickEntryFormController extends ChangeNotifier {
 
   /// Parses the monthly budget value from the current budget field.
   int parseBudgetAmount() {
-    return _parseRequiredAmount(_budgetController.text);
+    return _parseRequiredAmount(_budgetController.text, currency: _currency);
   }
 
   /// Parses required numeric form fields after trimming incidental whitespace.
-  int _parseRequiredAmount(String rawValue) {
+  int _parseRequiredAmount(
+    String rawValue, {
+    required LedgerCurrency currency,
+  }) {
     final normalizedValue = rawValue.trim();
-    final parsedValue = int.tryParse(normalizedValue);
+    final parsedValue = _tryParseAmount(normalizedValue, currency: currency);
     if (parsedValue == null) {
       throw const FormatException('Expected a whole-number amount.');
     }
+    if (parsedValue <= 0) {
+      throw const FormatException('Expected an amount greater than zero.');
+    }
     return parsedValue;
+  }
+
+  int? _tryParseAmount(String rawValue, {required LedgerCurrency currency}) {
+    final normalizedValue = rawValue.trim();
+    if (normalizedValue.isEmpty) {
+      return null;
+    }
+    if (!currency.usesMinorUnits) {
+      return int.tryParse(normalizedValue);
+    }
+    final match = RegExp(r'^\d+(?:\.(\d{1,2}))?$').firstMatch(normalizedValue);
+    if (match == null) {
+      return null;
+    }
+    final parts = normalizedValue.split('.');
+    final whole = int.parse(parts.first);
+    final fraction = parts.length == 1
+        ? 0
+        : int.parse(parts[1].padRight(2, '0'));
+    return whole * 100 + fraction;
+  }
+
+  static String _formatAmountForInput(
+    int amount, {
+    required LedgerCurrency currency,
+  }) {
+    if (!currency.usesMinorUnits) {
+      return amount.toString();
+    }
+    final whole = amount ~/ 100;
+    final fraction = (amount % 100).toString().padLeft(2, '0');
+    return '$whole.$fraction';
   }
 
   /// Disposes text editing controllers owned by the form controller.

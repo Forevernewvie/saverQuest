@@ -10,6 +10,7 @@ import '../../core/design/app_colors.dart';
 import '../../core/design/app_spacing.dart';
 import '../../core/localization/app_locale_controller.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/ledger/ledger_models.dart';
 import '../../widgets/ad_banner_slot.dart';
 import '../../widgets/common/app_blocks.dart';
 import '../../widgets/screen_shell.dart';
@@ -114,6 +115,53 @@ class _SettingsPageState extends State<SettingsPage> {
     await widget.dependencies.localeController.setLocale(Locale(languageCode));
   }
 
+  Future<void> _changeCurrency(LedgerCurrency currency) async {
+    final currentCurrency = widget.dependencies.ledgerController.currency;
+    if (currency == currentCurrency) {
+      return;
+    }
+
+    final shouldChange =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            final l10n = context.l10n;
+            return AlertDialog(
+              title: Text(l10n.settingsCurrencyChangeTitle),
+              content: Text(
+                l10n.settingsCurrencyChangeBody(
+                  currentCurrency: currentCurrency,
+                  nextCurrency: currency,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text(l10n.settingsCurrencyChangeCancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text(l10n.settingsCurrencyChangeConfirm),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldChange) {
+      return;
+    }
+
+    await widget.dependencies.ledgerController.updateCurrency(currency);
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.settingsCurrencyUpdated(currency))),
+    );
+  }
+
   /// Opens the in-app privacy policy screen from settings.
   void _openPrivacyPolicy() {
     Navigator.of(context).pushNamed(AppRoutes.privacyPolicy);
@@ -121,90 +169,126 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final consentState = widget.dependencies.consentController.state;
-    final l10n = context.l10n;
-    final currentLanguageCode =
-        widget.dependencies.localeController.locale?.languageCode ??
-        AppLocaleController.fallbackFor(
-          Localizations.localeOf(context),
-        ).languageCode;
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        widget.dependencies.localeController,
+        widget.dependencies.ledgerController,
+      ]),
+      builder: (context, _) {
+        final consentState = widget.dependencies.consentController.state;
+        final l10n = context.l10n;
+        final currentLanguageCode =
+            widget.dependencies.localeController.locale?.languageCode ??
+            AppLocaleController.fallbackFor(
+              Localizations.localeOf(context),
+            ).languageCode;
+        final currentCurrency = widget.dependencies.ledgerController.currency;
 
-    return ScreenShell(
-      title: l10n.settingsTitle,
-      children: [
-        AppHeroCard(
-          eyebrow: l10n.appTitle,
+        return ScreenShell(
           title: l10n.settingsTitle,
-          body: l10n.settingsHeroBody,
-          trailing: const AppHeroIcon(icon: Icons.settings_outlined),
-        ),
-        AppFeatureCard(
-          icon: Icons.verified_user_outlined,
-          title: l10n.settingsConsentStateTitle,
-          body: l10n.settingsConsentStateBody(
-            canRequestAds: consentState.canRequestAds,
-            nonPersonalized: consentState.serveNonPersonalizedAds,
-            privacyOptionsRequired: consentState.privacyOptionsRequired,
-          ),
-        ),
-        AppFeatureCard(
-          icon: Icons.ads_click_outlined,
-          title: l10n.settingsAdsInfoTitle,
-          body: l10n.settingsAdsInfoBody,
-        ),
-        AppSectionHeader(title: l10n.settingsManageTitle),
-        _SettingsControlCard(
-          title: l10n.settingsLanguageTitle,
-          subtitle: l10n.settingsLanguageSubtitle,
-          trailing: DropdownButton<String>(
-            value: currentLanguageCode,
-            underline: const SizedBox.shrink(),
-            onChanged: (value) {
-              if (value == null) {
-                return;
-              }
-              _changeLanguage(value);
-            },
-            items: [
-              DropdownMenuItem(value: 'ko', child: Text(l10n.languageKorean)),
-              DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
-            ],
-          ),
-        ),
-        _SettingsControlCard(
-          title: l10n.settingsPrivacyOptionsTitle,
-          subtitle: consentState.privacyOptionsRequired
-              ? l10n.settingsPrivacyOptionsSubtitleRequired
-              : l10n.settingsPrivacyOptionsSubtitleNotRequired,
-          trailing: _updatingPrivacyOptions
-              ? const SizedBox(
-                  height: 18,
-                  width: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.chevron_right),
-          onTap: _updatingPrivacyOptions
-              ? null
-              : () {
-                  _openPrivacyOptions();
+          children: [
+            AppHeroCard(
+              eyebrow: l10n.appTitle,
+              title: l10n.settingsTitle,
+              body: l10n.settingsHeroBody,
+              trailing: const AppHeroIcon(icon: Icons.settings_outlined),
+            ),
+            AppFeatureCard(
+              icon: Icons.verified_user_outlined,
+              title: l10n.settingsConsentStateTitle,
+              body: l10n.settingsConsentStateBody(
+                canRequestAds: consentState.canRequestAds,
+                nonPersonalized: consentState.serveNonPersonalizedAds,
+                privacyOptionsRequired: consentState.privacyOptionsRequired,
+              ),
+            ),
+            AppFeatureCard(
+              icon: Icons.ads_click_outlined,
+              title: l10n.settingsAdsInfoTitle,
+              body: l10n.settingsAdsInfoBody,
+            ),
+            AppSectionHeader(title: l10n.settingsManageTitle),
+            _SettingsControlCard(
+              title: l10n.settingsLanguageTitle,
+              subtitle: l10n.settingsLanguageSubtitle,
+              trailing: DropdownButton<String>(
+                value: currentLanguageCode,
+                underline: const SizedBox.shrink(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  _changeLanguage(value);
                 },
-        ),
-        _SettingsControlCard(
-          title: l10n.settingsPrivacyPolicyTitle,
-          subtitle: l10n.settingsPrivacyPolicySubtitle,
-          trailing: const Icon(Icons.chevron_right),
-          onTap: _openPrivacyPolicy,
-        ),
-        const SizedBox(height: AppSpacing.s),
-        AdBannerSlot(
-          adService: widget.dependencies.adService,
-          adUnitId: AdMobIds.settingsBanner,
-          placement: AdPlacement.settingsBanner,
-          routeName: AppRoutes.settings,
-          canRequestAds: consentState.canRequestAds,
-          nonPersonalizedAds: consentState.serveNonPersonalizedAds,
-        ),
-      ],
+                items: [
+                  DropdownMenuItem(
+                    value: 'ko',
+                    child: Text(l10n.languageKorean),
+                  ),
+                  DropdownMenuItem(
+                    value: 'en',
+                    child: Text(l10n.languageEnglish),
+                  ),
+                ],
+              ),
+            ),
+            _SettingsControlCard(
+              title: l10n.settingsCurrencyTitle,
+              subtitle: l10n.settingsCurrencySubtitle,
+              trailing: DropdownButton<LedgerCurrency>(
+                value: currentCurrency,
+                underline: const SizedBox.shrink(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  _changeCurrency(value);
+                },
+                items: LedgerCurrency.values
+                    .map(
+                      (currency) => DropdownMenuItem(
+                        value: currency,
+                        child: Text(l10n.currencyOptionLabel(currency)),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            if (consentState.privacyOptionsRequired)
+              _SettingsControlCard(
+                title: l10n.settingsPrivacyOptionsTitle,
+                subtitle: l10n.settingsPrivacyOptionsSubtitleRequired,
+                trailing: _updatingPrivacyOptions
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.chevron_right),
+                onTap: _updatingPrivacyOptions
+                    ? null
+                    : () {
+                        _openPrivacyOptions();
+                      },
+              ),
+            _SettingsControlCard(
+              title: l10n.settingsPrivacyPolicyTitle,
+              subtitle: l10n.settingsPrivacyPolicySubtitle,
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _openPrivacyPolicy,
+            ),
+            const SizedBox(height: AppSpacing.s),
+            AdBannerSlot(
+              adService: widget.dependencies.adService,
+              adUnitId: AdMobIds.settingsBanner,
+              placement: AdPlacement.settingsBanner,
+              routeName: AppRoutes.settings,
+              canRequestAds: consentState.canRequestAds,
+              nonPersonalizedAds: consentState.serveNonPersonalizedAds,
+            ),
+          ],
+        );
+      },
     );
   }
 }
